@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Contact
 
-from src.__metadata__ import __project__ as project
-from src.__metadata__ import __version__ as version
+from app.__metadata__ import __project__ as project
+from app.__metadata__ import __version__ as version
 
 __all__ = ["config"]
 load_dotenv()
@@ -29,7 +29,7 @@ config = OpenAPIConfig(
         email=os.getenv("OPENAPI_CONTACT_EMAIL", "admin@localhost"),
     ),
     use_handler_docstrings=True,
-    root_schema_site="swagger",
+    root_schema_site="elements",
     path=os.getenv("OPENAPI_PATH", "/api"),
 )
 """OpenAPI config for app."""
