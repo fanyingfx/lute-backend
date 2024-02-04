@@ -7,8 +7,7 @@ from pathlib import Path
 import urllib3
 from dotenv import load_dotenv
 
-from src.__metadata__ import __project__ as project
-from src.__metadata__ import __version__ as version
+from app.__metadata__ import __project__, __version__
 
 # -- Environmental Data ------------------------------------------------------
 path = Path("..").resolve()
@@ -18,9 +17,9 @@ sys.path.insert(0, path.as_posix())
 load_dotenv()
 
 # -- Project information -----------------------------------------------------
-project = project
-version = version
-release = version
+project = __project__
+version = __version__
+release = __version__
 copyright = "2023, Jacob Coffee"
 author = "Jacob Coffee"
 
