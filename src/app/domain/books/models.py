@@ -43,6 +43,10 @@ class BookText(orm.DatabaseModel):
     # book: Mapped[Book] = relationship(
     book_text: Mapped[str] = mapped_column(Text)
 
+    def __init__(self, ref_book_id: int, book_text: str):
+        self.ref_book_id = ref_book_id
+        self.book_text = book_text
+
     def __repr__(self):
         return f"BookText(id={self.id!r}, book_text={self.book_text!r})"
 

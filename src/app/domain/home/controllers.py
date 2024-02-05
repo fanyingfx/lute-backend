@@ -5,7 +5,6 @@ from app.lib import log
 
 __all__ = ("HomeController",)
 
-
 __all_ = ["HomeController"]
 
 logger = log.get_logger()
@@ -30,7 +29,6 @@ class HomeController(Controller):
         }
         return Template("index.html", context=context)
 
-    @get(path="/{path:str}")
+    @get("/favicon.ico", tags=["frontend:"], include_in_schema=False)
     async def get_resource(self, path: str) -> Response:
-        logger.info("get {path}")
-        return Redirect("/static" + path)
+        return Redirect("/static/favicon.ico")

@@ -38,6 +38,7 @@ class BookCreate:
     create_at: datetime = None
     update_at: datetime = None
     published_at: date | None = None
+    text: str | None = None
 
 
 class BookCreateDTO(DataclassDTO[BookCreate]):
