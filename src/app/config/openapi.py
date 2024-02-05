@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Contact
 
-# from app.__metadata__ import __project__ as project
-# from app.__metadata__ import __version__ as version
-
 __all__ = ["config"]
 
 from app.lib import settings
@@ -18,7 +15,7 @@ from app.lib import settings
 load_dotenv()
 
 config = OpenAPIConfig(
-    title=os.getenv("OPENAPI_TITLE", settings.openapi.TITLE or settings.app.TITLE),
+    title=os.getenv("OPENAPI_TITLE", default=settings.openapi.TITLE),
     description=os.getenv(
         "OPENAPI_DESCRIPTION",
         "Litestar template for Railway",
