@@ -18,12 +18,13 @@ def create_app():
     from litestar.config.cors import CORSConfig
 
     from app.config import openapi, static_files, template
-    from app.domain.books import BookController
+    from app.domain import books
     from app.domain.home.controllers import HomeController
     from app.lib import db, exceptions, log, repository
 
     load_dotenv()
-    routes: list[ControllerRouterHandler] = [HomeController, BookController]
+    book_controllers = [books.controllers.BookController, books.controllers.BookTextController]
+    routes: list[ControllerRouterHandler] = [HomeController, *book_controllers]
     """List of routes."""
     cors_config = CORSConfig(allow_origins=["*"])
 

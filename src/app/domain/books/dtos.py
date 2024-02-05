@@ -4,16 +4,10 @@ from datetime import date, datetime
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.books.models import Book
+from app.domain.books.models import Book, BookText
 from app.lib import dto
 
-__all__ = [
-    "BookCreate",
-    "BookCreateDTO",
-    "BookDTO",
-    "BookUpdate",
-    "BookUpdateDTO",
-]
+__all__ = ["BookCreate", "BookCreateDTO", "BookDTO", "BookUpdate", "BookUpdateDTO", "BookTextDTO", "BookTextCreate"]
 
 
 # database model
@@ -25,7 +19,17 @@ class BookDTO(SQLAlchemyDTO[Book]):
     )
 
 
+class BookTextDTO(SQLAlchemyDTO[BookText]):
+    config = dto.config(exclude={"book"})
+
+
 # input
+
+
+@dataclass
+class BookTextCreate:
+    ref_book_id: int
+    book_text: str
 
 
 @dataclass
@@ -56,3 +60,7 @@ class BookUpdateDTO(DataclassDTO[BookUpdate]):
 
 class BookPatchDTO(DataclassDTO[BookUpdate]):
     config = dto.config(partial=True)
+
+
+class BookTextCreateDTO(DataclassDTO[BookTextCreate]):
+    config = dto.config()

@@ -1,3 +1,3 @@
-from .book import BookController
+from .book import BookController, BookTextController
 
-__all__ = ["BookController"]
+__all__ = ["BookController", "BookTextController"]

@@ -1,3 +1,3 @@
-from .controllers import BookController
+from . import controllers
 
-__all__ = ["BookController"]
+__all__ = ["controllers"]

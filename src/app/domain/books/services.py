@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 
-from .models import Book
+from .models import Book, BookText
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -19,6 +19,12 @@ class BookRepository(SQLAlchemyAsyncRepository[Book]):
     """Book SQLAlchemy Repository."""
 
     model_type = Book
+
+
+class BookTextRepository(SQLAlchemyAsyncRepository[BookText]):
+    """BookText SQLAlchemy Repository."""
+
+    model_type = BookText
 
 
 class BookService(SQLAlchemyAsyncRepositoryService[Book]):
@@ -55,18 +61,22 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
         db_obj.book_name = data.get("book_name")
         await self.repository.update(db_obj)
 
-    # async def get_book_by_id(self, id: int) -> Book:
-    #         select(Book).join(BookText, onclause=Book.id == BookText.ref_book_id, isouter=False).options(
-    #             selectinload(
-    #                 Book.texts).options(
-    #                 joinedload(
-    #                     BookText.book
-    #                     ,
-    #                     noload(
-    #                         "*")),
-    #             ),
-    #             noload("*"))
-    #     ).execution_options(populate_existing=True)
-
     async def to_model(self, data: Book | dict[str, Any], operation: str | None = None) -> Book:
+        return await super().to_model(data, operation)
+
+
+class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):
+    """Handles database operations for users."""
+
+    repository_type = BookTextRepository
+
+    def __init__(self, **repo_kwargs: Any) -> None:
+        self.repository: BookRepository = self.repository_type(**repo_kwargs)
+        self.model_type = self.repository.model_type
+
+    async def create(self, data: BookText | dict(str, Any)) -> BookText:
+        db_obj = await self.to_model(data, "create")
+        return await super().create(data=db_obj, auto_commit=True)
+
+    async def to_model(self, data: BookText | dict[str, Any], operation: str | None = None) -> BookText:
         return await super().to_model(data, operation)
