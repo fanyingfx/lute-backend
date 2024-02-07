@@ -14,7 +14,7 @@ async_session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(eng
 # async def init_db(app: Litestar) -> None:
 #     async with app.state.db_engine.begin() as conn:
 session_config = AsyncSessionConfig(expire_on_commit=False)
-sqlalchemy_config = SQLAlchemyAsyncConfig(
+config = SQLAlchemyAsyncConfig(
     connection_string="sqlite+aiosqlite:////home/fan/PycharmProjects/lute-backend/data/test.db",
     session_config=session_config,
     alembic_config=AlembicAsyncConfig(
@@ -23,4 +23,4 @@ sqlalchemy_config = SQLAlchemyAsyncConfig(
         script_location=settings.db.MIGRATION_PATH,
     ),
 )  # Create 'db_session' dependency.
-plugin = SQLAlchemyInitPlugin(config=sqlalchemy_config)
+plugin = SQLAlchemyInitPlugin(config=config)

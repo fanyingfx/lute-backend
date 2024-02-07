@@ -13,6 +13,11 @@ dependencies = [
     "pydantic-settings>=2.1.0",
     "structlog>=24.1.0",
     "saq>=0.12.2",
+    "spacy>=3.7.2",
+    "panflute>=2.3.0",
+    "marko>=2.0.2",
+    "mistune>=3.0.2",
+    "dacite>=1.8.1",
 ]
 requires-python = ">=3.11,<4.0"
 readme = "README.md"

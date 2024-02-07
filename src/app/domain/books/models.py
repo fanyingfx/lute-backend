@@ -25,9 +25,7 @@ class Book(orm.DatabaseModel):
     # ORM Relationships
     texts: Mapped[list[BookText]] = relationship(lazy="noload", cascade="all,delete-orphan")
 
-    def __init__(self, book_name: str, published_at: date | None = None):
-        self.book_name = book_name
-        self.published_at = published_at
+    # def __init__(self, book_name: str, published_at: date | None = None, **kw: Any):
 
     def __repr__(self):
         return (

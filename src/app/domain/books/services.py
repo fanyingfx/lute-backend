@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import textwrap
 from typing import TYPE_CHECKING, Any
 
 from app.lib.repository import SQLAlchemyAsyncRepository
@@ -37,12 +36,10 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
         self.repository: BookRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def create_with_content(self, data: Book | dict(str, Any), content: str) -> Book:
+    async def create_with_content(self, data: Book | dict[str, Any], content: str) -> Book:
         book_obj = await self.to_model(data, "create")
         book = await super().create(data=book_obj, auto_commit=False)
-        texts = textwrap.wrap(content, 5)
-        for text in texts:
-            book.texts.append(BookText(ref_book_id=book.id, book_text=text))
+        book.texts.append(BookText(ref_book_id=book.id, book_text=content))
         return await self.update(item_id=book.id, data=book)
 
     async def create(self, data: Book | dict(str, Any)) -> Book:

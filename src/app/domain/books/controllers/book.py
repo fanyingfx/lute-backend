@@ -1,11 +1,13 @@
-from typing import Annotated
+from dataclasses import asdict
+from typing import Annotated, Any
 
+from dacite import from_dict
 from litestar import Controller, get
 
 __all__ = ("BookController",)
 
 
-from litestar import Response, delete, patch, post
+from litestar import delete, patch, post
 from litestar.di import Provide
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
@@ -24,6 +26,7 @@ from app.domain.books.dtos import (
 )
 from app.domain.books.models import Book, BookText
 from app.domain.books.services import BookService, BookTextService
+from app.parsers.test.ml_parser import MarkDownNode, markdown, parse_node
 
 
 class BookController(Controller):
@@ -37,6 +40,7 @@ class BookController(Controller):
     @get("/book_id/{book_id:int}")
     async def get_book_by_id(self, book_service: BookService, book_id: int) -> Book:
         book = await book_service.get(item_id=book_id)
+
         return book_service.to_dto(book)
 
     @get("/list")
@@ -53,7 +57,7 @@ class BookController(Controller):
         return book_service.to_dto(db_obj)
 
     @post("/add_book_and_content", dto=BookCreateDTO)
-    async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> Response:
+    async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
         content = data.create_instance().text
         db_obj = await book_service.create_with_content(data.as_builtins(), content)
         return book_service.to_dto(db_obj)
@@ -80,6 +84,12 @@ class BookTextController(Controller):
     async def get_booktext(self, booktext_service: BookTextService, book_id: int) -> BookText:
         db_obj = await booktext_service.get(item_id=book_id)
         return booktext_service.to_dto(db_obj)
+
+    @get("/test_parser")
+    async def test_parser(self, booktext_service: BookTextService) -> dict[str, Any]:
+        db_obj = await booktext_service.get(item_id=1)
+        notes = [from_dict(data_class=MarkDownNode, data=m) for m in markdown(db_obj.book_text)]
+        return {"data": [asdict(parse_node(md_node)) for md_node in notes]}
 
     @post("/add", dto=BookTextCreateDTO)
     async def add_booktext(self, booktext_service: BookTextService, data: DTOData[BookTextCreate]) -> BookText:
