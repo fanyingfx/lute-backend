@@ -125,12 +125,14 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
 
     def parse_child(child: MarkDownNode) -> Segment:
         match child.type:
-            case "text":
+            case "text" | "codespan":  # treat text in double quote as normal text
                 return parse_text(child.raw)
             case "softbreak":
                 return LineBreakSegment("")
             case "image":
                 return ImageSegment(child.attrs.url)
+            # case "codespan":
+        raise ValueError(f"Unknown child type: {child.type}")
 
     return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph.children])
 
@@ -147,9 +149,11 @@ def parse_node(node: MarkDownNode) -> Segment:
 
 
 if __name__ == "__main__":
-    source_text_file = "source.txt"
+    source_text_file = "alice_chp1.txt"
     with open(source_text_file) as f:  # noqa
         doc = markdown(f.read())
 
     res = [from_dict(data_class=MarkDownNode, data=m) for m in doc]
-    # for md_node in res:
+
+    for md_node in res:
+        parse_node(md_node)

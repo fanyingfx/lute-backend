@@ -47,5 +47,4 @@ def create_app():
         on_startup=[lambda: log.configure(log.default_processors)],
         on_app_init=[repository.on_app_init],
         debug=True,
-        pdb_on_exception=True,
     )

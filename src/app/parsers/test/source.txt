@@ -1,5 +1,4 @@
-This is the first paragraph. Hello Parser.
-Test line break.
+
 ![img_support](./logo.png)
 This is the second paragraph. check the Parser.
 

@@ -29,6 +29,6 @@ class HomeController(Controller):
         }
         return Template("index.html", context=context)
 
-    @get("/favicon.ico", tags=["frontend:"], include_in_schema=False)
-    async def get_resource(self, path: str) -> Response:
-        return Redirect("/static/favicon.ico")
+    @get("/{filename:str}", tags=["frontend:"], include_in_schema=False)
+    async def get_resource(self, filename: str) -> Response:
+        return Redirect(f"/static/{filename}")

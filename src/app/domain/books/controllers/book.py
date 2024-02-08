@@ -6,12 +6,13 @@ from litestar import Controller, get
 
 __all__ = ("BookController",)
 
-
-from litestar import delete, patch, post
+from litestar import MediaType, delete, patch, post
+from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.dto import DTOData
+from litestar.enums import RequestEncodingType
 from litestar.pagination import OffsetPagination
-from litestar.params import Parameter
+from litestar.params import Body, Parameter
 
 from app.domain.books.dependencies import provides_book_service, provides_booktext_service
 from app.domain.books.dtos import (
@@ -86,8 +87,8 @@ class BookTextController(Controller):
         return booktext_service.to_dto(db_obj)
 
     @get("/test_parser")
-    async def test_parser(self, booktext_service: BookTextService) -> dict[str, Any]:
-        db_obj = await booktext_service.get(item_id=1)
+    async def test_parser(self, booktext_service: BookTextService, booktext_id: int) -> dict[str, Any]:
+        db_obj = await booktext_service.get(item_id=booktext_id)
         notes = [from_dict(data_class=MarkDownNode, data=m) for m in markdown(db_obj.book_text)]
         return {"data": [asdict(parse_node(md_node)) for md_node in notes]}
 
@@ -95,3 +96,14 @@ class BookTextController(Controller):
     async def add_booktext(self, booktext_service: BookTextService, data: DTOData[BookTextCreate]) -> BookText:
         db_obj = await booktext_service.create(data.as_builtins())
         return booktext_service.to_dto(db_obj)
+
+    @post("/upload_file", media_type=MediaType.TEXT)
+    async def handle_file_upload(
+        self,
+        booktext_service: BookTextService,
+        data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
+        book_id: int,
+    ) -> str:
+        content = await data.read()
+        await booktext_service.create(BookText(ref_book_id=book_id, book_text=content.decode()))
+        return f"{data.filename} successfully uploaded"
