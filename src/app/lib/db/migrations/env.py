@@ -11,7 +11,7 @@ from sqlalchemy import Column, pool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_engine_from_config
 
 if TYPE_CHECKING:
-    from advanced_alchemy.extensions.litestar.alembic import AlembicCommandConfig
+    from advanced_alchemy.alembic.commands import AlembicCommandConfig
     from alembic.runtime.environment import EnvironmentContext
     from sqlalchemy.engine import Connection
 
@@ -41,7 +41,7 @@ def order_columns(
     op: ops.CreateTableOp,
 ) -> ops.CreateTableOp:
     """Orders ID first and the audit columns at the end."""
-    special_names = {"id": -100, "sa_orm_sentinel": 3001, "created_at": 3002, "updated_at": 3002}
+    special_names = {"id": -100, "sa_orm_sentinel": 3001, "created_at": 3002, "updated_at": 3003}
     cols_by_key = [
         (
             special_names.get(col.key, index) if isinstance(col, Column) else 2000,
@@ -81,7 +81,7 @@ def run_migrations_offline() -> None:
         version_table_pk=config.version_table_pk,
         user_module_prefix=config.user_module_prefix,
         render_as_batch=config.render_as_batch,
-        process_revision_directives=writer,  # type: ignore[arg-type]
+        process_revision_directives=writer,
     )
 
     with context.begin_transaction():
@@ -98,7 +98,7 @@ def do_run_migrations(connection: Connection) -> None:
         version_table_pk=config.version_table_pk,
         user_module_prefix=config.user_module_prefix,
         render_as_batch=config.render_as_batch,
-        process_revision_directives=writer,  # type: ignore[arg-type]
+        process_revision_directives=writer,
     )
 
     with context.begin_transaction():
@@ -112,6 +112,7 @@ async def run_migrations_online() -> None:
     connection with the context.
     """
     configuration = config.get_section(config.config_ini_section) or {}
+
     configuration["sqlalchemy.url"] = config.db_url
 
     connectable = cast(

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import date, datetime
 
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
@@ -8,13 +7,10 @@ from app.domain.words.models import Word
 from app.lib import dto
 
 __all__ = (
-    "BookCreate",
-    "BookCreateDTO",
-    "BookPatchDTO",
-    "BookUpdate",
-    "BookUpdateDTO",
     "WordCreate",
     "WordDTO",
+    "WordUpdate",
+    "WordUpdateDTO",
 )
 
 
@@ -30,36 +26,41 @@ class WordDTO(SQLAlchemyDTO[Word]):
 
 @dataclass
 class WordCreate:
-    ref_book_id: int
-    book_text: str
+    word_string: str
+    word_lemma: str
+    word_pos: str
+    word_pronunciation: str | None
+    word_explanation: str | None
+    is_multiple_words: bool = False
+    word_status: int = 0
 
 
-@dataclass
-class BookCreate:
-    book_name: str | None = None
-    create_at: datetime = None
-    update_at: datetime = None
-    published_at: date | None = None
-    text: str | None = None
-
-
-class BookCreateDTO(DataclassDTO[BookCreate]):
+class WordCreateDTO(DataclassDTO[WordCreate]):
     """User Create."""
 
     config = dto.config(exclude={"create_at", "update_at"})
 
 
 @dataclass
-class BookUpdate:
-    book_name: str | None = None
-    published_at: date | None = None
+class WordUpdate:
+    word_lemma: str
+    word_pos: str
+    is_multiple_words: bool
+    word_status: int
+    word_pronunciation: str | None
+    word_explanation: str | None
 
 
-class BookUpdateDTO(DataclassDTO[BookUpdate]):
+class WordUpdateDTO(DataclassDTO[WordUpdate]):
     """User Update."""
 
     config = dto.config()
 
 
-class BookPatchDTO(DataclassDTO[BookUpdate]):
+class WordPatchDTO(DataclassDTO[WordUpdate]):
+    """User Update."""
+
     config = dto.config(partial=True)
+
+
+# class BookPatchDTO(DataclassDTO[BookUpdate]):
