@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Annotated, Any
 
 from dacite import from_dict
@@ -27,7 +26,7 @@ from app.domain.books.dtos import (
 )
 from app.domain.books.models import Book, BookText
 from app.domain.books.services import BookService, BookTextService
-from app.parsers.test.ml_parser import MarkDownNode, markdown, parse_node
+from app.parsers.helper.parse2segment import MarkDownNode, flatten_segments, markdown, parse_node
 
 
 class BookController(Controller):
@@ -89,8 +88,8 @@ class BookTextController(Controller):
     @get("/test_parser")
     async def test_parser(self, booktext_service: BookTextService, booktext_id: int) -> dict[str, Any]:
         db_obj = await booktext_service.get(item_id=booktext_id)
-        notes = [from_dict(data_class=MarkDownNode, data=m) for m in markdown(db_obj.book_text)]
-        return {"data": [asdict(parse_node(md_node)) for md_node in notes]}
+        segments = [parse_node(from_dict(data_class=MarkDownNode, data=m)) for m in markdown(db_obj.book_text)]
+        return {"data": flatten_segments(segments)}
 
     @post("/add", dto=BookTextCreateDTO)
     async def add_booktext(self, booktext_service: BookTextService, data: DTOData[BookTextCreate]) -> BookText:

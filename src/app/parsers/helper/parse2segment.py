@@ -7,6 +7,27 @@ import spacy
 from dacite import from_dict
 from spacy.tokens import Span
 
+__all__ = (
+    "BlockSegment",
+    "EmptySegment",
+    "HardLineBreakSegment",
+    "ImageSegment",
+    "MarkDownNode",
+    "NodeAttr",
+    "ParagraphSegment",
+    "SoftLineBreakSegment",
+    "TextParagraphSegment",
+    "TextToken",
+    "TokenSentence",
+    "WordToken",
+    "flatten_segments",
+    "parse_node",
+    "parse_paragraph",
+    "parse_text",
+    "split_sentence",
+)
+
+
 nlp = spacy.load("en_core_web_sm")
 markdown = mistune.create_markdown(renderer=None)
 
@@ -35,47 +56,62 @@ class WordToken:
 @dataclass
 class TokenSentence:
     segment_value: list[WordToken]
+    segment_raw: str = ""
+
     segment_type: str = "sentence"
 
 
 @dataclass
 class ImageSegment:
     segment_value: str
+    segment_raw: str = ""
     segment_type: str = "image"
 
 
 @dataclass
 class TextParagraphSegment:
     segment_value: list[TokenSentence]
+    segment_raw: str = ""
     segment_type: str = "textparagraph"
 
 
 @dataclass
 class ParagraphSegment:
     segment_value: list[ImageSegment | TextParagraphSegment]
+    segment_raw: str = ""
     segment_type: str = "paragraph"
 
 
 @dataclass
 class BlockSegment:
     segment_value: str
+    segment_raw: str = ""
     segment_type: str = "block"
 
 
 @dataclass
-class LineBreakSegment:
+class SoftLineBreakSegment:
     segment_value: str
-    segment_type: str = "linebreak"
+    segment_raw: str = ""
+    segment_type: str = "softlinebreak"
+
+
+@dataclass
+class HardLineBreakSegment:
+    segment_value: str
+    segment_raw: str = ""
+    segment_type: str = "hardlinebreak"
 
 
 @dataclass
 class EmptySegment:
+    segment_raw: str = ""
     segment_value: str = ""
 
 
 # @dataclass
 # class Segment:
-Segment = [ImageSegment | LineBreakSegment | BlockSegment | ParagraphSegment | EmptySegment]
+Segment = ImageSegment | SoftLineBreakSegment | HardLineBreakSegment | BlockSegment | ParagraphSegment | EmptySegment
 
 
 @dataclass
@@ -115,20 +151,19 @@ def parse_text(text) -> TextParagraphSegment:
             )
 
         token_sentences.append(TokenSentence(segment_value=words))
-        return TextParagraphSegment(segment_value=token_sentences)
-    return None
+    return TextParagraphSegment(segment_value=token_sentences, segment_raw=text)
 
 
 def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
     if paragraph.children is None:
         raise ValueError(f"No children found for paragraph: {paragraph}")
 
-    def parse_child(child: MarkDownNode) -> Segment:
+    def parse_child(child: MarkDownNode) -> list[Segment]:
         match child.type:
             case "text" | "codespan":  # treat text in double quote as normal text
                 return parse_text(child.raw)
             case "softbreak":
-                return LineBreakSegment("")
+                return SoftLineBreakSegment("")
             case "image":
                 return ImageSegment(child.attrs.url)
             # case "codespan":
@@ -142,18 +177,28 @@ def parse_node(node: MarkDownNode) -> Segment:
         case "paragraph":
             return parse_paragraph(node)
         case "blank_line":
-            return LineBreakSegment(segment_value="\n")
+            return HardLineBreakSegment(segment_value="")
         case "block_code":
             return BlockSegment(segment_value=node.raw)
     raise ValueError(f"Unrecognized node: {node}")
 
 
+def flatten_segments(segments: list[Segment]) -> list[Segment]:
+    res_node_list: list[Segment] = []
+    for segment in segments:
+        match segment:
+            case ParagraphSegment():
+                res_node_list.extend(segment.segment_value)
+            case _:
+                res_node_list.append(segment)
+    return res_node_list
+
+
 if __name__ == "__main__":
-    source_text_file = "alice_chp1.txt"
+    source_text_file = "../test/source.txt"
     with open(source_text_file) as f:  # noqa
         doc = markdown(f.read())
+    segments = [parse_node(from_dict(data_class=MarkDownNode, data=m)) for m in doc]
 
-    res = [from_dict(data_class=MarkDownNode, data=m) for m in doc]
-
-    for md_node in res:
-        parse_node(md_node)
+    res = flatten_segments(segments)
+    r = {s.segment_type for s in res}
