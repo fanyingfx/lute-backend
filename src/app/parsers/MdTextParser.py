@@ -27,7 +27,6 @@ __all__ = (
     "split_sentence",
 )
 
-
 nlp = spacy.load("en_core_web_sm")
 markdown = mistune.create_markdown(renderer=None)
 
@@ -41,7 +40,9 @@ class TextToken:
     is_punct: bool = False
 
 
-@dataclass
+# kw_only for dataclass inheritance
+# https://medium.com/@aniscampos/python-dataclass-inheritance-finally-686eaf60fbb5
+@dataclass(kw_only=True)
 class WordToken:
     word_string: str
     word_lemma: str
@@ -53,9 +54,16 @@ class WordToken:
     word_status: int = 0
 
 
+@dataclass(kw_only=True)
+class VWord(WordToken):
+    word_pronunciation: str | None = None
+    word_tokens: list[str]
+    word_explanation: str | None = None
+
+
 @dataclass
 class TokenSentence:
-    segment_value: list[WordToken]
+    segment_value: list[VWord]
     segment_raw: str = ""
 
     segment_type: str = "sentence"
@@ -66,6 +74,12 @@ class ImageSegment:
     segment_value: str
     segment_raw: str = ""
     segment_type: str = "image"
+
+
+@dataclass
+class TextRawParagraphSegment:
+    segment_value: str
+    segment_type: str = "textrawparagraph"
 
 
 @dataclass
@@ -111,7 +125,15 @@ class EmptySegment:
 
 # @dataclass
 # class Segment:
-Segment = ImageSegment | SoftLineBreakSegment | HardLineBreakSegment | BlockSegment | ParagraphSegment | EmptySegment
+Segment = (
+    ImageSegment
+    | SoftLineBreakSegment
+    | HardLineBreakSegment
+    | BlockSegment
+    | ParagraphSegment
+    | EmptySegment
+    | TextRawParagraphSegment
+)
 
 
 @dataclass
@@ -161,7 +183,7 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
     def parse_child(child: MarkDownNode) -> list[Segment]:
         match child.type:
             case "text" | "codespan":  # treat text in double quote as normal text
-                return parse_text(child.raw)
+                return TextRawParagraphSegment(child.raw)
             case "softbreak":
                 return SoftLineBreakSegment("")
             case "image":
