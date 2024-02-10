@@ -2,34 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Integer, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.lib.db import orm
 
 __all__ = ("Word",)
-
-import json
-
-from sqlalchemy import Text, TypeDecorator
-
-
-class JSONType(TypeDecorator):
-    """Represents a JSON data type."""
-
-    impl = Text
-
-    def process_bind_param(self, value, dialect):
-        """Convert Python object to a JSON string before storing."""
-        if value is not None:
-            value = json.dumps(value)
-        return value
-
-    def process_result_value(self, value, dialect):
-        """Convert JSON string to a Python object after reading from database."""
-        if value is not None:
-            value = json.loads(value)
-        return value
 
 
 class Word(orm.DatabaseModel):
@@ -45,8 +23,17 @@ class Word(orm.DatabaseModel):
     word_pronunciation: Mapped[str | None] = mapped_column(String(100))
     word_explanation: Mapped[str | None] = mapped_column(String(100))
     word_counts: Mapped[int | None] = mapped_column(Integer)
-    word_tokens: Mapped[list[str]] = mapped_column(JSONType)
+    word_tokens: Mapped[list[str]] = mapped_column(orm.JSONType)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()
     )
+    word_image: Mapped[WordImage] = relationship(lazy="noload", cascade="all, delete-orphan")
+
+
+class WordImage(orm.DatabaseModel):
+    __tablename__ = "word_images"
+    word_id: Mapped[str] = mapped_column(ForeignKey("words.id"), primary_key=True)
+    word_image_name: Mapped[str] = mapped_column(String(100))
+    word_image_path: Mapped[str] = mapped_column(String(100))
+    word: Mapped[Word] = relationship(back_populates="word_image", lazy="noload")

@@ -13,7 +13,7 @@ __all__ = ["Book", "BookText"]
 class Book(orm.DatabaseModel):
     """Book Model."""
 
-    __tablename__ = "book"  # type: ignore[assignment]
+    __tablename__ = "books"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic Book Table"}
     book_name: Mapped[str] = mapped_column(String(length=300))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -35,9 +35,9 @@ class Book(orm.DatabaseModel):
 
 
 class BookText(orm.DatabaseModel):
-    __tablename__ = "booktext"  # type: ignore[assignment]
+    __tablename__ = "booktexts"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic BookText Table"}
-    ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("book.id"))
+    ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))
     # book: Mapped[Book] = relationship(
     book_text: Mapped[str] = mapped_column(Text)
 

@@ -32,6 +32,7 @@ class WordCreate:
     word_pronunciation: str | None
     word_tokens: list[str]
     word_explanation: str | None
+    word_image_path: str | None = None
     is_multiple_words: bool = False
     word_status: int = 0
 
@@ -50,6 +51,7 @@ class WordUpdate:
     word_status: int
     word_pronunciation: str | None
     word_explanation: str | None
+    word_image_path: str | None = None
 
 
 class WordUpdateDTO(DataclassDTO[WordUpdate]):
