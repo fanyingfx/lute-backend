@@ -30,6 +30,7 @@ class WordCreate:
     word_lemma: str
     word_pos: str
     word_pronunciation: str | None
+    word_tokens: list[str]
     word_explanation: str | None
     is_multiple_words: bool = False
     word_status: int = 0

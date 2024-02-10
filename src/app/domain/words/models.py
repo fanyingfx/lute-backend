@@ -9,6 +9,28 @@ from app.lib.db import orm
 
 __all__ = ("Word",)
 
+import json
+
+from sqlalchemy import Text, TypeDecorator
+
+
+class JSONType(TypeDecorator):
+    """Represents a JSON data type."""
+
+    impl = Text
+
+    def process_bind_param(self, value, dialect):
+        """Convert Python object to a JSON string before storing."""
+        if value is not None:
+            value = json.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        """Convert JSON string to a Python object after reading from database."""
+        if value is not None:
+            value = json.loads(value)
+        return value
+
 
 class Word(orm.DatabaseModel):
     "Word Model"
@@ -23,7 +45,7 @@ class Word(orm.DatabaseModel):
     word_pronunciation: Mapped[str | None] = mapped_column(String(100))
     word_explanation: Mapped[str | None] = mapped_column(String(100))
     word_counts: Mapped[int | None] = mapped_column(Integer)
-    word_tokens: Mapped[str] = mapped_column(String(200))
+    word_tokens: Mapped[list[str]] = mapped_column(JSONType)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()

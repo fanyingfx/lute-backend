@@ -31,6 +31,7 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         self.model_type = self.repository.model_type
 
     async def create(self, data: Word | dict(str, Any)) -> Word:
+        # if isinstance(data, dict) and 'word_tokens' in data:
         db_obj = await self.to_model(data, "create")
         return await super().create(data=db_obj, auto_commit=True)
 

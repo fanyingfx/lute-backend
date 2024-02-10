@@ -19,9 +19,9 @@ class WordController(Controller):
     return_dto = WordDTO
 
     @get("/word_id/{word_id:int}")
-    async def get_book_by_id(self, word_service: WordService, word_id: int) -> Word:
-        book = await word_service.get_one_or_none(item_id=word_id)
-        return word_service.to_dto(book)
+    async def get_word_by_id(self, word_service: WordService, word_id: int) -> Word:
+        word = await word_service.get(item_id=word_id)
+        return word_service.to_dto(word)
 
     @post("/create", dto=WordCreateDTO)
     async def create_word(self, word_service: WordService, data: DTOData[WordCreate]) -> Word:
