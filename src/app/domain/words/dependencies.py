@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
+from sqlalchemy.orm import noload
 
 from app.domain.words.services import WordService
 
@@ -21,5 +22,13 @@ async def provides_word_service(db_session: AsyncSession) -> AsyncGenerator[Word
     """Construct repository and service objects for the request."""
     from app.domain.words.models import Word
 
-    async with WordService.new(session=db_session, statement=select(Word)) as service:
+    async with WordService.new(
+        session=db_session,
+        statement=select(Word).options(
+            #     options(
+            # selectinload(Word.word_image).options(
+            # ),
+            noload("*")
+        ),
+    ) as service:
         yield service

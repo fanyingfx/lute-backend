@@ -17,13 +17,23 @@ class Singleton:
 
 
 class LanguageParser(ABC):
-    @abc.abstractmethod
-    def load_resource(self, resource):
-        pass
+    language_name = None
 
+    @classmethod
     @abc.abstractmethod
-    def update_resource(self, resource):
-        pass
+    def get_language_name(cls):
+        """
+
+        Returns:
+
+        """
+        raise NotImplementedError
+
+    def load_resource(self, resource):  # noqa
+        ...
+
+    def update_resource(self, resource):  # noqa
+        ...
 
     @abc.abstractmethod
     def split_sentences(self, text):

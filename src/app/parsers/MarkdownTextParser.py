@@ -1,11 +1,7 @@
-import random
-from collections.abc import Iterator
 from dataclasses import dataclass
 
 import mistune
-import spacy
 from dacite import from_dict
-from spacy.tokens import Span
 
 __all__ = (
     "BlockSegment",
@@ -23,11 +19,9 @@ __all__ = (
     "flatten_segments",
     "parse_node",
     "parse_paragraph",
-    "parse_text",
-    "split_sentence",
+    "markdown",
 )
 
-nlp = spacy.load("en_core_web_sm")
 markdown = mistune.create_markdown(renderer=None)
 
 
@@ -57,13 +51,12 @@ class WordToken:
 @dataclass(kw_only=True)
 class VWord(WordToken):
     word_pronunciation: str | None = None
-    word_tokens: list[str]
     word_explanation: str | None = None
 
 
 @dataclass
 class TokenSentence:
-    segment_value: list[VWord]
+    segment_value: list[VWord | WordToken]
     segment_raw: str = ""
 
     segment_type: str = "sentence"
@@ -150,32 +143,6 @@ class MarkDownNode:
     children: list["MarkDownNode"] | None = None
 
 
-def split_sentence(sentences: str) -> Iterator[Span]:
-    return nlp(sentences).sents
-
-
-def parse_text(text) -> TextParagraphSegment:
-    token_sentences = []
-    for sent in split_sentence(text):
-        words = []
-        for token in sent:
-            words.append(
-                WordToken(
-                    word_string=token.text,
-                    word_lemma=token.lemma_,
-                    word_pos=token.pos_,
-                    word_status=random.randint(0, 5),  # noqa
-                    is_word=not token.is_punct,
-                    is_eos=token.is_sent_end,
-                    next_is_ws=token.whitespace_ == " ",
-                    is_multiple_words=False,
-                )
-            )
-
-        token_sentences.append(TokenSentence(segment_value=words))
-    return TextParagraphSegment(segment_value=token_sentences, segment_raw=text)
-
-
 def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
     if paragraph.children is None:
         raise ValueError(f"No children found for paragraph: {paragraph}")
@@ -202,6 +169,8 @@ def parse_node(node: MarkDownNode) -> Segment:
             return HardLineBreakSegment(segment_value="")
         case "block_code":
             return BlockSegment(segment_value=node.raw)
+        case "heading":
+            return EmptySegment()
     raise ValueError(f"Unrecognized node: {node}")
 
 
@@ -211,6 +180,8 @@ def flatten_segments(segments: list[Segment]) -> list[Segment]:
         match segment:
             case ParagraphSegment():
                 res_node_list.extend(segment.segment_value)
+            case EmptySegment():
+                pass
             case _:
                 res_node_list.append(segment)
     return res_node_list

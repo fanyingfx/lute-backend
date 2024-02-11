@@ -3,11 +3,10 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
+from app.domain.books.models import Book, BookText
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
-from app.parsers.MdTextParser import TextParagraphSegment, TokenSentence
-
-from .models import Book, BookText
+from app.parsers.MdTextParser import TextParagraphSegment, TokenSentence, VWord
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -15,8 +14,9 @@ if TYPE_CHECKING:
     from spacy.tokens import Token
     from sqlalchemy.orm import InstrumentedAttribute
 
+    from app.domain.words.models import Word
+    from app.domain.words.services import WordIndex
     from app.parsers.language_parsers.LanguageParser import LanguageParser
-    from app.parsers.WordMatcher import WordIndex
 
 __all__ = ["BookService"]
 
@@ -94,38 +94,86 @@ class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):
         return await super().to_model(data, operation)
 
 
-def match_word_in_sentence(sentence: Iterable[Token], multiple_word_index: WordIndex, single_word_map) -> TokenSentence:
+def find_in_multiple_words(word_token, word_list: list[Word]):
+    pass
+
+
+async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordIndex, max_loop_num: int) -> TokenSentence:
     start_position = 0
     res_word_list = []
     dead_loop_indicator = 0
     sentence_length = len(sentence)
+    find_the_word = False
 
     while start_position < sentence_length:
         current_word = str(sentence[start_position])
-        if current_word in multiple_word_index:
-            for word in multiple_word_index[current_word]:
+        current_token: Token = sentence[start_position]
+        if current_word in word_index:
+            for db_word in word_index[current_word]:
                 end_position = start_position
-                for word_token in word.word_tokens:
+                for word_token in db_word.word_tokens:
                     if end_position >= sentence_length or word_token != str(sentence[end_position]):
                         break
                     end_position += 1
                 else:
                     # it means all words matches
-                    # TODO add status and else process should return VWord
-                    res_word_list.append(sentence[start_position:end_position])
+                    end_position -= 1
+                    res_word_list.append(
+                        VWord(
+                            word_string=db_word.word_string,
+                            word_lemma=db_word.word_lemma,
+                            word_pos=db_word.word_pos,
+                            is_multiple_words=db_word.is_multiple_words,
+                            is_word=True,
+                            is_eos=sentence[end_position].is_sent_end,
+                            next_is_ws=" " in sentence[end_position].text_with_ws,
+                            word_status=db_word.word_status,
+                            word_explanation=db_word.word_explanation,
+                            word_pronunciation=db_word.word_pronunciation,
+                        )
+                    )
+                    find_the_word = True
                     start_position = end_position
-        else:
-            # TODO add condition to judge whether the single word matches
-            if current_word in single_word_map:
-                ...
-            res_word_list.append(sentence[start_position])
-            start_position += 1
+                    break
+        if not find_the_word:
+            res_word_list.append(
+                VWord(
+                    word_string=current_token.text,
+                    word_lemma=current_token.lemma_,
+                    word_pos=current_token.pos_,
+                    is_multiple_words=False,
+                    is_word=not current_token.is_punct,
+                    is_eos=current_token.is_sent_end,
+                    next_is_ws=" " in current_token.text_with_ws,
+                    word_status=0,
+                    word_explanation="",
+                    word_pronunciation="",
+                )
+            )
+
+        start_position += 1
+        find_the_word = False
         dead_loop_indicator += 1
-        if dead_loop_indicator > 5000:
-            raise OverflowError("Maximum number of word in sentence exceeded!5000! or maybe in the dead loop!")
+        if dead_loop_indicator > max_loop_num:
+            raise OverflowError(
+                f"Maximum number of word in sentence exceeded !{max_loop_num}! or maybe in the dead loop!"
+            )
     return TokenSentence(segment_value=res_word_list)
 
 
-def text2segment(text: str, wi: WordIndex, language_parser: LanguageParser) -> TextParagraphSegment:
+async def text2segment(text: str, language_parser: LanguageParser) -> TextParagraphSegment:
+    """
+    Returns:
+        object:
+    """
     sents: Iterator[Iterable[Token]] = language_parser.split_sentences_and_tokenize(text)
-    return TextParagraphSegment(segment_value=[match_word_in_sentence(sent) for sent in sents], segment_raw=text)
+    sentences = []
+    max_loop_num = len(text) * 100
+    from app.domain.words.services import words_store
+
+    language_name = language_parser.get_language_name()
+    word_index: WordIndex = await words_store.get(f"{language_name}-word-index")
+    for sent in sents:
+        parsed_sent = await match_word_in_sentence(sent, language_name, max_loop_num, word_index)
+        sentences.append(parsed_sent)
+    return TextParagraphSegment(segment_value=sentences, segment_raw=text)
