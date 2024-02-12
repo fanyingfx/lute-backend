@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from app.domain.books.models import Book, BookText
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
-from app.parsers.MdTextParser import TextParagraphSegment, TokenSentence, VWord
+from app.parsers.MarkdownTextParser import TextParagraphSegment, TokenSentence, VWord
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -174,6 +174,6 @@ async def text2segment(text: str, language_parser: LanguageParser) -> TextParagr
     language_name = language_parser.get_language_name()
     word_index: WordIndex = await words_store.get(f"{language_name}-word-index")
     for sent in sents:
-        parsed_sent = await match_word_in_sentence(sent, language_name, max_loop_num, word_index)
+        parsed_sent = await match_word_in_sentence(sent, word_index, max_loop_num)
         sentences.append(parsed_sent)
     return TextParagraphSegment(segment_value=sentences, segment_raw=text)

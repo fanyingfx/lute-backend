@@ -1,8 +1,0 @@
-
-![img_support](./logo.png)
-This is the second paragraph. check the Parser.
-
-```text
-This is raw text block.
-just for testing.
-```

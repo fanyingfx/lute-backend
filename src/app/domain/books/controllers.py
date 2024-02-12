@@ -4,7 +4,7 @@ from advanced_alchemy.filters import CollectionFilter
 from dacite import from_dict
 from litestar import Controller, get
 
-__all__ = ("BookController",)
+__all__ = ("BookController", "BookTextController")
 
 from litestar import MediaType, delete, patch, post
 from litestar.datastructures import UploadFile
@@ -31,7 +31,15 @@ from app.domain.words.dependencies import provides_word_service
 from app.domain.words.dtos import WordDTO
 from app.domain.words.models import Word
 from app.domain.words.services import WordService
-from app.parsers.MdTextParser import MarkDownNode, Segment, flatten_segments, markdown, parse_node
+from app.parsers.language_parsers.EnglishParser import EnglishParser
+from app.parsers.MarkdownTextParser import (
+    MarkDownNode,
+    Segment,
+    TextRawParagraphSegment,
+    flatten_segments,
+    markdown,
+    parse_node,
+)
 
 if TYPE_CHECKING:
     from app.parsers.language_parsers.LanguageParser import LanguageParser
@@ -98,9 +106,6 @@ class BookTextController(Controller):
 
     @get("/test_parser")
     async def test_parser(self, booktext_service: BookTextService, word_service: WordService, booktext_id: int) -> dict:
-        from app.parsers.language_parsers.EnglishParser import EnglishParser
-        from app.parsers.MdTextParser import TextRawParagraphSegment
-
         db_obj = await booktext_service.get(item_id=booktext_id)
         english_parser: LanguageParser = EnglishParser()
         await word_service.load_word_index(english_parser.get_language_name())
