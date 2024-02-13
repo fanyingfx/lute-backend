@@ -156,7 +156,7 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
             case "image":
                 return ImageSegment(child.attrs.url)
             # case "codespan":
-        raise ValueError(f"Unknown child type: {child.type}")
+        raise ValueError(f"Unknown child type of paragraph: {child.type}")
 
     return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph.children])
 
@@ -171,7 +171,7 @@ def parse_node(node: MarkDownNode) -> Segment:
             return BlockSegment(segment_value=node.raw)
         case "heading":
             return EmptySegment()
-    raise ValueError(f"Unrecognized node: {node}")
+    raise ValueError(f"Unrecognized markdown node: {node}")
 
 
 def flatten_segments(segments: list[Segment]) -> list[Segment]:
