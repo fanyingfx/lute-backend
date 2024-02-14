@@ -117,10 +117,12 @@ class BookTextController(Controller):
         for segment in flatten_segmentlist:
             match segment:
                 case TextRawParagraphSegment():
-                    new_segment = await text2segment(segment.segment_value, english_parser)
-                    res.append(asdict(new_segment))
+                    new_text_segment = await text2segment(segment.segment_value, english_parser)
+                    new_segment = asdict(new_text_segment)
                 case _:
-                    res.append(asdict(segment))
+                    new_segment = asdict(segment)
+            res.append(asdict(new_segment))
+
         return {"data": res}
 
     @post("/add", dto=BookTextCreateDTO)

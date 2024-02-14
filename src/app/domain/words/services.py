@@ -66,10 +66,16 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         self.repository: WordRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def create(self, data: Word | dict(str, Any)) -> Word:
+    async def create(self, data: Word | dict[str, Any]) -> Word:
         # if isinstance(data, dict) and 'word_tokens' in data:
         db_obj = await self.to_model(data, "create")
         return await super().create(data=db_obj, auto_commit=True)
+
+    async def create_or_update(self, data: dict[str, Any]) -> Word:
+        db_obj: Word = await self.get_one_or_none(word_string=data["word_string"])
+        if db_obj is None:
+            return await self.create(data)
+        return await super().update(item_id=db_obj.id, data=data, auto_commit=True)
 
     async def update(
         self,
@@ -82,7 +88,8 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         auto_refresh: bool | None = None,
         id_attribute: str | InstrumentedAttribute | None = None,
     ) -> Word:
-        return await super().update(item_id=item_id, data=data, auto_commit=True)
+        db_obj: Word = await self.to_model(data, "update")
+        return await super().update(item_id=item_id, data=db_obj, auto_commit=True)
 
     async def get_word_index(self) -> WordIndex:
         collection_filter = CollectionFilter("is_multiple_words", [True, False])

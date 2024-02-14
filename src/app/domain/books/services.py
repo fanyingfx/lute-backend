@@ -103,11 +103,23 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
     res_word_list = []
     dead_loop_indicator = 0
     sentence_length = len(sentence)
-    find_the_word = False
 
     while start_position < sentence_length:
         current_word = str(sentence[start_position])
         current_token: Token = sentence[start_position]
+        vword = VWord(
+            word_string=current_token.text,
+            word_lemma=current_token.lemma_,
+            word_pos=current_token.pos_,
+            is_multiple_words=False,
+            is_word=not current_token.is_punct,
+            is_eos=current_token.is_sent_end,
+            next_is_ws=" " in current_token.text_with_ws,
+            word_status=0,
+            word_explanation="",
+            word_pronunciation="",
+        )
+
         if current_word in word_index:
             for db_word in word_index[current_word]:
                 end_position = start_position
@@ -116,43 +128,23 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
                         break
                     end_position += 1
                 else:
-                    # it means all words matches
+                    # it means all words matches, update word properties with db_word
                     end_position -= 1
-                    res_word_list.append(
-                        VWord(
-                            word_string=db_word.word_string,
-                            word_lemma=db_word.word_lemma,
-                            word_pos=db_word.word_pos,
-                            is_multiple_words=db_word.is_multiple_words,
-                            is_word=True,
-                            is_eos=sentence[end_position].is_sent_end,
-                            next_is_ws=" " in sentence[end_position].text_with_ws,
-                            word_status=db_word.word_status,
-                            word_explanation=db_word.word_explanation,
-                            word_pronunciation=db_word.word_pronunciation,
-                        )
-                    )
-                    find_the_word = True
+                    vword.word_string = db_word.word_string
+                    vword.word_lemma = db_word.word_lemma
+                    vword.word_pos = db_word.word_pos
+                    vword.is_multiple_words = db_word.is_multiple_words
+                    vword.is_word = True
+                    vword.is_eos = sentence[end_position].is_sent_end
+                    vword.next_is_ws = " " in sentence[end_position].text_with_ws
+                    vword.word_status = db_word.word_status
+                    vword.word_explanation = db_word.word_explanation
+                    vword.word_pronunciation = db_word.word_pronunciation
                     start_position = end_position
                     break
-        if not find_the_word:
-            res_word_list.append(
-                VWord(
-                    word_string=current_token.text,
-                    word_lemma=current_token.lemma_,
-                    word_pos=current_token.pos_,
-                    is_multiple_words=False,
-                    is_word=not current_token.is_punct,
-                    is_eos=current_token.is_sent_end,
-                    next_is_ws=" " in current_token.text_with_ws,
-                    word_status=0,
-                    word_explanation="",
-                    word_pronunciation="",
-                )
-            )
+        res_word_list.append(vword)
 
         start_position += 1
-        find_the_word = False
         dead_loop_indicator += 1
         if dead_loop_indicator > max_loop_num:
             raise OverflowError(
@@ -164,15 +156,15 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
 async def text2segment(text: str, language_parser: LanguageParser) -> TextParagraphSegment:
     """
     Returns:
-        object:
+        object: TextParagraphSegment
     """
     sents: Iterator[Iterable[Token]] = language_parser.split_sentences_and_tokenize(text)
-    sentences = []
     max_loop_num = len(text) * 100
     from app.domain.words.services import words_store
 
     language_name = language_parser.get_language_name()
     word_index: WordIndex = await words_store.get(f"{language_name}-word-index")
+    sentences = []
     for sent in sents:
         parsed_sent = await match_word_in_sentence(sent, word_index, max_loop_num)
         sentences.append(parsed_sent)
