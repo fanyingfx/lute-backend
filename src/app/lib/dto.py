@@ -59,7 +59,7 @@ def config(
     Returns:
         DTOConfig: Configured DTO class
     """
-    default_kwargs = {"rename_strategy": "camel", "max_nested_depth": 2}
+    default_kwargs = {"rename_strategy": "lower", "max_nested_depth": 2}
     if exclude:
         default_kwargs["exclude"] = exclude
     if rename_fields:

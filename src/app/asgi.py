@@ -20,6 +20,7 @@ def create_app():
     from app.config import openapi, static_files, template
     from app.domain import books, words
     from app.domain.home.controllers import HomeController
+    from app.domain.words.services import on_word_updated
     from app.lib import db, exceptions, log, repository
 
     load_dotenv()
@@ -31,6 +32,7 @@ def create_app():
 
     return Litestar(
         route_handlers=[*routes],
+        listeners=[on_word_updated],
         # --- Config
         template_config=template.config,
         openapi_config=openapi.config,

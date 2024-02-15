@@ -114,14 +114,15 @@ class BookTextController(Controller):
         res = []
         from dataclasses import asdict
 
+        paragraph_order = 1
+
         for segment in flatten_segmentlist:
-            match segment:
-                case TextRawParagraphSegment():
-                    new_text_segment = await text2segment(segment.segment_value, english_parser)
-                    new_segment = asdict(new_text_segment)
-                case _:
-                    new_segment = asdict(segment)
-            res.append(asdict(new_segment))
+            if isinstance(segment, TextRawParagraphSegment):
+                sentence_segments = await text2segment(segment.segment_value, english_parser, paragraph_order)
+                res.extend(asdict(sentence_segment) for sentence_segment in sentence_segments)
+                paragraph_order += 1
+            else:
+                res.append(asdict(segment))
 
         return {"data": res}
 

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from app.domain.books.models import Book, BookText
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
-from app.parsers.MarkdownTextParser import TextParagraphSegment, TokenSentence, VWord
+from app.parsers.MarkdownTextParser import TokenSentence, VWord
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -103,6 +103,7 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
     res_word_list = []
     dead_loop_indicator = 0
     sentence_length = len(sentence)
+    sentence_raw = str(sentence)
 
     while start_position < sentence_length:
         current_word = str(sentence[start_position])
@@ -150,10 +151,10 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
             raise OverflowError(
                 f"Maximum number of word in sentence exceeded !{max_loop_num}! or maybe in the dead loop!"
             )
-    return TokenSentence(segment_value=res_word_list)
+    return TokenSentence(segment_value=res_word_list, segment_raw=sentence_raw)
 
 
-async def text2segment(text: str, language_parser: LanguageParser) -> TextParagraphSegment:
+async def text2segment(text: str, language_parser: LanguageParser, paragraph_order: int) -> list[TokenSentence]:
     """
     Returns:
         object: TextParagraphSegment
@@ -165,7 +166,9 @@ async def text2segment(text: str, language_parser: LanguageParser) -> TextParagr
     language_name = language_parser.get_language_name()
     word_index: WordIndex = await words_store.get(f"{language_name}-word-index")
     sentences = []
-    for sent in sents:
+    for index, sent in enumerate(sents, 1):
         parsed_sent = await match_word_in_sentence(sent, word_index, max_loop_num)
+        parsed_sent.paragraph_order = paragraph_order
+        parsed_sent.sentence_order = index
         sentences.append(parsed_sent)
-    return TextParagraphSegment(segment_value=sentences, segment_raw=text)
+    return sentences

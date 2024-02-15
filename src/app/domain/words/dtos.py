@@ -18,7 +18,7 @@ __all__ = (
 
 
 class WordDTO(SQLAlchemyDTO[Word]):
-    config = dto.config({"max_nested_depth": 1}, exclude={"word_image", "id"})
+    config = dto.config({"max_nested_depth": 1}, exclude={"word_image", "id"}, rename_strategy="")
 
 
 # input
@@ -42,15 +42,18 @@ class WordCreateDTO(DataclassDTO[WordCreate]):
     config = dto.config(exclude={"create_at", "update_at"})
 
 
-@dataclass
+@dataclass(kw_only=True)
 class WordUpdate:
-    word_lemma: str
-    word_pos: str
-    is_multiple_words: bool
+    word_string: str
+    word_lemma: str = ""
+    word_pos: str = ""
     word_status: int
-    word_pronunciation: str | None
-    word_explanation: str | None
+    is_multiple_words: bool = False
+    word_pronunciation: str | None = None
+    word_explanation: str | None = None
     word_image_path: str | None = None
+    word_tokens: list[str]
+    word_counts: int
 
 
 class WordUpdateDTO(DataclassDTO[WordUpdate]):

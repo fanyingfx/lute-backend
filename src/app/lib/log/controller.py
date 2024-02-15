@@ -16,11 +16,7 @@ import structlog
 from litestar.constants import SCOPE_STATE_RESPONSE_COMPRESSED
 from litestar.data_extractors import ConnectionDataExtractor, ResponseDataExtractor
 from litestar.enums import ScopeType
-from litestar.status_codes import (
-    HTTP_200_OK,
-    HTTP_300_MULTIPLE_CHOICES,
-    HTTP_500_INTERNAL_SERVER_ERROR,
-)
+from litestar.status_codes import HTTP_200_OK, HTTP_300_MULTIPLE_CHOICES, HTTP_500_INTERNAL_SERVER_ERROR
 from litestar.utils.scope import get_litestar_scope_state
 
 from app.lib import constants, settings

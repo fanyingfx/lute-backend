@@ -1,9 +1,6 @@
 from advanced_alchemy import AlembicAsyncConfig, AsyncSessionConfig
 from advanced_alchemy.extensions.litestar.plugins.init.config.asyncio import autocommit_before_send_handler
-from litestar.contrib.sqlalchemy.plugins import (
-    SQLAlchemyAsyncConfig,
-    SQLAlchemyPlugin,
-)
+from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.lib import serialization, settings

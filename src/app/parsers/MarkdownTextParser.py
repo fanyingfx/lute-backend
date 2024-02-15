@@ -58,8 +58,9 @@ class VWord(WordToken):
 class TokenSentence:
     segment_value: list[VWord | WordToken]
     segment_raw: str = ""
-
     segment_type: str = "sentence"
+    paragraph_order: int = 0
+    sentence_order: int = 0
 
 
 @dataclass
@@ -80,11 +81,19 @@ class TextParagraphSegment:
     segment_value: list[TokenSentence]
     segment_raw: str = ""
     segment_type: str = "textparagraph"
+    segment_order: int = 0
+
+
+@dataclass
+class SoftLineBreakSegment:
+    segment_value: str
+    segment_raw: str = ""
+    segment_type: str = "softlinebreak"
 
 
 @dataclass
 class ParagraphSegment:
-    segment_value: list[ImageSegment | TextParagraphSegment]
+    segment_value: list[ImageSegment | TextParagraphSegment | SoftLineBreakSegment]
     segment_raw: str = ""
     segment_type: str = "paragraph"
 
@@ -94,13 +103,6 @@ class BlockSegment:
     segment_value: str
     segment_raw: str = ""
     segment_type: str = "block"
-
-
-@dataclass
-class SoftLineBreakSegment:
-    segment_value: str
-    segment_raw: str = ""
-    segment_type: str = "softlinebreak"
 
 
 @dataclass
@@ -147,7 +149,7 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
     if paragraph.children is None:
         raise ValueError(f"No children found for paragraph: {paragraph}")
 
-    def parse_child(child: MarkDownNode) -> list[Segment]:
+    def parse_child(child: MarkDownNode) -> ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment:
         match child.type:
             case "text" | "codespan":  # treat text in double quote as normal text
                 return TextRawParagraphSegment(child.raw)

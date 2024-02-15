@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import importlib.metadata
+import importlib
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -38,8 +38,7 @@ BASE_DIR: Final = utils.module_to_os_path(DEFAULT_MODULE_NAME)
 RESOURCES_DIR = Path(BASE_DIR / "domain" / "web" / "resources")
 STATIC_DIR = Path(BASE_DIR / "domain" / "web" / "public")
 TEMPLATES_DIR = Path(BASE_DIR / "domain" / "web" / "templates")
-APP_NAME = "backend"
-version = importlib.metadata.version(APP_NAME)
+version = importlib.metadata.version(DEFAULT_MODULE_NAME)
 
 
 class ServerSettings(BaseSettings):
@@ -112,6 +111,7 @@ class AppSettings(BaseSettings):
     CSRF_COOKIE_NAME: str = "csrftoken"
     CSRF_COOKIE_SECURE: bool = False
     """Default URL where static assets are located."""
+    STATIC_DIR: Path = STATIC_DIR
     DEV_MODE: bool = False
 
     @property
@@ -273,7 +273,7 @@ class DatabaseSettings(BaseSettings):
     """Enable SQLAlchemy engine logs."""
     ECHO_POOL: bool | Literal["debug"] = False
     """Enable SQLAlchemy connection pool logs."""
-    POOL_DISABLE: bool = True
+    POOL_DISABLE: bool = False
     """Disable SQLAlchemy pooling, same as setting pool to.
 
     [`NullPool`][sqlalchemy.pool.NullPool].
@@ -287,7 +287,7 @@ class DatabaseSettings(BaseSettings):
     POOL_RECYCLE: int = 300
     POOL_PRE_PING: bool = False
     CONNECT_ARGS: dict[str, Any] = {}
-    URL: str = "sqlite+aiosqlite:///test1.sqlite"
+    URL: str = "postgresql+asyncpg://postgres:mysecretpassword@localhost:5432/postgres"
     ENGINE: str | None = None
     USER: str | None = None
     PASSWORD: str | None = None

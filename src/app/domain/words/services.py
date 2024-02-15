@@ -4,7 +4,7 @@ import copy
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
-from advanced_alchemy.filters import CollectionFilter
+from litestar.events import listener
 from litestar.stores.memory import MemoryStore
 
 from app.domain.words.models import Word
@@ -21,6 +21,11 @@ __all__ = ["WordService", "words_store"]
 words_store = MemoryStore()
 
 
+@listener("word_created", "word_updated")
+async def on_word_updated(language_name: str) -> None:
+    await words_store.delete(f"{language_name}-word-index-saved")
+
+
 class WordIndex:
     def _init_word_list(self, word_list: list[Word]):
         word_index = defaultdict(list)
@@ -35,7 +40,7 @@ class WordIndex:
             word_index[key].sort(key=lambda w: w.word_counts, reverse=True)
         return word_index
 
-    def __init__(self, word_list: list[Word]):
+    def __init__(self, word_list: Iterable[Word]):
         self._word_index = self._init_word_list(word_list)
 
     def __contains__(self, key):
@@ -92,8 +97,7 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         return await super().update(item_id=item_id, data=db_obj, auto_commit=True)
 
     async def get_word_index(self) -> WordIndex:
-        collection_filter = CollectionFilter("is_multiple_words", [True, False])
-        word_list = await self.list(collection_filter)
+        word_list = await self.list()
         return WordIndex(word_list)
 
     async def load_word_index(self, language_name):

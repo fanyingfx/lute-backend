@@ -10,10 +10,7 @@ import contextlib
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, overload
 
-from advanced_alchemy.filters import (
-    FilterTypes,
-    LimitOffset,
-)
+from advanced_alchemy.filters import FilterTypes, LimitOffset
 from advanced_alchemy.repository.typing import ModelT
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService as _SQLAlchemyAsyncRepositoryService
 from litestar.dto import DTOData
@@ -25,7 +22,6 @@ from app.lib.db import async_session_factory
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from pydantic import BaseModel
     from sqlalchemy import Select
     from sqlalchemy.ext.asyncio import AsyncSession
     from sqlalchemy.sql import ColumnElement
@@ -35,7 +31,7 @@ __all__ = ["SQLAlchemyAsyncRepositoryService"]
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictDTOT: TypeAlias = dict[str, Any] | ModelT | DTOData
 ModelDictListDTOT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]] | DTOData
-ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")
+ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")  # noqa
 FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
 
 

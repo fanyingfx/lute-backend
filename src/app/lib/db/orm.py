@@ -10,11 +10,7 @@ from advanced_alchemy.base import BigIntBase as DatabaseModel
 from advanced_alchemy.base import UUIDAuditBase as TimestampedDatabaseModel
 from advanced_alchemy.repository.typing import ModelT  # noqa: TCH002
 from sqlalchemy import String, Text, TypeDecorator
-from sqlalchemy.orm import (
-    Mapped,
-    declarative_mixin,
-    mapped_column,
-)
+from sqlalchemy.orm import Mapped, declarative_mixin, mapped_column
 
 __all__ = ["DatabaseModel", "TimestampedDatabaseModel", "orm_registry", "model_from_dict", "AuditColumns", "SlugKey"]
 
