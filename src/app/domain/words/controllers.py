@@ -23,6 +23,11 @@ class WordController(Controller):
         word = await word_service.get(item_id=word_id)
         return word_service.to_dto(word)
 
+    @get("/word_string/{word_string:str}")
+    async def search_word_string(self, word_service: WordService, word_string: str) -> Word:
+        db_word = await word_service.get_one(word_string=word_string)
+        return word_service.to_dto(db_word)
+
     @post(path="/create_or_update", dto=WordPatchDTO)
     async def create_or_update(self, word_service: WordService, data: DTOData[WordUpdate], request: Request) -> Word:
         db_obj = await word_service.create_or_update(data.create_instance().__dict__)
