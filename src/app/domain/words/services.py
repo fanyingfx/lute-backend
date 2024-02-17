@@ -46,7 +46,7 @@ class WordIndex:
     def __contains__(self, key):
         return key in self._word_index
 
-    def __getitem__(self, key) -> Word:
+    def __getitem__(self, key: str) -> Iterable[Word]:
         return self._word_index[key]
 
     def __iter__(self):

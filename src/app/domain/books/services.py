@@ -119,6 +119,7 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
             word_status=0,
             word_explanation="",
             word_pronunciation="",
+            word_tokens=[current_token.text],
         )
 
         if current_word in word_index:
@@ -141,6 +142,7 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
                     vword.word_status = db_word.word_status
                     vword.word_explanation = db_word.word_explanation
                     vword.word_pronunciation = db_word.word_pronunciation
+                    vword.word_tokens = db_word.word_tokens
                     start_position = end_position
                     break
         res_word_list.append(vword)

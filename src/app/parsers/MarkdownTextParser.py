@@ -52,11 +52,12 @@ class WordToken:
 class VWord(WordToken):
     word_pronunciation: str | None = None
     word_explanation: str | None = None
+    word_tokens: list[str]
 
 
 @dataclass
 class TokenSentence:
-    segment_value: list[VWord | WordToken]
+    segment_value: list[VWord]
     segment_raw: str = ""
     segment_type: str = "sentence"
     paragraph_order: int = 0
