@@ -46,29 +46,29 @@ repos:
       - id: ensure-dunder-all
         exclude: "test*"
         args: ["--use-tuple"]
-#  - repo: https://github.com/pre-commit/mirrors-mypy
-#    rev: "v1.4.1"
-#    hooks:
-#      - id: mypy
-#        exclude: "docs"
-#        additional_dependencies:
-#          [
-#            annotated_types,
-#            httpx,
-#            httpx_sse,
-#            hypothesis,
-#            jsbeautifier,
-#            pytest,
-#            pytest-lazy-fixture,
-#            pytest-mock,
-#            pytest_docker,
-#            python-dotenv,
-#            click,
-#            rich,
-#            rich-click,
-#            uvicorn,
-#            litestar,
-#          ]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.4.1"
+    hooks:
+      - id: mypy
+        exclude: "(docs|^lib/.*)"
+        additional_dependencies:
+          [
+            annotated_types,
+            httpx,
+            httpx_sse,
+            hypothesis,
+            jsbeautifier,
+            pytest,
+            pytest-lazy-fixture,
+            pytest-mock,
+            pytest_docker,
+            python-dotenv,
+            click,
+            rich,
+            rich-click,
+            uvicorn,
+            litestar,
+          ]
 #  - repo: https://github.com/sphinx-contrib/sphinx-lint
 #    rev: "v0.6.7"
 #    hooks:
