@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
 from app.domain.books.models import Book, BookText
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
+from app.lib.timer import async_timed  # type: ignore
 from app.parsers.MarkdownTextParser import TokenSentence, VWord
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from spacy.tokens import Token
+    from spacy.tokens.span import Span
     from sqlalchemy.orm import InstrumentedAttribute
 
-    from app.domain.words.models import Word
     from app.domain.words.services import WordIndex
     from app.parsers.language_parsers.LanguageParser import LanguageParser
 
@@ -48,9 +48,15 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
         book.texts.append(BookText(ref_book_id=book.id, book_text=content))
         return await self.update(item_id=book.id, data=book)
 
-    async def create(self, data: Book | dict(str, Any)) -> Book:
+    async def create(
+        self,
+        data: Book | dict[str, Any],
+        auto_commit: bool | None = True,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+    ) -> Book:
         db_obj = await self.to_model(data, "create")
-        return await super().create(data=db_obj, auto_commit=True)
+        return await super().create(data=db_obj, auto_commit=auto_commit)
 
     async def update(
         self,
@@ -70,7 +76,7 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
 
         This is only used when not used IAP authentication.
         """
-        db_obj.book_name = data.get("book_name")
+        db_obj.book_name = data.get("book_name")  # type: ignore[assignment]
         await self.repository.update(db_obj)
 
     async def to_model(self, data: Book | dict[str, Any], operation: str | None = None) -> Book:
@@ -83,22 +89,24 @@ class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):
     repository_type = BookTextRepository
 
     def __init__(self, **repo_kwargs: Any) -> None:
-        self.repository: BookRepository = self.repository_type(**repo_kwargs)
+        self.repository: BookTextRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def create(self, data: BookText | dict(str, Any)) -> BookText:
+    async def create(
+        self,
+        data: BookText | dict[str, Any],
+        auto_commit: bool | None = True,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+    ) -> BookText:
         db_obj = await self.to_model(data, "create")
-        return await super().create(data=db_obj, auto_commit=True)
+        return await super().create(data=db_obj, auto_commit=auto_commit)
 
     async def to_model(self, data: BookText | dict[str, Any], operation: str | None = None) -> BookText:
         return await super().to_model(data, operation)
 
 
-def find_in_multiple_words(word_token, word_list: list[Word]):
-    pass
-
-
-async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordIndex, max_loop_num: int) -> TokenSentence:
+async def match_word_in_sentence(sentence: Span, word_index: WordIndex, max_loop_num: int) -> TokenSentence:
     start_position = 0
     res_word_list = []
     dead_loop_indicator = 0
@@ -114,7 +122,7 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
             word_pos=current_token.pos_,
             is_multiple_words=False,
             is_word=not current_token.is_punct,
-            is_eos=current_token.is_sent_end,
+            is_eos=current_token.is_sent_end or False,
             next_is_ws=" " in current_token.text_with_ws,
             word_status=0,
             word_explanation="",
@@ -133,11 +141,11 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
                     # it means all words matches, update word properties with db_word
                     end_position -= 1
                     vword.word_string = db_word.word_string
-                    vword.word_lemma = db_word.word_lemma
-                    vword.word_pos = db_word.word_pos
+                    vword.word_lemma = db_word.word_lemma or db_word.word_string
+                    vword.word_pos = db_word.word_pos or "UNKNOWN"
                     vword.is_multiple_words = db_word.is_multiple_words
                     vword.is_word = True
-                    vword.is_eos = sentence[end_position].is_sent_end
+                    vword.is_eos = sentence[end_position].is_sent_end or False
                     vword.next_is_ws = " " in sentence[end_position].text_with_ws
                     vword.word_status = db_word.word_status
                     vword.word_explanation = db_word.word_explanation
@@ -156,17 +164,18 @@ async def match_word_in_sentence(sentence: Iterable[Token], word_index: WordInde
     return TokenSentence(segment_value=res_word_list, segment_raw=sentence_raw)
 
 
+@async_timed  # type: ignore
 async def text2segment(text: str, language_parser: LanguageParser, paragraph_order: int) -> list[TokenSentence]:
     """
     Returns:
         object: TextParagraphSegment
     """
-    sents: Iterator[Iterable[Token]] = language_parser.split_sentences_and_tokenize(text)
+    sents: list[Span] = language_parser.split_sentences_and_tokenize(text)
     max_loop_num = len(text) * 100
     from app.domain.words.services import words_store
 
     language_name = language_parser.get_language_name()
-    word_index: WordIndex = await words_store.get(f"{language_name}-word-index")
+    word_index: WordIndex = await words_store.get(f"{language_name}-word-index")  # type: ignore
     sentences = []
     for index, sent in enumerate(sents, 1):
         parsed_sent = await match_word_in_sentence(sent, word_index, max_loop_num)

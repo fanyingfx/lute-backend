@@ -94,7 +94,7 @@ class SoftLineBreakSegment:
 
 @dataclass
 class ParagraphSegment:
-    segment_value: list[ImageSegment | TextParagraphSegment | SoftLineBreakSegment]
+    segment_value: list[ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment]
     segment_raw: str = ""
     segment_type: str = "paragraph"
 
@@ -116,6 +116,7 @@ class HardLineBreakSegment:
 @dataclass
 class EmptySegment:
     segment_raw: str = ""
+    segment_type: str = "empty"
     segment_value: str = ""
 
 
@@ -138,12 +139,18 @@ class NodeAttr:
     info: str | None
 
 
-@dataclass
+@dataclass(kw_only=True)
 class MarkDownNode:
-    type: str  # noqa
-    raw: str | None
+    type: str
+    raw: str = ""
     attrs: NodeAttr | None
-    children: list["MarkDownNode"] | None = None
+    children: list["MarkDownNode"] | None
+
+    @property
+    def attr_url(self) -> str | None:
+        if self.attrs is not None:
+            return self.attrs.url
+        raise ValueError("image not find")
 
 
 def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
@@ -157,7 +164,7 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
             case "softbreak":
                 return SoftLineBreakSegment("")
             case "image":
-                return ImageSegment(child.attrs.url)
+                return ImageSegment(child.attr_url or "image not found")
             # case "codespan":
         raise ValueError(f"Unknown child type of paragraph: {child.type}")
 

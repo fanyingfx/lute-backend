@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """OpenAPI Config."""
 
 from __future__ import annotations

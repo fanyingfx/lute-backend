@@ -20,13 +20,13 @@ class JSONType(TypeDecorator):
 
     impl = Text
 
-    def process_bind_param(self, value, dialect):
+    def process_bind_param(self, value, dialect):  # type: ignore
         """Convert Python object to a JSON string before storing."""
         if value is not None:
             value = json.dumps(value)
         return value
 
-    def process_result_value(self, value, dialect):
+    def process_result_value(self, value, dialect):  # type: ignore
         """Convert JSON string to a Python object after reading from database."""
         if value is not None:
             value = json.loads(value)

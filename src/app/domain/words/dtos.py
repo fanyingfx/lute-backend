@@ -18,7 +18,7 @@ __all__ = (
 
 
 class WordDTO(SQLAlchemyDTO[Word]):
-    config = dto.config({"max_nested_depth": 1}, exclude={"word_image", "id"}, rename_strategy="")
+    config = dto.config(exclude={"word_image", "id"}, max_nested_depth=1)
 
 
 # input

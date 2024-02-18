@@ -35,8 +35,8 @@ class BookTextCreate:
 @dataclass
 class BookCreate:
     book_name: str | None = None
-    create_at: datetime = None
-    update_at: datetime = None
+    create_at: datetime | None = None
+    update_at: datetime | None = None
     published_at: date | None = None
     text: str | None = None
 

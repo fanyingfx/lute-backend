@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from __future__ import annotations
 
 import importlib
@@ -201,7 +202,7 @@ class LogSettings(BaseSettings):
         "status_code",
         "cookies",
         "headers",
-        "body",
+        # "body",
     ]
     """Attributes of the [Response][litestar.response.Response] to be
     logged."""

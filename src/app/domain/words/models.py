@@ -12,7 +12,7 @@ __all__ = ("Word",)
 
 class Word(orm.DatabaseModel):
     "Word Model"
-    __tablename__ = "words"
+    __tablename__ = "words"  # type: ignore[assignment]
     __table_args__ = {"comment": "Words table"}
 
     word_string: Mapped[str] = mapped_column(String(100))
@@ -26,11 +26,11 @@ class Word(orm.DatabaseModel):
     word_tokens: Mapped[list[str]] = mapped_column(orm.JSONType)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()
+        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()  # type: ignore
     )
     word_image: Mapped[WordImage | None] = relationship(lazy="noload", cascade="all, delete-orphan")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<Word(word_string={self.word_string}, word_lemma={self.word_lemma},word_pos={self.word_pos},"
             f"is_multiple_words={self.is_multiple_words},word_status={self.word_status},word_pronunciation={self.word_pronunciation}"
@@ -41,7 +41,7 @@ class Word(orm.DatabaseModel):
 
 
 class WordImage(orm.DatabaseModel):
-    __tablename__ = "word_images"
+    __tablename__ = "word_images"  # type: ignore[assignment]
     word_id: Mapped[str] = mapped_column(ForeignKey("words.id"))
     word_image_name: Mapped[str] = mapped_column(String(100))
     word_image_path: Mapped[str] = mapped_column(String(100))

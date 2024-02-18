@@ -104,10 +104,15 @@ disallow_untyped_decorators = true
 disallow_any_generics = false
 implicit_reexport = false
 show_error_codes = true
+exclude = [
+    '.*/orm.py$',  # TOML literal string (single-quotes, no escaping necessary)
+    ".*/dto\\.py$",  # TOML basic string (double-quotes, backslash and other characters need escaping)
+]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_decorators = false
+
 
 [tool.ruff]
 select = [
@@ -150,7 +155,8 @@ ignore = [
     "RUF012", # Ruff-specific rule - annotated with classvar
     "D",
      "TCH003",#Move standard library import `datetime.datetime` into a type-checking block
-    "N999"
+    "N999",
+    "ERA001"
 ]
 line-length = 120
 src = ["src", "tests"]

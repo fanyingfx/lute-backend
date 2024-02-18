@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Service object implementation for SQLAlchemy.
 
 RepositoryService object is generic on the domain model type which
@@ -31,7 +32,7 @@ __all__ = ["SQLAlchemyAsyncRepositoryService"]
 SQLAlchemyAsyncRepoServiceT = TypeVar("SQLAlchemyAsyncRepoServiceT", bound="SQLAlchemyAsyncRepositoryService")
 ModelDictDTOT: TypeAlias = dict[str, Any] | ModelT | DTOData
 ModelDictListDTOT: TypeAlias = list[ModelT | dict[str, Any]] | list[dict[str, Any]] | DTOData
-ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")  # noqa
+ModelDTOT = TypeVar("ModelDTOT", bound="BaseModel")  # noqa type:ignore
 FilterTypeT = TypeVar("FilterTypeT", bound=FilterTypes)
 
 

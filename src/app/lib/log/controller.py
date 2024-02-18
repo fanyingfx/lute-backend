@@ -220,7 +220,9 @@ class BeforeSendHandler:
             messages=(scope["state"][HTTP_RESPONSE_START], scope["state"][HTTP_RESPONSE_BODY]),
         )
         missing = object()
-        response_body_compressed = get_litestar_scope_state(scope, SCOPE_STATE_RESPONSE_COMPRESSED)
+        response_body_compressed = get_litestar_scope_state(  # mypy: ignore-errors
+            scope, SCOPE_STATE_RESPONSE_COMPRESSED
+        )
         for key in settings.log.RESPONSE_FIELDS:
             value = extracted_data.get(key, missing)
             if key == "body" and response_body_compressed and not self.include_compressed_body:

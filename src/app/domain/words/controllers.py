@@ -41,4 +41,5 @@ class WordController(Controller):
 
     @post("/update/{word_string:str}")
     async def update_word(self, word_service: WordService, data: WordUpdate) -> Word:
-        await word_service.get(word_string=data.as_builtins())
+        # await word_service.get(word_string=data.as_builtins())
+        raise NotImplementedError

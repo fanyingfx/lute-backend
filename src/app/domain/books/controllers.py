@@ -75,6 +75,10 @@ class BookController(Controller):
     @post("/add_book_and_content", dto=BookCreateDTO)
     async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
         content = data.create_instance().text
+        if content is None or len(content) == 0:
+            from litestar.exceptions import HTTPException
+
+            raise HTTPException("Content cannot be empty")
         db_obj = await book_service.create_with_content(data.as_builtins(), content)
         return book_service.to_dto(db_obj)
 
@@ -111,7 +115,7 @@ class BookTextController(Controller):
         await word_service.load_word_index(english_parser.get_language_name())
         segmentlist = [parse_node(from_dict(data_class=MarkDownNode, data=m)) for m in markdown(db_obj.book_text)]
         flatten_segmentlist: list[Segment] = flatten_segments(segmentlist)
-        res = []
+        res: list[dict] = []
         from dataclasses import asdict
 
         paragraph_order = 1

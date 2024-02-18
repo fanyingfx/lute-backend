@@ -30,7 +30,6 @@ __all__ = (
     "worker",
 )
 
-
 default_processors = [
     structlog.contextvars.merge_contextvars,
     controller.drop_health_logs,
@@ -141,5 +140,5 @@ def get_logger(*args: Any, **kwargs: Any) -> BoundLogger:
         Logger: A configured logger instance
     """
     config.configure()
-    configure(default_processors)  # type: ignore[arg-type]
+    configure(default_processors)  # type:ignore
     return structlog.getLogger(*args, **kwargs)  # type: ignore
