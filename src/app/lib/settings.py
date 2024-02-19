@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 from __future__ import annotations
 
 import importlib
@@ -21,14 +20,14 @@ __all__ = [
     "DatabaseSettings",
     "AppSettings",
     "OpenAPISettings",
-    # "RedisSettings",
+    "RedisSettings",
     "LogSettings",
     "WorkerSettings",
     "ServerSettings",
     "app",
     "db",
     "openapi",
-    # "redis",
+    "redis",
     "server",
     "log",
     "worker",
@@ -46,7 +45,7 @@ class ServerSettings(BaseSettings):
     """Server configurations."""
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_prefix="SERVER_", case_sensitive=False, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="SERVER_", case_sensitive=False, extra="allow"
     )
 
     APP_LOC: str = "app.asgi:create_app"
@@ -76,7 +75,7 @@ class AppSettings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_prefix="APP_", case_sensitive=False, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="APP_", case_sensitive=False, extra="allow"
     )
 
     BUILD_NUMBER: str = ""
@@ -146,7 +145,7 @@ class AppSettings(BaseSettings):
 class LogSettings(BaseSettings):
     """Logging config for the application."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_prefix="LOG_", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_prefix="LOG_", extra="allow")
 
     # https://stackoverflow.com/a/1845097/6560549
     EXCLUDE_PATHS: str = r"\A(?!x)x"
@@ -196,7 +195,7 @@ class LogSettings(BaseSettings):
         "status_code",
         "cookies",
         "headers",
-        # "body",
+        "body",
     ]
     """Attributes of the [Response][litestar.response.Response] to be
     logged."""
@@ -217,7 +216,7 @@ class OpenAPISettings(BaseSettings):
     """Configures OpenAPI for the application."""
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_prefix="OPENAPI_", case_sensitive=False, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="OPENAPI_", case_sensitive=False, extra="allow"
     )
 
     CONTACT_NAME: str = "Cody"
@@ -234,7 +233,7 @@ class WorkerSettings(BaseSettings):
     """Global SAQ Job configuration."""
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_prefix="WORKER_", case_sensitive=False, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="WORKER_", case_sensitive=False, extra="allow"
     )
 
     CONCURRENCY: int = 10
@@ -252,7 +251,7 @@ class DatabaseSettings(BaseSettings):
     """Configures the database for the application."""
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", env_prefix="DB_", case_sensitive=False, extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", env_prefix="DB_", case_sensitive=False, extra="allow"
     )
 
     ECHO: bool = False
@@ -285,32 +284,31 @@ class DatabaseSettings(BaseSettings):
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
 
 
-# class RedisSettings(BaseSettings):
-#     """Redis settings for the application."""
-#
-#     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_prefix="REDIS_")
-#
-#     URL: str = "redis://localhost:6379/0"
-#     """A Redis connection URL."""
-#     DB: int | None = None
-#     """Redis DB ID (optional)"""
-#     PORT: int | None = None
-#     """Redis port (optional)"""
-#     SOCKET_CONNECT_TIMEOUT: int = 5
-#     """Length of time to wait (in seconds) for a connection to become
-#     active."""
-#     HEALTH_CHECK_INTERVAL: int = 5
-#     """Length of time to wait (in seconds) before testing connection health."""
-#     SOCKET_KEEPALIVE: int = 5
-#     """Length of time to wait (in seconds) between keepalive commands."""
-#
+class RedisSettings(BaseSettings):
+    """Redis settings for the application."""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_prefix="REDIS_", extra="allow")
+
+    URL: str = "redis://localhost:6379/0"
+    """A Redis connection URL."""
+    DB: int | None = None
+    """Redis DB ID (optional)"""
+    PORT: int | None = None
+    """Redis port (optional)"""
+    SOCKET_CONNECT_TIMEOUT: int = 5
+    """Length of time to wait (in seconds) for a connection to become
+    active."""
+    HEALTH_CHECK_INTERVAL: int = 5
+    """Length of time to wait (in seconds) before testing connection health."""
+    SOCKET_KEEPALIVE: int = 5
+    """Length of time to wait (in seconds) between keepalive commands."""
 
 
 @lru_cache
 def load_settings() -> (
     tuple[
         AppSettings,
-        # RedisSettings,
+        RedisSettings,
         DatabaseSettings,
         OpenAPISettings,
         ServerSettings,
@@ -357,8 +355,8 @@ def load_settings() -> (
             HOST="0.0.0.0",  # noqa: S104
             RELOAD_DIRS=[str(BASE_DIR)],
         )
-        app: AppSettings = AppSettings()
-        # redis: RedisSettings = RedisSettings()
+        app: AppSettings = AppSettings()  # type: ignore
+        redis: RedisSettings = RedisSettings()
         db: DatabaseSettings = DatabaseSettings()
         openapi: OpenAPISettings = OpenAPISettings()
         log: LogSettings = LogSettings()
@@ -369,7 +367,7 @@ def load_settings() -> (
         raise
     return (
         app,
-        # redis,
+        redis,
         db,
         openapi,
         server,
@@ -380,7 +378,7 @@ def load_settings() -> (
 
 (
     app,
-    # redis,
+    redis,
     db,
     openapi,
     server,

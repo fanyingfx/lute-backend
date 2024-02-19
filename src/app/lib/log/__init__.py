@@ -84,7 +84,7 @@ def configure(processors: Sequence[Processor]) -> None:
 
 
 config = LoggingConfig(
-    root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
+    root={"level": logging.getLevelName(logging.INFO), "handlers": ["console"]},
     formatters={
         "standard": {"()": structlog.stdlib.ProcessorFormatter, "processors": stdlib_processors},
     },
