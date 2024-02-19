@@ -32,6 +32,6 @@ config = OpenAPIConfig(
     ),
     use_handler_docstrings=True,
     root_schema_site="elements",
-    path=os.getenv("OPENAPI_PATH", "/api"),
+    path=os.getenv("OPENAPI_PATH", "/schema"),
 )
 """OpenAPI config for app."""
