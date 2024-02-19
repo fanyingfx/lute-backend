@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from typing import NotRequired, TypedDict
 
 import mistune
-from dacite import from_dict
+from mistune.markdown import Markdown
 
 __all__ = (
     "BlockSegment",
@@ -22,7 +23,19 @@ __all__ = (
     "markdown",
 )
 
-markdown = mistune.create_markdown(renderer=None)
+markdown: Markdown = mistune.create_markdown(renderer=None)
+
+
+class AttrNode(TypedDict):
+    url: NotRequired[str]
+    info: NotRequired[str]
+
+
+class MarkDownNode(TypedDict):
+    type: str
+    raw: NotRequired[str]
+    children: NotRequired[list["MarkDownNode"]]
+    attrs: NotRequired[AttrNode]
 
 
 @dataclass
@@ -65,15 +78,19 @@ class TokenSentence:
 
 
 @dataclass
-class ImageSegment:
-    segment_value: str
+class BaseSegment:
+    segment_value: str = ""
     segment_raw: str = ""
+    segment_type: str = "segment"
+
+
+@dataclass
+class ImageSegment(BaseSegment):
     segment_type: str = "image"
 
 
 @dataclass
-class TextRawParagraphSegment:
-    segment_value: str
+class TextRawParagraphSegment(BaseSegment):
     segment_type: str = "textrawparagraph"
 
 
@@ -86,9 +103,7 @@ class TextParagraphSegment:
 
 
 @dataclass
-class SoftLineBreakSegment:
-    segment_value: str
-    segment_raw: str = ""
+class SoftLineBreakSegment(BaseSegment):
     segment_type: str = "softlinebreak"
 
 
@@ -100,24 +115,18 @@ class ParagraphSegment:
 
 
 @dataclass
-class BlockSegment:
-    segment_value: str
-    segment_raw: str = ""
+class BlockSegment(BaseSegment):
     segment_type: str = "block"
 
 
 @dataclass
-class HardLineBreakSegment:
-    segment_value: str
-    segment_raw: str = ""
+class HardLineBreakSegment(BaseSegment):
     segment_type: str = "hardlinebreak"
 
 
 @dataclass
-class EmptySegment:
-    segment_raw: str = ""
+class EmptySegment(BaseSegment):
     segment_type: str = "empty"
-    segment_value: str = ""
 
 
 # @dataclass
@@ -139,46 +148,32 @@ class NodeAttr:
     info: str | None
 
 
-@dataclass(kw_only=True)
-class MarkDownNode:
-    type: str
-    raw: str = ""
-    attrs: NodeAttr | None
-    children: list["MarkDownNode"] | None
-
-    @property
-    def attr_url(self) -> str | None:
-        if self.attrs is not None:
-            return self.attrs.url
-        raise ValueError("image not find")
-
-
 def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
-    if paragraph.children is None:
-        raise ValueError(f"No children found for paragraph: {paragraph}")
+    # if paragraph["children"] is None:
+    #     raise ValueError(f"No children found for paragraph: {paragraph}")
 
     def parse_child(child: MarkDownNode) -> ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment:
-        match child.type:
+        match child["type"]:
             case "text" | "codespan":  # treat text in double quote as normal text
-                return TextRawParagraphSegment(child.raw)
+                return TextRawParagraphSegment(child["raw"])
             case "softbreak":
                 return SoftLineBreakSegment("")
             case "image":
-                return ImageSegment(child.attr_url or "image not found")
+                return ImageSegment(child["attrs"]["url"])
             # case "codespan":
-        raise ValueError(f"Unknown child type of paragraph: {child.type}")
+        raise ValueError(f"Unknown child type of paragraph: {child['type']}")
 
-    return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph.children])
+    return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph["children"]])
 
 
 def parse_node(node: MarkDownNode) -> Segment:
-    match node.type:
+    match node["type"]:
         case "paragraph":
             return parse_paragraph(node)
         case "blank_line":
             return HardLineBreakSegment(segment_value="")
         case "block_code":
-            return BlockSegment(segment_value=node.raw)
+            return BlockSegment(segment_value=node["raw"])
         case "heading":
             return EmptySegment()
     raise ValueError(f"Unrecognized markdown node: {node}")
@@ -198,10 +193,11 @@ def flatten_segments(segments: list[Segment]) -> list[Segment]:
 
 
 if __name__ == "__main__":
-    source_text_file = "../test/source.txt"
+    source_text_file = "test.md"
     with open(source_text_file) as f:  # noqa
-        doc = markdown(f.read())
-    segments = [parse_node(from_dict(data_class=MarkDownNode, data=m)) for m in doc]
+        doc: list[MarkDownNode] = markdown(f.read())
+    segments = [parse_node(m) for m in doc]
 
     res = flatten_segments(segments)
     r = {s.segment_type for s in res}
+    print(r)  # noqa

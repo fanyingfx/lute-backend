@@ -80,7 +80,7 @@ class AppSettings(BaseSettings):
 
     BUILD_NUMBER: str = ""
     """Identifier for CI build."""
-    DEBUG: bool = False
+    DEBUG: bool = True
     """Run `Litestar` with `debug=True`."""
     ENVIRONMENT: str = "prod"
     """'dev', 'prod', etc."""

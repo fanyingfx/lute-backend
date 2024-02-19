@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Annotated
 
 from advanced_alchemy.filters import CollectionFilter
-from dacite import from_dict
 from litestar import Controller, get
 
 __all__ = ("BookController", "BookTextController")
@@ -27,22 +26,21 @@ from app.domain.books.dtos import (
 )
 from app.domain.books.models import Book, BookText
 from app.domain.books.services import BookService, BookTextService, text2segment
-from app.domain.words.dependencies import provides_word_service
-from app.domain.words.dtos import WordDTO
-from app.domain.words.models import Word
-from app.domain.words.services import WordService
-from app.parsers.language_parsers.EnglishParser import EnglishParser
-from app.parsers.MarkdownTextParser import (
-    MarkDownNode,
+from app.domain.parsers.language_parsers.EnglishParser import EnglishParser
+from app.domain.parsers.MarkdownTextParser import (
     Segment,
     TextRawParagraphSegment,
     flatten_segments,
     markdown,
     parse_node,
 )
+from app.domain.words.dependencies import provides_word_service
+from app.domain.words.dtos import WordDTO
+from app.domain.words.models import Word
+from app.domain.words.services import WordService
 
 if TYPE_CHECKING:
-    from app.parsers.language_parsers.LanguageParser import LanguageParser
+    from app.domain.parsers.language_parsers.LanguageParser import LanguageParser
 
 
 class BookController(Controller):
@@ -113,7 +111,7 @@ class BookTextController(Controller):
         db_obj = await booktext_service.get(item_id=booktext_id)
         english_parser: LanguageParser = EnglishParser()
         await word_service.load_word_index(english_parser.get_language_name())
-        segmentlist = [parse_node(from_dict(data_class=MarkDownNode, data=m)) for m in markdown(db_obj.book_text)]
+        segmentlist = [parse_node(m) for m in markdown(db_obj.book_text)]
         flatten_segmentlist: list[Segment] = flatten_segments(segmentlist)
         res: list[dict] = []
         from dataclasses import asdict

@@ -7,7 +7,7 @@ pytestmark = pytest.mark.anyio
 @pytest.mark.parametrize(
     ("word_id", "expected_status_code"),
     (
-        ("2", 500),
+        ("3", 404),
         ("1", 200),
     ),
 )
