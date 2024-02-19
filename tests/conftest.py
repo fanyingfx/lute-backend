@@ -65,7 +65,7 @@ def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     """
     from app.asgi import create_app
 
-    return create_app()
+    return create_app(debug=False)
 
 
 @pytest.fixture(name="is_unit_test")

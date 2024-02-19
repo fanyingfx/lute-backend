@@ -6,15 +6,17 @@ from typing import TYPE_CHECKING
 
 __all__ = ("create_app",)
 
+from litestar import Litestar
+
+from app.lib import settings
 
 if TYPE_CHECKING:
     from litestar.types import ControllerRouterHandler
 
 
-def create_app():
+def create_app(debug: bool = settings.app.DEBUG) -> Litestar:
     from advanced_alchemy import RepositoryError
     from dotenv import load_dotenv
-    from litestar import Litestar
     from litestar.config.cors import CORSConfig
 
     from app.config import openapi, static_files, template
@@ -47,7 +49,7 @@ def create_app():
         plugins=[db.plugin],
         # --- Lifecycle
         cors_config=cors_config,
-        on_startup=[lambda: log.configure(log.default_processors)],
+        on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[repository.on_app_init],
-        debug=True,
+        debug=debug,
     )

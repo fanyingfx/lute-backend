@@ -3,10 +3,10 @@ from tokenize import Token
 from pytest import fixture
 
 from app.domain.books.services import match_word_in_sentence
+from app.domain.parsers.language_parsers.EnglishParser import EnglishParser
+from app.domain.parsers.MarkdownTextParser import VWord
 from app.domain.words.models import Word
 from app.domain.words.services import WordIndex
-from app.parsers.language_parsers.EnglishParser import EnglishParser
-from app.parsers.MarkdownTextParser import VWord
 
 
 # async def match_word_in_sentence(sentence: Iterable[Token], max_loop_num: int,word_index:WordIndex) -> TokenSentence:
