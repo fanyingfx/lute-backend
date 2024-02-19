@@ -46,10 +46,7 @@ class ServerSettings(BaseSettings):
     """Server configurations."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        env_prefix="SERVER_",
-        case_sensitive=False,
+        env_file=".env", env_file_encoding="utf-8", env_prefix="SERVER_", case_sensitive=False, extra="ignore"
     )
 
     APP_LOC: str = "app.asgi:create_app"

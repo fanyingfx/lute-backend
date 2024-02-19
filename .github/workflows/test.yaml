@@ -25,7 +25,6 @@ jobs:
         shell: bash
 
     steps:
-
       - name: Check out repository
         uses: actions/checkout@v3
 

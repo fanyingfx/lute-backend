@@ -4,7 +4,7 @@ from rich import get_console
 
 from app.lib import log
 
-__all__ = ['console','logger']
+__all__ = ["console", "logger"]
 
 
 console = get_console()
