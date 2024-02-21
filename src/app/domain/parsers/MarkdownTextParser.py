@@ -192,6 +192,12 @@ def flatten_segments(segments: list[Segment]) -> list[Segment]:
     return res_node_list
 
 
+def parse_markdown(text: str) -> list[Segment]:
+    doc: list[MarkDownNode] = markdown(text)
+    segments = [parse_node(m) for m in doc]
+    return flatten_segments(segments)
+
+
 if __name__ == "__main__":
     source_text_file = "test.md"
     with open(source_text_file) as f:  # noqa

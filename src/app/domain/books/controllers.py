@@ -28,11 +28,8 @@ from app.domain.books.models import Book, BookText
 from app.domain.books.services import BookService, BookTextService, text2segment
 from app.domain.parsers.language_parsers.EnglishParser import EnglishParser
 from app.domain.parsers.MarkdownTextParser import (
-    Segment,
     TextRawParagraphSegment,
-    flatten_segments,
-    markdown,
-    parse_node,
+    parse_markdown,
 )
 from app.domain.words.dependencies import provides_word_service
 from app.domain.words.dtos import WordDTO
@@ -73,6 +70,10 @@ class BookController(Controller):
     @post("/add_book_and_content", dto=BookCreateDTO)
     async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
         content = data.create_instance().text
+        if content is None or len(content) == 0:
+            from litestar.exceptions import HTTPException
+
+            raise HTTPException("Content cannot be empty")
         db_obj = await book_service.create_with_content(data.as_builtins(), content)
         return book_service.to_dto(db_obj)
 
@@ -107,14 +108,12 @@ class BookTextController(Controller):
         db_obj = await booktext_service.get(item_id=booktext_id)
         english_parser: LanguageParser = EnglishParser()
         await word_service.load_word_index(english_parser.get_language_name())
-        segmentlist = [parse_node(m) for m in markdown(db_obj.book_text)]
-        flatten_segmentlist: list[Segment] = flatten_segments(segmentlist)
-        res = []
+        segmentlist = parse_markdown(db_obj.book_text)
+        res: list[dict] = []
         from dataclasses import asdict
 
         paragraph_order = 1
-
-        for segment in flatten_segmentlist:
+        for segment in segmentlist:
             if isinstance(segment, TextRawParagraphSegment):
                 sentence_segments = await text2segment(segment.segment_value, english_parser, paragraph_order)
                 res.extend(asdict(sentence_segment) for sentence_segment in sentence_segments)
