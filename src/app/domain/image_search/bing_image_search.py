@@ -12,12 +12,14 @@ from bs4 import BeautifulSoup
 
 
 def get_soup(url, header):
-    return BeautifulSoup(urllib.request.urlopen(urllib.request.Request(url, headers=header)), "html.parser")
+   return BeautifulSoup(urllib.request.urlopen(urllib.request.Request(url, headers=header)), "html.parser")
 
 
 def bing_image_search(query):
     query = query.split()
+    # query.pop()
     query = "+".join(query)
+    # query.split()
     url = "http://www.bing.com/images/search?q=" + query + "&FORM=HDRSC2"
 
     # add the directory for your image here

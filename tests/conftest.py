@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
 
-    from app.domain.books.models import Book
+    from app.domain.book.models import Book
 
 pytestmark = pytest.mark.anyio
 

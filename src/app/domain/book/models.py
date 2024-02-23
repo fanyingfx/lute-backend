@@ -6,6 +6,7 @@ from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.lib.db import orm
+from app.domain.language.models import  Language
 
 __all__ = ["Book", "BookText"]
 
@@ -16,6 +17,7 @@ class Book(orm.DatabaseModel):
     __tablename__ = "books"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic Book Table"}
     book_name: Mapped[str] = mapped_column(String(length=300))
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()

@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from app.domain.books.models import Book, BookText
-from app.domain.parsers.MarkdownTextParser import TokenSentence, VWord
+from app.domain.book.models import Book, BookText
+from app.domain.parser.MarkdownTextParser import TokenSentence, VWord
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.lib.timer import async_timed  # type: ignore
+
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
     from spacy.tokens.span import Span
     from sqlalchemy.orm import InstrumentedAttribute
 
-    from app.domain.parsers.language_parsers.LanguageParser import LanguageParser
+    from app.domain.parser.language_parsers.LanguageParser import LanguageParser
     from app.domain.words.services import WordIndex
 
 __all__ = ["BookService"]

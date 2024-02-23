@@ -13,8 +13,8 @@ from litestar.enums import RequestEncodingType
 from litestar.pagination import OffsetPagination
 from litestar.params import Body, Parameter
 
-from app.domain.books.dependencies import provides_book_service, provides_booktext_service
-from app.domain.books.dtos import (
+from app.domain.book.dependencies import provides_book_service, provides_booktext_service
+from app.domain.book.dtos import (
     BookCreate,
     BookCreateDTO,
     BookDTO,
@@ -24,10 +24,10 @@ from app.domain.books.dtos import (
     BookTextDTO,
     BookUpdate,
 )
-from app.domain.books.models import Book, BookText
-from app.domain.books.services import BookService, BookTextService, text2segment
-from app.domain.parsers.language_parsers.EnglishParser import EnglishParser
-from app.domain.parsers.MarkdownTextParser import (
+from app.domain.book.models import Book, BookText
+from app.domain.book.services import BookService, BookTextService, text2segment
+from app.domain.parser.language_parsers.EnglishParser import EnglishParser
+from app.domain.parser.MarkdownTextParser import (
     TextRawParagraphSegment,
     parse_markdown,
 )
@@ -37,7 +37,7 @@ from app.domain.words.models import Word
 from app.domain.words.services import WordService
 
 if TYPE_CHECKING:
-    from app.domain.parsers.language_parsers.LanguageParser import LanguageParser
+    from app.domain.parser.language_parsers.LanguageParser import LanguageParser
 
 
 class BookController(Controller):
@@ -60,11 +60,13 @@ class BookController(Controller):
         book_service: BookService,
     ) -> OffsetPagination[Book]:
         result = await book_service.list()
+
         return book_service.to_dto(result)
 
     @post("/add", dto=BookCreateDTO)
     async def add_book(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
         db_obj = await book_service.create(data.as_builtins())
+        db_obj = book_service.to_dto(db_obj)
         return book_service.to_dto(db_obj)
 
     @post("/add_book_and_content", dto=BookCreateDTO)

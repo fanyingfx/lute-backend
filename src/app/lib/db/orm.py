@@ -32,6 +32,10 @@ class JSONType(TypeDecorator):
             value = json.loads(value)
         return value
 
+    # https://stackoverflow.com/questions/15668115/alembic-how-to-migrate-custom-type-in-a-model/43810638#43810638
+    def __repr__(self):  # type: ignore
+        return f"{self.impl!r}"
+
 
 @declarative_mixin
 class SlugKey:

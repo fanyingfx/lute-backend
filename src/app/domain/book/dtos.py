@@ -4,7 +4,7 @@ from datetime import date, datetime
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.books.models import Book, BookText
+from app.domain.book.models import Book, BookText
 from app.lib import dto
 
 __all__ = ["BookCreate", "BookCreateDTO", "BookDTO", "BookUpdate", "BookUpdateDTO", "BookTextDTO", "BookTextCreate"]

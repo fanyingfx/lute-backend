@@ -2,9 +2,9 @@ from tokenize import Token
 
 from pytest import fixture
 
-from app.domain.books.services import match_word_in_sentence
-from app.domain.parsers.language_parsers.EnglishParser import EnglishParser
-from app.domain.parsers.MarkdownTextParser import VWord
+from app.domain.book.services import match_word_in_sentence
+from app.domain.parser.language_parsers.EnglishParser import EnglishParser
+from app.domain.parser.MarkdownTextParser import VWord
 from app.domain.words.models import Word
 from app.domain.words.services import WordIndex
 

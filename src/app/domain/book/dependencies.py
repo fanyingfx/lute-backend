@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
-from app.domain.books.models import Book, BookText
-from app.domain.books.services import BookService
+from app.domain.book.models import Book, BookText
+from app.domain.book.services import BookService
 
 __all__ = ["provides_book_service"]
 
-from app.domain.books.services import BookTextService
+from app.domain.book.services import BookTextService
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator

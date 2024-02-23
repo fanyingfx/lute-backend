@@ -5,11 +5,11 @@ from spacy.language import Language
 from spacy.tokens.span import Span
 
 # from app.lib.timer import sync_timed
-from app.domain.parsers.language_parsers.LanguageParser import LanguageParser
+from app.domain.parser.language_parsers.LanguageParser import LanguageParser
 
 __all__ = ("EnglishParser",)
 
-from app.domain.parsers.language_parsers.LanguageParser import Singleton
+from app.domain.parser.language_parsers.LanguageParser import Singleton
 
 
 @lru_cache

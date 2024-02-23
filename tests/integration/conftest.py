@@ -7,7 +7,7 @@ from httpx import AsyncClient
 from litestar import Litestar
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
-from app.domain.books.models import Book
+from app.domain.book.models import Book
 from app.domain.words.models import Word
 from app.lib import db
 
@@ -60,7 +60,7 @@ async def _seed_db(
 
     """
 
-    from app.domain.books.services import BookService
+    from app.domain.book.services import BookService
     from app.domain.words.services import WordService
     from app.lib.db import orm  # pylint: disable=[import-outside-toplevel,unused-import]
 
