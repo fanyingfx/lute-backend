@@ -8,11 +8,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
 from app.domain.book.models import Book, BookText
-from app.domain.book.services import BookService
+from app.domain.book.services import BookService, BookTextService
 
 __all__ = ["provides_book_service"]
-
-from app.domain.book.services import BookTextService
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from spacy.tokens.span import Span
     from sqlalchemy.orm import InstrumentedAttribute
 
-    from app.domain.parser.language_parsers.LanguageParser import LanguageParser
+    from app.domain.parser.language_parser import LanguageParser
     from app.domain.word.services import WordIndex
 
 __all__ = ["BookService"]

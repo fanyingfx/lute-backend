@@ -6,7 +6,7 @@ from spacy.tokens.span import Span
 
 # from app.lib.timer import sync_timed
 from app.domain.parser.language_parser import LanguageParser
-from app.domain.parser.register_parser import register_parser, spacy_model_mapping
+from app.domain.parser.parser_tool import register_parser, spacy_model_mapping
 
 __all__ = ("SpacyParser", "split_sentences_and_tokenize")
 
@@ -27,7 +27,7 @@ def _get_language_parser(language_name: str) -> Language:
     return nlp_mapping[language_name]
 
 
-@register_parser("spacy", True)
+@register_parser("spacy")
 class SpacyParser(LanguageParser):
     # nlp = spacy.load("en_core_web_sm")
 

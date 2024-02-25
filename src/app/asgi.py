@@ -20,7 +20,7 @@ def create_app(debug: bool = settings.app.DEBUG) -> Litestar:
     from litestar.config.cors import CORSConfig
 
     from app.config import openapi, static_files, template
-    from app.domain import book, word
+    from app.domain import book, language, word
     from app.domain.home.controllers import HomeController
     from app.domain.word.services import on_word_updated
     from app.lib import db, exceptions, log, repository
@@ -28,7 +28,13 @@ def create_app(debug: bool = settings.app.DEBUG) -> Litestar:
     load_dotenv()
     book_controllers = [book.controllers.BookController, book.controllers.BookTextController]
     words_controllers = [word.controllers.WordController]
-    routes: list[ControllerRouterHandler] = [HomeController, *book_controllers, *words_controllers]
+    language_controllers = [language.controllers.LanguageController]
+    routes: list[ControllerRouterHandler] = [
+        HomeController,
+        *book_controllers,
+        *words_controllers,
+        *language_controllers,
+    ]
     """List of routes."""
     cors_config = CORSConfig(allow_origins=["*"])
 
