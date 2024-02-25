@@ -8,7 +8,7 @@ from litestar import Litestar
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from app.domain.book.models import Book
-from app.domain.words.models import Word
+from app.domain.word.models import Word
 from app.lib import db
 
 here = Path(__file__).parent
@@ -61,7 +61,7 @@ async def _seed_db(
     """
 
     from app.domain.book.services import BookService
-    from app.domain.words.services import WordService
+    from app.domain.word.services import WordService
     from app.lib.db import orm  # pylint: disable=[import-outside-toplevel,unused-import]
 
     metadata = orm.DatabaseModel.registry.metadata

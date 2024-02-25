@@ -5,7 +5,6 @@ from app.lib import log
 
 __all__ = ("HomeController",)
 
-__all_ = ["HomeController"]
 
 logger = log.get_logger()
 

@@ -9,7 +9,7 @@ import pytest
 from structlog.contextvars import clear_contextvars
 from structlog.testing import CapturingLogger
 
-from app.domain.words.models import Word
+from app.domain.word.models import Word
 
 if TYPE_CHECKING:
     from collections import abc

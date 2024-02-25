@@ -26,18 +26,18 @@ from app.domain.book.dtos import (
 )
 from app.domain.book.models import Book, BookText
 from app.domain.book.services import BookService, BookTextService, text2segment
-from app.domain.parser.language_parsers.EnglishParser import EnglishParser
-from app.domain.parser.MarkdownTextParser import (
+from app.domain.parser.markdown_text_parser import (
     TextRawParagraphSegment,
     parse_markdown,
 )
-from app.domain.words.dependencies import provides_word_service
-from app.domain.words.dtos import WordDTO
-from app.domain.words.models import Word
-from app.domain.words.services import WordService
+from app.domain.parser.spacy_parser import SpacyParser
+from app.domain.word.dependencies import provides_word_service
+from app.domain.word.dtos import WordDTO
+from app.domain.word.models import Word
+from app.domain.word.services import WordService
 
 if TYPE_CHECKING:
-    from app.domain.parser.language_parsers.LanguageParser import LanguageParser
+    from app.domain.parser.language_parser import LanguageParser
 
 
 class BookController(Controller):
@@ -108,7 +108,7 @@ class BookTextController(Controller):
     @get("/test_parser")
     async def test_parser(self, booktext_service: BookTextService, word_service: WordService, booktext_id: int) -> dict:
         db_obj = await booktext_service.get(item_id=booktext_id)
-        english_parser: LanguageParser = EnglishParser()
+        english_parser: LanguageParser = SpacyParser("english")
         await word_service.load_word_index(english_parser.get_language_name())
         segmentlist = parse_markdown(db_obj.book_text)
         res: list[dict] = []

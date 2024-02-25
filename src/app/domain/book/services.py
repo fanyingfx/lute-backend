@@ -3,11 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from app.domain.book.models import Book, BookText
-from app.domain.parser.MarkdownTextParser import TokenSentence, VWord
+from app.domain.parser.markdown_text_parser import TokenSentence, VWord
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.lib.timer import async_timed  # type: ignore
-
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import InstrumentedAttribute
 
     from app.domain.parser.language_parsers.LanguageParser import LanguageParser
-    from app.domain.words.services import WordIndex
+    from app.domain.word.services import WordIndex
 
 __all__ = ["BookService"]
 
@@ -173,7 +172,7 @@ async def text2segment(text: str, language_parser: LanguageParser, paragraph_ord
     """
     sents: list[Span] = language_parser.split_sentences_and_tokenize(text)
     max_loop_num = len(text) * 100
-    from app.domain.words.services import words_store
+    from app.domain.word.services import words_store
 
     language_name = language_parser.get_language_name()
     word_index: WordIndex = await words_store.get(f"{language_name}-word-index")  # type: ignore

@@ -3,10 +3,10 @@ from tokenize import Token
 from pytest import fixture
 
 from app.domain.book.services import match_word_in_sentence
-from app.domain.parser.language_parsers.EnglishParser import EnglishParser
-from app.domain.parser.MarkdownTextParser import VWord
-from app.domain.words.models import Word
-from app.domain.words.services import WordIndex
+from app.domain.parser.language_parsers.LanguageParser import LanguageParser
+from app.domain.parser.markdown_text_parser import VWord
+from app.domain.word.models import Word
+from app.domain.word.services import WordIndex
 
 
 # async def match_word_in_sentence(sentence: Iterable[Token], max_loop_num: int,word_index:WordIndex) -> TokenSentence:
@@ -26,7 +26,7 @@ def assert_vword_equal(vword1: VWord, vword2: VWord) -> None:
     )
 
 
-def assert_vword_list_equal(vwordlist1, vwordlist2) -> None:
+def assert_vword_list_equal(vwordlist1: list[VWord], vwordlist2: list[VWord]) -> None:
     for vword1, vword2 in zip(vwordlist1, vwordlist2):
         assert_vword_equal(vword1, vword2)
 
@@ -60,23 +60,23 @@ def word_index() -> WordIndex:
 
 
 @fixture()
-def sentence_tokens() -> list[Token]:
-    english_parser: EnglishParser = EnglishParser()
+def sentence_tokens() -> list[Token]:  # type: ignore
+    english_parser: LanguageParser = LanguageParser.get_parser("english")
     sentence = "I have to go home."
     sents = english_parser.split_sentences_and_tokenize(sentence)
 
-    return list(next(sents))  # in the test case, there only one sentence.
+    return [token for token in sents[0]]  # noqa  in the test case, there is only one sentence.
 
 
 @fixture()
-async def get_vwords(sentence_tokens, word_index) -> list[VWord]:
+async def get_vwords(sentence_tokens, word_index) -> list[VWord]:  # type: ignore
     max_loop_num = len(sentence_tokens) * 100
     token_sentence = await match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
     return token_sentence.segment_value
 
 
 @fixture()
-def expectedVwords():
+def expectedVwords():  # type: ignore
     return [
         VWord(
             word_string="I",
@@ -89,6 +89,7 @@ def expectedVwords():
             word_status=0,
             word_pronunciation="",
             word_explanation="",
+            word_tokens=["I"],
         ),
         VWord(
             word_string="have to",
@@ -101,6 +102,7 @@ def expectedVwords():
             word_status=2,
             word_pronunciation="",
             word_explanation="must do something",
+            word_tokens=["have", "to"],
         ),
         VWord(
             word_string="go",
@@ -113,6 +115,7 @@ def expectedVwords():
             word_status=0,
             word_pronunciation="",
             word_explanation="",
+            word_tokens=["go"],
         ),
         VWord(
             word_string="home",
@@ -125,6 +128,7 @@ def expectedVwords():
             word_status=0,
             word_pronunciation="",
             word_explanation="",
+            word_tokens=["home"],
         ),
         VWord(
             word_string=".",
@@ -137,9 +141,10 @@ def expectedVwords():
             word_status=0,
             word_pronunciation="",
             word_explanation="",
+            word_tokens=["."],
         ),
     ]
 
 
-def test_match_word_in_sentece(get_vwords, expectedVwords):
+def test_match_word_in_sentece(get_vwords, expectedVwords) -> None:  # type: ignore
     assert_vword_list_equal(get_vwords, expectedVwords)

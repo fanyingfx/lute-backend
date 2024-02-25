@@ -2,10 +2,10 @@ from litestar import Controller, Request, get, post
 from litestar.di import Provide
 from litestar.dto import DTOData
 
-from app.domain.words.dependencies import provides_word_service
-from app.domain.words.dtos import WordCreate, WordCreateDTO, WordDTO, WordPatchDTO, WordUpdate
-from app.domain.words.models import Word
-from app.domain.words.services import WordService
+from app.domain.word.dependencies import provides_word_service
+from app.domain.word.dtos import WordCreate, WordCreateDTO, WordDTO, WordPatchDTO, WordUpdate
+from app.domain.word.models import Word
+from app.domain.word.services import WordService
 
 __all__ = ("WordController",)
 

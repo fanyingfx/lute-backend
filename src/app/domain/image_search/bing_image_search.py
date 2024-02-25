@@ -1,4 +1,5 @@
 # mypy: ignore-errors
+# ruff: noqa
 
 # adapted from code by @stephenhouser on github
 # https://gist.github.com/stephenhouser/c5e2b921c3770ed47eb3b75efbc94799
@@ -12,7 +13,7 @@ from bs4 import BeautifulSoup
 
 
 def get_soup(url, header):
-   return BeautifulSoup(urllib.request.urlopen(urllib.request.Request(url, headers=header)), "html.parser")
+    return BeautifulSoup(urllib.request.urlopen(urllib.request.Request(url, headers=header)), "html.parser")
 
 
 def bing_image_search(query):

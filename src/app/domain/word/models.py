@@ -15,6 +15,7 @@ class Word(orm.DatabaseModel):
     __tablename__ = "words"
     __table_args__ = {"comment": "Words table"}
 
+    language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
     word_string: Mapped[str] = mapped_column(String(100))
     word_lemma: Mapped[str | None] = mapped_column(String(100))
     word_pos: Mapped[str | None] = mapped_column(String(100))

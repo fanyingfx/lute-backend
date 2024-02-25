@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 from litestar.events import listener
 from litestar.stores.memory import MemoryStore
 
-from app.domain.words.models import Word
+from app.domain.word.models import Word
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 

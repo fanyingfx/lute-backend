@@ -8,6 +8,13 @@ from litestar.static_files.config import StaticFilesConfig
 
 config = [
     StaticFilesConfig(
+        directories=[Path(__file__).parent.parent / "static"],
+        path="static",
+        name="static",
+        html_mode=True,
+        opt={"exclude_from_auth": True},
+    ),
+    StaticFilesConfig(
         directories=[Path(__file__).parent.parent / "static" / "web"],
         path="web",
         name="web",
@@ -22,4 +29,3 @@ config = [
         opt={"exclude_from_auth": True},
     ),
 ]
-"""Static files configuration for app."""
