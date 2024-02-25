@@ -51,11 +51,11 @@ def create_app(debug: bool = settings.app.DEBUG) -> Litestar:
         },
         before_send=[log.controller.BeforeSendHandler()],
         middleware=[log.controller.StructlogLoggingMiddleware],
-        logging_config=log.config,
+        # logging_config=log.config,
         plugins=[db.plugin],
         # --- Lifecycle
         cors_config=cors_config,
-        on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
+        # on_startup=[lambda: log.configure(log.default_processors)],  # type: ignore[arg-type]
         on_app_init=[repository.on_app_init],
         debug=debug,
     )

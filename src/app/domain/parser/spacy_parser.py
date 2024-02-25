@@ -29,10 +29,6 @@ def _get_language_parser(language_name: str) -> Language:
 
 @register_parser("spacy")
 class SpacyParser(LanguageParser):
-    # nlp = spacy.load("en_core_web_sm")
-
-    # @lru_cache()
-    # def __init__(self)-> NoReturn:  # type: ignore
 
     def __init__(self, language_name: str) -> None:
         super().__init__(language_name)

@@ -2,11 +2,15 @@ import abc
 
 __all__ = ("LanguageParser", "parser_mapping")
 
-
 from collections.abc import Iterable
 from typing import Any
 
 from spacy.tokens.span import Span
+
+# register in the @parser_tool.register_parser
+parser_mapping: dict[str, type["LanguageParser"]] = {}
+
+parser_instances: dict[str, "LanguageParser"] = {}
 
 
 def _get_parser(language_name: str) -> "LanguageParser":
@@ -47,9 +51,3 @@ class LanguageParser(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def tokenize(self, text: str) -> Iterable[Any]:
         pass
-
-
-parser_mapping: dict[str, type["LanguageParser"]] = {}
-
-
-parser_instances: dict[str, "LanguageParser"] = {}
