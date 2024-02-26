@@ -3,9 +3,9 @@ from litestar.di import Provide
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 
+from app.db.models.language import Language
 from app.domain.language.dependencies import provides_language_service
 from app.domain.language.dtos import LanguageCreateDTO, LanguageData, LanguageDTO
-from app.domain.language.models import Language
 from app.domain.language.services import LanguageService
 from app.domain.parser import parser_tool
 

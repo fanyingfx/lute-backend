@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from app.domain.book.models import Book, BookText
+from app.db.models.book import Book, BookText
 from app.domain.parser.markdown_text_parser import TokenSentence, VWord
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService

@@ -29,7 +29,6 @@ def _get_language_parser(language_name: str) -> Language:
 
 @register_parser("spacy")
 class SpacyParser(LanguageParser):
-
     def __init__(self, language_name: str) -> None:
         super().__init__(language_name)
         self.nlp = _get_language_parser(language_name)

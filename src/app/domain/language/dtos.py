@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.language.models import Language
+from app.db.models.language import Language
 from app.lib import dto
 
 __all__ = ["LanguageDTO", "LanguageData", "LanguageCreateDTO", "LanguageUpdateDTO", "LanguagePatchDTO"]

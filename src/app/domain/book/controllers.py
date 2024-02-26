@@ -13,6 +13,8 @@ from litestar.enums import RequestEncodingType
 from litestar.pagination import OffsetPagination
 from litestar.params import Body, Parameter
 
+from app.db.models.book import Book, BookText
+from app.db.models.word import Word
 from app.domain.book.dependencies import provides_book_service, provides_booktext_service
 from app.domain.book.dtos import (
     BookCreate,
@@ -24,7 +26,6 @@ from app.domain.book.dtos import (
     BookTextDTO,
     BookUpdate,
 )
-from app.domain.book.models import Book, BookText
 from app.domain.book.services import BookService, BookTextService, text2segment
 from app.domain.parser.markdown_text_parser import (
     TextRawParagraphSegment,
@@ -33,7 +34,6 @@ from app.domain.parser.markdown_text_parser import (
 from app.domain.parser.spacy_parser import SpacyParser
 from app.domain.word.dependencies import provides_word_service
 from app.domain.word.dtos import WordDTO
-from app.domain.word.models import Word
 from app.domain.word.services import WordService
 
 if TYPE_CHECKING:

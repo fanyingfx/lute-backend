@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload, noload, selectinload
 
-from app.domain.book.models import Book, BookText
+from app.db.models.book import Book, BookText
 from app.domain.book.services import BookService, BookTextService
 
 __all__ = ["provides_book_service"]

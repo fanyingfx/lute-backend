@@ -6,18 +6,19 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
-from structlog.contextvars import clear_contextvars
-from structlog.testing import CapturingLogger
 
-from app.domain.word.models import Word
+from app.config import base
+from app.db.models import Book
+from app.db.models import Language
+from app.db.models import Word
 
 if TYPE_CHECKING:
     from collections import abc
+    from collections.abc import Iterator
 
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
 
-    from app.domain.book.models import Book
 
 pytestmark = pytest.mark.anyio
 
@@ -27,8 +28,20 @@ def anyio_backend() -> str:
     return "asyncio"
 
 
+@pytest.fixture(autouse=True)
+def _patch_settings(monkeypatch: MonkeyPatch) -> None:
+    """Path the settings."""
+
+    settings = base.Settings.from_env(".env.testing")
+
+    def get_settings(dotenv_filename: str = ".env.testing") -> base.Settings:
+        return settings
+
+    monkeypatch.setattr(base, "get_settings", get_settings)
+
+
 @pytest.fixture(scope="session")
-def event_loop() -> abc.Iterator[asyncio.AbstractEventLoop]:
+def event_loop() -> "abc.Iterator[asyncio.AbstractEventLoop]":
     """Scoped Event loop.
 
     Need the event loop scoped to the session so that we can use it to check
@@ -65,7 +78,7 @@ def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     """
     from app.asgi import create_app
 
-    return create_app(debug=False)
+    return create_app()
 
 
 @pytest.fixture(name="is_unit_test")
@@ -75,21 +88,26 @@ def fx_is_unit_test(request: FixtureRequest) -> bool:
     """
     unittest_pattern: str = request.config.getini("unit_test_pattern")  # pyright:ignore
     return bool(re.search(unittest_pattern, str(request.path)))
+@pytest.fixture(name="raw_languages")
+def fx_raw_language()-> list[Language | dict[str, Any]]:
 
-
+    return [
+        {"language_name": "English","parser_name": "english", "RTL": False},
+    ]
+from datetime import date
 @pytest.fixture(name="raw_books")
 def fx_raw_books() -> list[Book | dict[str, Any]]:
     """Unstructured user representations."""
 
     return [
-        {"book_name": "Text Book", "published_dt": "2022-01-01"},
+        {"book_name": "Text Book","language_id": 1, "published_at": date(2022,1,1)},
     ]
 
 
 @pytest.fixture(name="raw_words")
 def fx_raw_words() -> list[Word | dict[str, Any]]:
     return [
-        {
+        {   "language_id": 1,
             "word_string": "have to",
             "word_lemma": "have to",
             "word_pos": "v",
@@ -100,7 +118,7 @@ def fx_raw_words() -> list[Word | dict[str, Any]]:
             "word_counts": 2,
             "word_tokens": ["have", "to"],
         },
-        {
+        {   "language_id": 1,
             "word_string": "hello",
             "word_lemma": "hello",
             "word_pos": "NOUN",
@@ -114,34 +132,15 @@ def fx_raw_words() -> list[Word | dict[str, Any]]:
     ]
 
 
-@pytest.fixture()
-def _patch_sqlalchemy_plugin(is_unit_test: bool, monkeypatch: MonkeyPatch) -> None:
-    if is_unit_test:
-        from app.lib import db
-
-        monkeypatch.setattr(
-            db.config.SQLAlchemyConfig,  # type:ignore[attr-defined]
-            "on_shutdown",
-            MagicMock(),
-        )
-
-
-@pytest.fixture(name="cap_logger")
-def fx_cap_logger(monkeypatch: MonkeyPatch) -> CapturingLogger:
-    """Used to monkeypatch the app logger, so we can inspect output."""
-    import app.lib
-
-    app.lib.log.configure(
-        app.lib.log.default_processors,  # type:ignore[arg-type]
-    )
-    # clear context for every test
-    clear_contextvars()
-    # pylint: disable=protected-access
-    logger = app.lib.log.controller.LOGGER.bind()
-    logger._logger = CapturingLogger()
-    # drop rendering processor to get a dict, not bytes
-    # noinspection PyProtectedMember
-    logger._processors = app.lib.log.default_processors[:-1]
-    monkeypatch.setattr(app.lib.log.controller, "LOGGER", logger)
-    monkeypatch.setattr(app.lib.log.worker, "LOGGER", logger)
-    return logger._logger
+# @pytest.fixture()
+# def _patch_worker(
+#     is_unit_test: bool,
+#     monkeypatch: MonkeyPatch,
+#     event_loop: Iterator[asyncio.AbstractEventLoop],
+# ) -> None:
+#     """We don't want the worker to start for unit tests."""
+#     if is_unit_test:
+#         from litestar_saq import base
+#
+#         monkeypatch.setattr(base.Worker, "on_app_startup", MagicMock())
+#         monkeypatch.setattr(base.Worker, "stop", MagicMock())

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import select
 
-from app.domain.language.models import Language
+from app.db.models.language import Language
 from app.domain.language.services import LanguageService
 
 __all__ = ["provides_language_service"]

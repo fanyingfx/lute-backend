@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 async def provides_word_service(db_session: AsyncSession) -> AsyncGenerator[WordService, None]:
     """Construct repository and service objects for the request."""
-    from app.domain.word.models import Word
+    from app.db.models.word import Word
 
     async with WordService.new(
         session=db_session,

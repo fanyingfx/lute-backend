@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
-from app.domain.word.models import Word
+from app.db.models.word import Word
 from app.lib import dto
 
 __all__ = (

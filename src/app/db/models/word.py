@@ -2,17 +2,18 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.lib.db import orm
-
 __all__ = ("Word",)
 
+from app.db.models.base import JSONType
 
-class Word(orm.DatabaseModel):
+
+class Word(BigIntBase):
     "Word Model"
-    __tablename__ = "words"
+    __tablename__ = "words"  # type: ignore[assignment]
     __table_args__ = {"comment": "Words table"}
 
     language_id: Mapped[int] = mapped_column(ForeignKey("languages.id"), nullable=False)
@@ -24,14 +25,14 @@ class Word(orm.DatabaseModel):
     word_pronunciation: Mapped[str | None] = mapped_column(String(100))
     word_explanation: Mapped[str | None] = mapped_column(String(100))
     word_counts: Mapped[int | None] = mapped_column(Integer)
-    word_tokens: Mapped[list[str]] = mapped_column(orm.JSONType)
+    word_tokens: Mapped[list[str]] = mapped_column(JSONType)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()
+        DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()  # type: ignore
     )
     word_image: Mapped[WordImage | None] = relationship(lazy="noload", cascade="all, delete-orphan")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<Word(word_string={self.word_string}, word_lemma={self.word_lemma},word_pos={self.word_pos},"
             f"is_multiple_words={self.is_multiple_words},word_status={self.word_status},word_pronunciation={self.word_pronunciation}"
@@ -41,8 +42,8 @@ class Word(orm.DatabaseModel):
     UniqueConstraint(word_string)
 
 
-class WordImage(orm.DatabaseModel):
-    __tablename__ = "word_images"
+class WordImage(BigIntBase):
+    __tablename__ = "word_images"  # type: ignore[assignment]
     word_id: Mapped[str] = mapped_column(ForeignKey("words.id"))
     word_image_name: Mapped[str] = mapped_column(String(100))
     word_image_path: Mapped[str] = mapped_column(String(100))

@@ -7,15 +7,17 @@ from httpx import AsyncClient
 from litestar import Litestar
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
-from app.domain.book.models import Book
-from app.domain.word.models import Word
-from app.lib import db
+from app.db.models import Language
+from app.db.models.book import Book
+from app.db.models.word import Word
+from app.server.plugins import alchemy
+
 
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="engine")
+@pytest.fixture(name="engine",autouse=True)
 async def fx_engine() -> AsyncEngine:
     """Postgresql instance for end-to-end testing.
 
@@ -47,6 +49,7 @@ async def fx_session(sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncGen
 async def _seed_db(
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
+    raw_languages: list[Language | dict[str, Any]],
     raw_books: list[Book | dict[str, Any]],
     raw_words: list[Word | dict[str, Any]],
 ) -> AsyncIterator[None]:
@@ -62,18 +65,19 @@ async def _seed_db(
 
     from app.domain.book.services import BookService
     from app.domain.word.services import WordService
-    from app.lib.db import orm  # pylint: disable=[import-outside-toplevel,unused-import]
+    from app.domain.language.services import LanguageService
+    from advanced_alchemy.base import BigIntBase
 
-    metadata = orm.DatabaseModel.registry.metadata
+    metadata = BigIntBase.registry.metadata
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
+    async with LanguageService.new(sessionmaker()) as language_service:
+        await language_service.create_many(raw_languages,auto_commit=True)
     async with BookService.new(sessionmaker()) as book_service:
-        await book_service.create_many(raw_books)
-        await book_service.repository.session.commit()
+        await book_service.create_many(raw_books,auto_commit=True)
     async with WordService.new(sessionmaker()) as word_service:
-        await word_service.create_many(raw_words)
-        await word_service.repository.session.commit()
+        await word_service.create_many(raw_words,auto_commit=True)
 
     return None  # type: ignore[return-value]
 
@@ -85,12 +89,11 @@ def _patch_db(
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(db, "async_session_factory", sessionmaker)
-    monkeypatch.setattr(db.base, "async_session_factory", sessionmaker)
-    monkeypatch.setitem(app.state, db.config.engine_app_state_key, engine)
+    monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
+    monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
     monkeypatch.setitem(
         app.state,
-        db.config.session_maker_app_state_key,
+        alchemy._config.session_maker_app_state_key,
         async_sessionmaker(bind=engine, expire_on_commit=False),
     )
 

@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
+from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.lib.db import orm
 
 __all__ = ["Book", "BookText"]
 
 
-class Book(orm.DatabaseModel):
+class Book(BigIntBase):
     """Book Model."""
 
     __tablename__ = "books"  # type: ignore[assignment]
@@ -35,7 +35,7 @@ class Book(orm.DatabaseModel):
         )
 
 
-class BookText(orm.DatabaseModel):
+class BookText(BigIntBase):
     __tablename__ = "booktexts"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic BookText Table"}
     ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))

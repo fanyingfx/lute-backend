@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, TypeVar
 
+import structlog
 from litestar import Controller, MediaType, get
 from litestar.response import Response
 from sqlalchemy import text
 
 from app.domain.system.dtos import SystemHealth
-from app.lib import constants, log
+
+from .urls import SYSTEM_HEALTH
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +18,7 @@ if TYPE_CHECKING:
 __all__ = ["SystemController"]
 
 
-logger = log.get_logger()
+logger = structlog.get_logger()
 
 OnlineOffline = TypeVar("OnlineOffline", bound=Literal["online", "offline"])
 
@@ -27,7 +29,7 @@ class SystemController(Controller):
     @get(
         operation_id="SystemHealth",
         name="system:health",
-        path=constants.SYSTEM_HEALTH,
+        path=SYSTEM_HEALTH,
         media_type=MediaType.JSON,
         cache=False,
         tags=["System"],

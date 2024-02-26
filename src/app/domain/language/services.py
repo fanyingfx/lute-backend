@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlalchemy.orm import InstrumentedAttribute
 
-from app.domain.language.models import Language
+from app.db.models.language import Language
 from app.domain.parser import parser_tool
 from app.lib import exceptions
 from app.lib.repository import SQLAlchemyAsyncRepository
@@ -20,6 +20,7 @@ class LanguageService(SQLAlchemyAsyncRepositoryService[Language]):
     """Handles database operations for users."""
 
     repository_type = LanguageRepository
+    match_fields = ["name"]
 
     def __init__(self, **repo_kwargs: Any) -> None:
         self.repository: LanguageRepository = self.repository_type(**repo_kwargs)

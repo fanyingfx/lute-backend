@@ -2,28 +2,14 @@ from __future__ import annotations
 
 import random
 import string
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from advanced_alchemy.repository import SQLAlchemyAsyncRepository
 from advanced_alchemy.repository.typing import ModelT
-from litestar.repository.handlers import on_app_init as _on_app_init
 
 from app.utils import slugify
 
-if TYPE_CHECKING:
-    from litestar.config.app import AppConfig
-__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository", "on_app_init"]
-
-
-def on_app_init(app_config: AppConfig) -> AppConfig:
-    """Executes on application init.  Injects signature namespaces."""
-    app_config.signature_namespace.update(
-        {
-            "SQLAlchemyAsyncSlugRepository": SQLAlchemyAsyncSlugRepository,
-            "SQLAlchemyAsyncRepository": SQLAlchemyAsyncRepository,
-        },
-    )
-    return _on_app_init(app_config)
+__all__ = ["SQLAlchemyAsyncRepository", "SQLAlchemyAsyncSlugRepository"]
 
 
 class SQLAlchemyAsyncSlugRepository(
@@ -46,8 +32,7 @@ class SQLAlchemyAsyncSlugRepository(
     ) -> str:
         """Get a unique slug for the supplied value.
 
-        If the value is found to exist, a random 4 digit character is appended to the end.
-         There may be a better way to do this, but I wanted to limit the number of additional database calls.
+        If the value is found to exist, a random 4 digit character is appended to the end.  There may be a better way to do this, but I wanted to limit the number of additional database calls.
 
         Args:
             value_to_slugify (str): A string that should be converted to a unique slug.
@@ -67,4 +52,4 @@ class SQLAlchemyAsyncSlugRepository(
         slug: str,
         **kwargs: Any,
     ) -> bool:
-        return await self.get_one_or_none(slug=slug) is None
+        return await self.exists(slug=slug) is False

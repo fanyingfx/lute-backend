@@ -226,8 +226,6 @@ class OpenAPISettings(BaseSettings):
     """Document version."""
 
 
-
-
 class DatabaseSettings(BaseSettings):
     """Configures the database for the application."""
 
@@ -263,8 +261,6 @@ class DatabaseSettings(BaseSettings):
     MIGRATION_CONFIG: str = f"{BASE_DIR}/lib/db/alembic.ini"
     MIGRATION_PATH: str = f"{BASE_DIR}/lib/db/migrations"
     MIGRATION_DDL_VERSION_TABLE: str = "ddl_version"
-
-
 
 
 @lru_cache

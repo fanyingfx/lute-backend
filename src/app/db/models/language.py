@@ -1,14 +1,16 @@
+from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.domain.parser.language_parser import LanguageParser
-from app.lib.db import orm
+
+# from app.lib.db import orm
 
 # how to initialize Language Model and parser
 __all__ = ["Language"]
 
 
-class Language(orm.DatabaseModel):
+class Language(BigIntBase):
     """Language Model."""
 
     __tablename__ = "languages"  # type: ignore[assignment]

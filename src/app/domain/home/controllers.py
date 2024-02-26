@@ -1,12 +1,11 @@
 from litestar import Controller, Request, Response, get
 from litestar.response import Redirect, Template
 
-from app.lib import log
-
+import structlog
 __all__ = ("HomeController",)
 
 
-logger = log.get_logger()
+logger = structlog.get_logger()
 
 
 class HomeController(Controller):

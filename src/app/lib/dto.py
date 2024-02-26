@@ -13,13 +13,13 @@ if TYPE_CHECKING:
 
     from litestar.dto import RenameStrategy
 
-__all__ = ["config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO"]
+__all__ = ("config", "dto_field", "DTOConfig", "SQLAlchemyDTO", "DataclassDTO")
 
 DTOT = TypeVar("DTOT", bound=DataclassProtocol | DeclarativeBase)
 DTOFactoryT = TypeVar("DTOFactoryT", bound=DataclassDTO | SQLAlchemyDTO)
 SQLAlchemyModelT = TypeVar("SQLAlchemyModelT", bound=DeclarativeBase)
 DataclassModelT = TypeVar("DataclassModelT", bound=DataclassProtocol)
-ModelT = SQLAlchemyModelT | DataclassModelT
+ModelT = SQLAlchemyModelT | DataclassModelT  # type: ignore
 
 
 @overload
@@ -54,12 +54,12 @@ def config(
     max_nested_depth: int | None = None,
     partial: bool | None = None,
 ) -> DTOConfig | SQLAlchemyDTOConfig:
-    """_summary_.
+    """_summary_
 
     Returns:
         DTOConfig: Configured DTO class
     """
-    default_kwargs = {"rename_strategy": "lower", "max_nested_depth": 2}
+    default_kwargs = {"rename_strategy": "camel", "max_nested_depth": 2}
     if exclude:
         default_kwargs["exclude"] = exclude
     if rename_fields:
@@ -70,21 +70,4 @@ def config(
         default_kwargs["max_nested_depth"] = max_nested_depth
     if partial:
         default_kwargs["partial"] = partial
-    return DTOConfig(**default_kwargs)
-
-
-@overload
-def builder(dto: DeclarativeBase) -> DataclassDTO[DTOT]:
-    ...
-
-
-@overload
-def builder(dto: DataclassModelT) -> SQLAlchemyDTO[DTOT]:
-    ...
-
-
-def builder(dto: ModelT) -> DTOFactoryT[ModelT]:
-    """Construct a DTO."""
-    if issubclass(dto, DeclarativeBase):
-        return SQLAlchemyDTO[dto]
-    return DataclassDTO[dto]
+    return DTOConfig(**default_kwargs)  # type: ignore
