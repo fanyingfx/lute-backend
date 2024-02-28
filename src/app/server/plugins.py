@@ -8,6 +8,7 @@ from litestar_vite import VitePlugin
 from app.config import app as config
 from app.server.builder import ApplicationConfigurator
 
+# structlog = StructlogPlugin(config=config.log)
 structlog = StructlogPlugin(config=config.log)
 vite = VitePlugin(config=config.vite)
 # saq = SAQPlugin(config=config.saq)

@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+import dataclasses
+from dataclasses import asdict, dataclass
 from typing import NotRequired, TypedDict
+from typing import Optional
 
 import mistune
 from mistune.markdown import Markdown
@@ -15,13 +17,51 @@ __all__ = (
     "SoftLineBreakSegment",
     "TextParagraphSegment",
     "TextToken",
-    "TokenSentence",
+    "SentenceSegment",
     "WordToken",
     "flatten_segments",
     "parse_node",
     "parse_paragraph",
     "markdown",
+    # "dict_to_camel_case",
 )
+
+
+def to_camel_case(snake_str: str) -> str:
+    return "".join(x.capitalize() for x in snake_str.lower().split("_"))
+def to_lower_camel_case(snake_str:str)->str:
+    # We capitalize the first letter of each component except the first one
+    # with the 'capitalize' method and join them together.
+    camel_string = to_camel_case(snake_str)
+    return snake_str[0].lower() + camel_string[1:]
+
+
+# def to_camel_dict(snake_dataclass) -> dict:  # type: ignore
+#
+#     return {to_camel_case(k): v for k, v in asdict(snake_dataclass).items()}
+
+# def dict_to_camel_case(input_dataclass):  # type: ignore
+#     output_dict = {}
+#     for key, value in asdict(input_dataclass).items():
+#         if isinstance(value, dict):
+#             value = dict_to_camel_case(value)  # type: ignore
+#         output_dict[to_camel_case(key)] = value
+#     return output_dict
+# def dict_to_camel_case(input_dataclass) -> dict:
+#     renamed_dict = {}
+#     if dataclasses._is_dataclass_instance(input_dataclass):  # type: ignore[attr-defined]
+#         input_dict = asdict(input_dataclass)
+#     else:
+#         input_dict = input_dataclass
+#     for key, value in input_dict.items():
+#         new_key = to_lower_camel_case(key)
+#         if isinstance(value, dict):
+#             value = dict_to_camel_case(value)  # type: ignore[no-untyped-call]
+#         elif isinstance(value, list):
+#             value = [dict_to_camel_case(item) if isinstance(item, dict) else item for item in value]
+#         renamed_dict[new_key] = value
+#     return renamed_dict
+
 
 markdown: Markdown = mistune.create_markdown(renderer=None)
 
@@ -61,21 +101,30 @@ class WordToken:
     word_status: int = 0
 
 
-@dataclass(kw_only=True)
+@dataclass
 class VWord(WordToken):
+    word_tokens: list[str]
     word_pronunciation: str | None = None
     word_explanation: str | None = None
-    word_tokens: list[str]
 
 
+# @dataclass_json(letter_case=LetterCase.CAMEL)  # now all fields are encoded/decoded from camelCase
 @dataclass
-class TokenSentence:
+class SentenceSegment:
     segment_value: list[VWord]
     segment_raw: str = ""
     segment_type: str = "sentence"
     paragraph_order: int = 0
     sentence_order: int = 0
 
+@dataclass
+class ParsedTextSegment:
+    segment_words: list[VWord]=dataclasses.field(default_factory=list,)
+    segment_value: str=""
+    segment_raw: str = ""
+    segment_type: str = ""
+    paragraph_order: int = 0
+    sentence_order: int = 0
 
 @dataclass
 class BaseSegment:
@@ -96,7 +145,7 @@ class TextRawParagraphSegment(BaseSegment):
 
 @dataclass
 class TextParagraphSegment:
-    segment_value: list[TokenSentence]
+    segment_value: list[SentenceSegment]
     segment_raw: str = ""
     segment_type: str = "textparagraph"
     segment_order: int = 0
@@ -132,13 +181,13 @@ class EmptySegment(BaseSegment):
 # @dataclass
 # class Segment:
 Segment = (
-    ImageSegment
-    | SoftLineBreakSegment
-    | HardLineBreakSegment
-    | BlockSegment
-    | ParagraphSegment
-    | EmptySegment
-    | TextRawParagraphSegment
+        ImageSegment
+        | SoftLineBreakSegment
+        | HardLineBreakSegment
+        | BlockSegment
+        | ParagraphSegment
+        | EmptySegment
+        | TextRawParagraphSegment
 )
 
 

@@ -40,7 +40,7 @@ class SQLAlchemyAsyncSlugRepository(
 
         Returns:
             str: a unique slug for the supplied value.  This is safe for URLs and other unique identifiers.
-        """
+        """  # noqa: E501
         slug = slugify(value_to_slugify)
         if await self._is_slug_unique(slug):
             return slug

@@ -46,13 +46,13 @@ def create_app() -> Litestar:
             # db.plugin,
             # plugins.vite,
             # plugins.saq,
-            plugins.granian,
+            # plugins.granian,
         ],
         template_config=template.config,
         # signature_namespace={"UUID": UUID},
         # on_app_init=[auth.on_app_init],
         # listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
-        listeners=[on_word_updated],  # type: ignore
+        listeners=[on_word_updated],
     )
 
 

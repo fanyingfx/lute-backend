@@ -12,12 +12,11 @@ from app.db.models.book import Book
 from app.db.models.word import Word
 from app.server.plugins import alchemy
 
-
 here = Path(__file__).parent
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture(name="engine",autouse=True)
+@pytest.fixture(name="engine", autouse=True)
 async def fx_engine() -> AsyncEngine:
     """Postgresql instance for end-to-end testing.
 
@@ -63,21 +62,22 @@ async def _seed_db(
 
     """
 
-    from app.domain.book.services import BookService
-    from app.domain.word.services import WordService
-    from app.domain.language.services import LanguageService
     from advanced_alchemy.base import BigIntBase
+
+    from app.domain.book.services import BookService
+    from app.domain.language.services import LanguageService
+    from app.domain.word.services import WordService
 
     metadata = BigIntBase.registry.metadata
     async with engine.begin() as conn:
         await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
     async with LanguageService.new(sessionmaker()) as language_service:
-        await language_service.create_many(raw_languages,auto_commit=True)
+        await language_service.create_many(raw_languages, auto_commit=True)
     async with BookService.new(sessionmaker()) as book_service:
-        await book_service.create_many(raw_books,auto_commit=True)
+        await book_service.create_many(raw_books, auto_commit=True)
     async with WordService.new(sessionmaker()) as word_service:
-        await word_service.create_many(raw_words,auto_commit=True)
+        await word_service.create_many(raw_words, auto_commit=True)
 
     return None  # type: ignore[return-value]
 

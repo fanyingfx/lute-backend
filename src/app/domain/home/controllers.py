@@ -1,7 +1,7 @@
+import structlog
 from litestar import Controller, Request, Response, get
 from litestar.response import Redirect, Template
 
-import structlog
 __all__ = ("HomeController",)
 
 

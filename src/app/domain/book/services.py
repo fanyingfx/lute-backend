@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from app.db.models.book import Book, BookText
-from app.domain.parser.markdown_text_parser import TokenSentence, VWord
+from app.domain.book.dtos import BookTextCreate
+from app.domain.parser.markdown_text_parser import SentenceSegment, VWord
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.lib.timer import async_timed  # type: ignore
@@ -42,10 +43,11 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
         self.repository: BookRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def create_with_content(self, data: Book | dict[str, Any], content: str) -> Book:
+    async def create_with_contents(self, data: Book | dict[str, Any], contents: list[BookTextCreate]) -> Book:
         book_obj = await self.to_model(data, "create")
         book = await super().create(data=book_obj, auto_commit=False)
-        book.texts.append(BookText(ref_book_id=book.id, book_text=content))
+        for content in contents:
+            book.texts.append(BookText(ref_book_id=book.id, book_text=content.book_text, title=content.book_title))
         return await self.update(item_id=book.id, data=book)
 
     async def create(
@@ -106,7 +108,7 @@ class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):
         return await super().to_model(data, operation)
 
 
-async def match_word_in_sentence(sentence: Span, word_index: WordIndex, max_loop_num: int) -> TokenSentence:
+async def match_word_in_sentence(sentence: Span, word_index: WordIndex, max_loop_num: int) -> SentenceSegment:
     start_position = 0
     res_word_list = []
     dead_loop_indicator = 0
@@ -161,11 +163,11 @@ async def match_word_in_sentence(sentence: Span, word_index: WordIndex, max_loop
             raise OverflowError(
                 f"Maximum number of word in sentence exceeded !{max_loop_num}! or maybe in the dead loop!"
             )
-    return TokenSentence(segment_value=res_word_list, segment_raw=sentence_raw)
+    return SentenceSegment(segment_value=res_word_list, segment_raw=sentence_raw)
 
 
 @async_timed  # type: ignore
-async def text2segment(text: str, language_parser: LanguageParser, paragraph_order: int) -> list[TokenSentence]:
+async def text2segment(text: str, language_parser: LanguageParser, paragraph_order: int) -> list[SentenceSegment]:
     """
     Returns:
         object: TextParagraphSegment

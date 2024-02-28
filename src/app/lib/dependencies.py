@@ -106,7 +106,7 @@
 #
 # def provide_order_by(
 #     field_name: StringOrNone = Parameter(title="Order by field", query="orderBy", default=None, required=False),
-#     sort_order: SortOrderOrNone = Parameter(title="Field to search", query="sortOrder", default="desc", required=False),
+#     sort_order: SortOrderOrNone = Parameter(title="Field to search", query="sortOrder", default="desc", required=False), #noqa
 # ) -> OrderBy:
 #     """Add offset/limit pagination.
 #

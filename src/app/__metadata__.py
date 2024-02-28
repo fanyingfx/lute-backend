@@ -7,7 +7,7 @@ __all__ = [
     "__project__",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 """Project version."""
 __project__ = "Litestar Template"
 """Project name."""

@@ -45,6 +45,7 @@ class WordCreateDTO(DataclassDTO[WordCreate]):
 @dataclass(kw_only=True)
 class WordUpdate:
     word_string: str
+    language_id: int
     word_lemma: str = ""
     word_pos: str = ""
     word_status: int

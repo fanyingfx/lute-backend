@@ -5,12 +5,32 @@ from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.dto import DataclassDTO
 
 from app.db.models.book import Book, BookText
+from app.domain.parser.markdown_text_parser import BaseSegment
+from app.domain.parser.markdown_text_parser import SentenceSegment,ParsedTextSegment
 from app.lib import dto
 
-__all__ = ["BookCreate", "BookCreateDTO", "BookDTO", "BookUpdate", "BookUpdateDTO", "BookTextDTO", "BookTextCreate"]
-
+__all__ = ["BookCreate", "BookCreateDTO", "BookDTO", "BookUpdate", "BookUpdateDTO", "BookTextDTO", "BookTextCreate","BaseSegment","ParsedTextSegment"
+           ,"ParsedBookTextDTO","ParsedBookText"]
 
 # database model
+
+from dataclasses import dataclass
+from typing import Generic, TypeVar
+
+
+# T = TypeVar("T")
+
+# @dataclass
+# class ReturnData(Generic[T]):
+#     data: list[T]
+
+@dataclass
+class ParsedBookText:
+    data: list[ParsedTextSegment]
+
+
+class ParsedBookTextDTO(DataclassDTO[ParsedBookText]):
+    config = dto.config(max_nested_depth=4,)
 
 
 class BookDTO(SQLAlchemyDTO[Book]):
@@ -28,17 +48,22 @@ class BookTextDTO(SQLAlchemyDTO[BookText]):
 
 @dataclass
 class BookTextCreate:
-    ref_book_id: int
     book_text: str
+    book_title: str | None = None
 
 
 @dataclass
 class BookCreate:
+    language_id: int
     book_name: str | None = None
     create_at: datetime = None
     update_at: datetime = None
     published_at: date | None = None
-    text: str | None = None
+    texts: list[BookTextCreate] | None = None
+
+
+# class BookParsedDTO(DataclassDTO[Segment]):
+#     config = dto.config()
 
 
 class BookCreateDTO(DataclassDTO[BookCreate]):

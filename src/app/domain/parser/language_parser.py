@@ -9,7 +9,6 @@ from spacy.tokens.span import Span
 
 # register in the @parser_tool.register_parser
 parser_mapping: dict[str, type["LanguageParser"]] = {}
-
 parser_instances: dict[str, "LanguageParser"] = {}
 
 

@@ -58,7 +58,7 @@ class UniqueMixin:
         cache = getattr(session, "_unique_cache", None)
         if cache is None:
             cache = {}
-            session._unique_cache = cache
+            session._unique_cache = cache  # type: ignore
         if obj := cache.get(key):
             return cast("Self", obj)
 

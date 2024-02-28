@@ -2,23 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import re
+from datetime import date
 from typing import TYPE_CHECKING, Any
-from unittest.mock import MagicMock
 
 import pytest
 
 from app.config import base
-from app.db.models import Book
-from app.db.models import Language
-from app.db.models import Word
+from app.db.models import Book, Language, Word
 
 if TYPE_CHECKING:
     from collections import abc
-    from collections.abc import Iterator
 
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
-
 
 pytestmark = pytest.mark.anyio
 
@@ -41,7 +37,7 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
 
 
 @pytest.fixture(scope="session")
-def event_loop() -> "abc.Iterator[asyncio.AbstractEventLoop]":
+def event_loop() -> abc.Iterator[asyncio.AbstractEventLoop]:
     """Scoped Event loop.
 
     Need the event loop scoped to the session so that we can use it to check
@@ -88,26 +84,29 @@ def fx_is_unit_test(request: FixtureRequest) -> bool:
     """
     unittest_pattern: str = request.config.getini("unit_test_pattern")  # pyright:ignore
     return bool(re.search(unittest_pattern, str(request.path)))
-@pytest.fixture(name="raw_languages")
-def fx_raw_language()-> list[Language | dict[str, Any]]:
 
+
+@pytest.fixture(name="raw_languages")
+def fx_raw_language() -> list[Language | dict[str, Any]]:
     return [
-        {"language_name": "English","parser_name": "english", "RTL": False},
+        {"language_name": "English", "parser_name": "english", "RTL": False},
     ]
-from datetime import date
+
+
 @pytest.fixture(name="raw_books")
 def fx_raw_books() -> list[Book | dict[str, Any]]:
     """Unstructured user representations."""
 
     return [
-        {"book_name": "Text Book","language_id": 1, "published_at": date(2022,1,1)},
+        {"book_name": "Text Book", "language_id": 1, "published_at": date(2022, 1, 1)},
     ]
 
 
 @pytest.fixture(name="raw_words")
 def fx_raw_words() -> list[Word | dict[str, Any]]:
     return [
-        {   "language_id": 1,
+        {
+            "language_id": 1,
             "word_string": "have to",
             "word_lemma": "have to",
             "word_pos": "v",
@@ -118,7 +117,8 @@ def fx_raw_words() -> list[Word | dict[str, Any]]:
             "word_counts": 2,
             "word_tokens": ["have", "to"],
         },
-        {   "language_id": 1,
+        {
+            "language_id": 1,
             "word_string": "hello",
             "word_lemma": "hello",
             "word_pos": "NOUN",
