@@ -15,7 +15,6 @@ def create_app() -> Litestar:
 
     from litestar import Litestar
 
-    # from uuid_utils import UUID
     from app.config import app as config
     from app.config.base import get_settings
     from app.domain.word.services import on_word_updated
@@ -46,7 +45,8 @@ def create_app() -> Litestar:
             # db.plugin,
             # plugins.vite,
             # plugins.saq,
-            # plugins.granian,
+
+            plugins.granian if settings.app.ENABLE_GRANIAN and not settings.app.DEBUG else None,
         ],
         template_config=template.config,
         # signature_namespace={"UUID": UUID},

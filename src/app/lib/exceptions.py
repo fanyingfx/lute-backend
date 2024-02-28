@@ -8,7 +8,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
-from advanced_alchemy.exceptions import IntegrityError
+from advanced_alchemy.exceptions import IntegrityError,NotFoundError as AdvancedAlchemyNotFoundError
 from litestar.exceptions import (
     HTTPException,
     InternalServerException,
@@ -110,8 +110,8 @@ async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
 
 
 def exception_to_http_response(
-    request: Request[Any, Any, Any],
-    exc: ApplicationError | RepositoryError,
+        request: Request[Any, Any, Any],
+        exc: ApplicationError | RepositoryError | AdvancedAlchemyNotFoundError,
 ) -> Response[ExceptionResponseContent]:
     """Transform repository exceptions to HTTP exceptions.
 
@@ -123,7 +123,7 @@ def exception_to_http_response(
         Exception response appropriate to the type of original exception.
     """
     http_exc: type[HTTPException]
-    if isinstance(exc, NotFoundError):
+    if isinstance(exc, NotFoundError) or isinstance(exc,AdvancedAlchemyNotFoundError):
         http_exc = NotFoundException
     elif isinstance(exc, ConflictError | RepositoryError | IntegrityError):
         http_exc = _HTTPConflictException
@@ -131,6 +131,6 @@ def exception_to_http_response(
         http_exc = PermissionDeniedException
     else:
         http_exc = InternalServerException
-    if request.app.debug and not isinstance(http_exc, PermissionDeniedException | NotFoundError | AuthorizationError):
+    if request.app.debug and not issubclass(http_exc, PermissionDeniedException | NotFoundException | AuthorizationError):
         return create_debug_response(request, exc)
     return create_exception_response(request, http_exc(detail=str(exc.__cause__)))

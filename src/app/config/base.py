@@ -399,6 +399,7 @@ class AppSettings:
     """CSRF Secure Cookie"""
     JWT_ENCRYPTION_ALGORITHM: str = field(default_factory=lambda: "HS256")
     """JWT Encryption Algorithm"""
+    ENABLE_GRANIAN: bool = field(default_factory=lambda: os.getenv("ENABLE_GRANIAN", "False") in TRUE_VALUES)
 
     @property
     def slug(self) -> str:
