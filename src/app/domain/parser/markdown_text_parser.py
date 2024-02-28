@@ -1,7 +1,6 @@
 import dataclasses
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import NotRequired, TypedDict
-from typing import Optional
 
 import mistune
 from mistune.markdown import Markdown
@@ -29,7 +28,9 @@ __all__ = (
 
 def to_camel_case(snake_str: str) -> str:
     return "".join(x.capitalize() for x in snake_str.lower().split("_"))
-def to_lower_camel_case(snake_str:str)->str:
+
+
+def to_lower_camel_case(snake_str: str) -> str:
     # We capitalize the first letter of each component except the first one
     # with the 'capitalize' method and join them together.
     camel_string = to_camel_case(snake_str)
@@ -117,14 +118,18 @@ class SentenceSegment:
     paragraph_order: int = 0
     sentence_order: int = 0
 
+
 @dataclass
 class ParsedTextSegment:
-    segment_words: list[VWord]=dataclasses.field(default_factory=list,)
-    segment_value: str=""
+    segment_words: list[VWord] = dataclasses.field(
+        default_factory=list,
+    )
+    segment_value: str = ""
     segment_raw: str = ""
     segment_type: str = ""
     paragraph_order: int = 0
     sentence_order: int = 0
+
 
 @dataclass
 class BaseSegment:
@@ -181,13 +186,13 @@ class EmptySegment(BaseSegment):
 # @dataclass
 # class Segment:
 Segment = (
-        ImageSegment
-        | SoftLineBreakSegment
-        | HardLineBreakSegment
-        | BlockSegment
-        | ParagraphSegment
-        | EmptySegment
-        | TextRawParagraphSegment
+    ImageSegment
+    | SoftLineBreakSegment
+    | HardLineBreakSegment
+    | BlockSegment
+    | ParagraphSegment
+    | EmptySegment
+    | TextRawParagraphSegment
 )
 
 

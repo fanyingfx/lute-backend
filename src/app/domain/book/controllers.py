@@ -1,6 +1,4 @@
-from dataclasses import asdict
-from typing import Any
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from advanced_alchemy.filters import CollectionFilter
 from litestar import Controller, get
@@ -27,24 +25,21 @@ from app.domain.book.dtos import (
     BookTextCreateDTO,
     BookTextDTO,
     BookUpdate,
-    BaseSegment,
     ParsedBookText,
     ParsedBookTextDTO,
-    ParsedTextSegment
+    ParsedTextSegment,
 )
 from app.domain.book.services import BookService, BookTextService, text2segment
-from app.domain.parser.markdown_text_parser import SentenceSegment
+from app.domain.parser.language_parser import LanguageParser
 from app.domain.parser.markdown_text_parser import (
     TextRawParagraphSegment,
     parse_markdown,
 )
-from app.domain.parser.spacy_parser import SpacyParser
 from app.domain.word.dependencies import provides_word_service
 from app.domain.word.dtos import WordDTO
 from app.domain.word.services import WordService
 
-if TYPE_CHECKING:
-    from app.domain.parser.language_parser import LanguageParser
+# if TYPE_CHECKING:
 
 
 class BookController(Controller):
@@ -63,8 +58,8 @@ class BookController(Controller):
 
     @get("/list")
     async def list_books(
-            self,
-            book_service: BookService,
+        self,
+        book_service: BookService,
     ) -> OffsetPagination[Book]:
         result = await book_service.list()
 
@@ -88,8 +83,7 @@ class BookController(Controller):
 
     @patch("/update", dto=BookPatchDTO)
     async def update_book(
-            self, book_service: BookService, data: DTOData[BookUpdate],
-            book_id: Annotated[int, Parameter(title="BookID")]
+        self, book_service: BookService, data: DTOData[BookUpdate], book_id: Annotated[int, Parameter(title="BookID")]
     ) -> Book:
         db_obj = await book_service.update(item_id=book_id, data=data.create_instance().__dict__)
         return book_service.to_dto(db_obj)
@@ -115,10 +109,10 @@ class BookTextController(Controller):
 
     @get("/test_parser", return_dto=ParsedBookTextDTO)
     async def test_parser(
-            self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
+        self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
     ) -> ParsedBookText:
         db_obj = await booktext_service.get(item_id=booktext_id)
-        english_parser: LanguageParser = SpacyParser("english")
+        english_parser: LanguageParser = LanguageParser.get_parser("english")
         await word_service.load_word_index(english_parser.get_language_name())
         segmentlist = parse_markdown(db_obj.book_text)
         res: list[ParsedTextSegment] = []
@@ -126,11 +120,15 @@ class BookTextController(Controller):
         for segment in segmentlist:
             if isinstance(segment, TextRawParagraphSegment):
                 sentence_segments = await text2segment(segment.segment_value, english_parser, paragraph_order)
-                res.extend((ParsedTextSegment(
-                    segment_words=segment.segment_value,
-                    segment_type=segment.segment_type,
-                    paragraph_order=paragraph_order,
-                    sentence_order=segment.sentence_order) for segment in sentence_segments))
+                res.extend(
+                    ParsedTextSegment(
+                        segment_words=segment.segment_value,
+                        segment_type=segment.segment_type,
+                        paragraph_order=paragraph_order,
+                        sentence_order=segment.sentence_order,
+                    )
+                    for segment in sentence_segments
+                )
                 paragraph_order += 1
             else:
                 res.append(ParsedTextSegment(**segment.__dict__))
@@ -142,15 +140,16 @@ class BookTextController(Controller):
         db_obj = await booktext_service.create(data.as_builtins())
         return booktext_service.to_dto(db_obj)
 
-    @post("/upload_file", media_type=MediaType.TEXT)
+    @post("/upload_book_text", media_type=MediaType.TEXT)
     async def handle_file_upload(
-            self,
-            booktext_service: BookTextService,
-            data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
-            book_id: int,
+        self,
+        booktext_service: BookTextService,
+        data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
+        book_id: int,
+        book_text_id: int,
     ) -> str:
         content = await data.read()
-        await booktext_service.create(BookText(ref_book_id=book_id, book_text=content.decode()))
+        await booktext_service.update(BookText(ref_book_id=book_id, book_text=content.decode()), item_id=book_text_id)
         return f"{data.filename} successfully uploaded"
 
     @get("/list_words", return_dto=WordDTO)

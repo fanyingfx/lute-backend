@@ -104,6 +104,20 @@ class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):
         db_obj = await self.to_model(data, "create")
         return await super().create(data=db_obj, auto_commit=auto_commit)
 
+    async def update(
+        self,
+        data: BookText | dict[str, Any],
+        item_id: Any | None = None,
+        attribute_names: Iterable[str] | None = None,
+        with_for_update: bool | None = None,
+        auto_commit: bool | None = None,
+        auto_expunge: bool | None = None,
+        auto_refresh: bool | None = None,
+        id_attribute: str | InstrumentedAttribute | None = None,
+    ) -> BookText:
+        db_obj = await self.to_model(data, "update")
+        return await super().update(item_id=item_id, data=db_obj, auto_commit=auto_commit)
+
     async def to_model(self, data: BookText | dict[str, Any], operation: str | None = None) -> BookText:
         return await super().to_model(data, operation)
 
