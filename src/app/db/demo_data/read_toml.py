@@ -1,6 +1,8 @@
-import json
 import tomllib
+from pathlib import Path
 
-with open("english.toml", "rb") as f:
+path = Path("english.toml")
+
+with path.open("rb") as f:
     data = tomllib.load(f)
-print(json.dumps(data, indent=4))
+# print(json.dumps(data, indent=4))

@@ -2,17 +2,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeVar
-from uuid import UUID
 
 from litestar.config.app import ExperimentalFeatures
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
-from litestar.dto import DTOData
-from litestar.pagination import OffsetPagination
-from litestar.params import Dependency, Parameter
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
-from litestar.security.jwt import OAuth2Login
 from litestar.stores.redis import RedisStore
-from litestar.stores.registry import StoreRegistry
 
 if TYPE_CHECKING:
     from click import Group
@@ -56,9 +50,9 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
             app_config: The :class:`AppConfig <.config.app.AppConfig>` instance.
         """
 
-        from advanced_alchemy.exceptions import RepositoryError,NotFoundError
-        # from litestar.security.jwt import Token
+        from advanced_alchemy.exceptions import NotFoundError, RepositoryError
 
+        # from litestar.security.jwt import Token
         from app.config import constants, get_settings
         from app.lib.exceptions import ApplicationError, exception_to_http_response
 
@@ -83,7 +77,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         app_config.exception_handlers = {
             ApplicationError: exception_to_http_response,
             RepositoryError: exception_to_http_response,
-            NotFoundError: exception_to_http_response
+            NotFoundError: exception_to_http_response,
         }
         # app_config.type_decoders = [*(app_config.type_decoders or []), (lambda x: x is UUID, lambda t, v: t(str(v)))]
         return app_config

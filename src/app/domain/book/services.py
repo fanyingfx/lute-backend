@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from app.db.models.book import Book, BookText
-from app.domain.book.dtos import BookTextCreate
 from app.domain.parser.markdown_text_parser import SentenceSegment, VWord
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
@@ -16,6 +15,7 @@ if TYPE_CHECKING:
     from spacy.tokens.span import Span
     from sqlalchemy.orm import InstrumentedAttribute
 
+    from app.domain.book.dtos import BookTextCreate
     from app.domain.parser.language_parser import LanguageParser
     from app.domain.word.services import WordIndex
 

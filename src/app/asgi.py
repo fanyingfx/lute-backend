@@ -45,8 +45,7 @@ def create_app() -> Litestar:
             # db.plugin,
             # plugins.vite,
             # plugins.saq,
-
-            plugins.granian if settings.app.ENABLE_GRANIAN and not settings.app.DEBUG else None,
+            plugins.granian if settings.app.ENABLE_GRANIAN and not settings.app.DEBUG else None,  # type: ignore
         ],
         template_config=template.config,
         # signature_namespace={"UUID": UUID},

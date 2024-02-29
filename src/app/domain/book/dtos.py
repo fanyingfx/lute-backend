@@ -24,7 +24,6 @@ __all__ = [
 
 # database model
 
-from dataclasses import dataclass
 
 # T = TypeVar("T")
 
