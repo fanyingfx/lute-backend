@@ -131,6 +131,6 @@ def exception_to_http_response(
         http_exc = PermissionDeniedException
     else:
         http_exc = InternalServerException
-    if request.app.debug and not issubclass(http_exc, PermissionDeniedException | NotFoundException | AuthorizationError):
+    if request.app.debug and not isinstance(exc, PermissionDeniedException | NotFoundError|AdvancedAlchemyNotFoundError | AuthorizationError):
         return create_debug_response(request, exc)
     return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
