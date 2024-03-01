@@ -3,11 +3,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+# from app.server.static_files_router import static_route_handlers
 from app.domain.book.controllers import BookController, BookTextController
 from app.domain.language.controllers import LanguageController
 from app.domain.system.controllers import SystemController
 from app.domain.web.controllers import WebController
 from app.domain.word.controllers import WordController
+
+from .static_files_router import static_route_handlers
 
 if TYPE_CHECKING:
     from litestar.types import ControllerRouterHandler
@@ -27,4 +30,5 @@ route_handlers: list[ControllerRouterHandler] = [
     WordController,
     BookController,
     BookTextController,
+    *static_route_handlers,
 ]

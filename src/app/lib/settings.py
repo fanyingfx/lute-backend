@@ -102,7 +102,7 @@ class AppSettings(BaseSettings):
     CSRF_COOKIE_NAME: str = "csrftoken"
     CSRF_COOKIE_SECURE: bool = False
     """Default URL where static assets are located."""
-    STATIC_DIR: Path = STATIC_DIR
+    # STATIC_DIR: Path = STATIC_DIR
     DEV_MODE: bool = False
 
     @property

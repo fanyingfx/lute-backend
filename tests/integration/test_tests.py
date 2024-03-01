@@ -25,22 +25,22 @@ pytestmark = pytest.mark.anyio
 #
 
 
-def test_engine_on_app(app: "Litestar", engine: "AsyncEngine") -> None:
+def test_engine_on_app(test_app: "Litestar", engine: "AsyncEngine") -> None:
     """Test that the app's engine is patched.
 
     Args:
-        app: The test Litestar instance
+        test_app: The test Litestar instance
         engine: The test SQLAlchemy engine instance.
     """
-    assert app.state[config.alchemy.engine_app_state_key] is engine
+    assert test_app.state[config.alchemy.engine_app_state_key] is engine
 
 
 @pytest.mark.anyio
-async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> None:
+async def test_db_session_dependency(test_app: "Litestar", engine: "AsyncEngine") -> None:
     """Test that handlers receive session attached to patched engine.
 
     Args:
-        app: The test Litestar instance
+        test_app: The test Litestar instance
         engine: The patched SQLAlchemy engine instance.
     """
 
@@ -48,8 +48,8 @@ async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> 
     async def db_session_dependency_patched(db_session: AsyncSession) -> dict[str, str]:
         return {"result": f"{db_session.bind is engine = }"}
 
-    app.register(db_session_dependency_patched)
+    test_app.register(db_session_dependency_patched)
     # can't use test client as it always starts its own event loop
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncClient(app=test_app, base_url="http://testserver") as client:
         response = await client.get("/db-session-test")
         assert response.json()["result"] == "db_session.bind is engine = True"

@@ -1,6 +1,6 @@
 import structlog
-from litestar import Controller, Request, Response, get
-from litestar.response import Redirect, Template
+from litestar import Controller, Request, get
+from litestar.response import Template
 
 __all__ = ("HomeController",)
 
@@ -27,6 +27,6 @@ class HomeController(Controller):
         }
         return Template("index.html", context=context)
 
-    @get("/{filename:str}", tags=["frontend:"], include_in_schema=False)
-    async def get_resource(self, filename: str) -> Response:
-        return Redirect(f"/static/{filename}")
+    # @get("/{filename:str}", tags=["frontend:"], include_in_schema=False)
+    # async def get_resource(self, filename: str) -> Response:
+    #     return Redirect(f"/static/{filename}")

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import re
 from datetime import date
 from typing import TYPE_CHECKING, Any
@@ -11,8 +10,6 @@ from app.config import base
 from app.db.models import Book, Language, Word
 
 if TYPE_CHECKING:
-    from collections import abc
-
     from litestar import Litestar
     from pytest import FixtureRequest, MonkeyPatch
 
@@ -36,19 +33,19 @@ def _patch_settings(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(base, "get_settings", get_settings)
 
 
-@pytest.fixture(scope="session")
-def event_loop() -> abc.Iterator[asyncio.AbstractEventLoop]:
-    """Scoped Event loop.
-
-    Need the event loop scoped to the session so that we can use it to check
-    containers are ready in session scoped containers fixture.
-    """
-    policy = asyncio.get_event_loop_policy()
-    loop = policy.new_event_loop()
-    try:
-        yield loop
-    finally:
-        loop.close()
+# @pytest.fixture(scope="session")
+# def event_loop() -> abc.Iterator[asyncio.AbstractEventLoop]:
+#     """Scoped Event loop.
+#
+#     Need the event loop scoped to the session so that we can use it to check
+#     containers are ready in session scoped containers fixture.
+#     """
+#     policy = asyncio.get_event_loop_policy()
+#     loop = policy.new_event_loop()
+#     try:
+#         yield loop
+#     finally:
+#         loop.close()
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -65,16 +62,16 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-@pytest.fixture(name="app")
+@pytest.fixture(name="test_app")
 def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     """App fixture.
 
     Returns:
         An application instance, configured via plugin.
     """
-    from app.asgi import create_app
+    from app.asgi import app
 
-    return create_app()
+    return app
 
 
 @pytest.fixture(name="is_unit_test")

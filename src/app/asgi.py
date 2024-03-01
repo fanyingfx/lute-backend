@@ -25,7 +25,7 @@ def create_app() -> Litestar:
     # from app.domain.accounts.guards import auth
     # from app.domain.teams import signals as team_signals
     # from app.lib.dependencies import create_collection_dependencies
-    from app.server import openapi, plugins, routers, static_files, template
+    from app.server import openapi, plugins, routers, template
 
     # dependencies = {constants.USER_DEPENDENCY_KEY: Provide(provide_user)}
     # dependencies.update(create_collection_dependencies())
@@ -37,7 +37,7 @@ def create_app() -> Litestar:
         debug=settings.app.DEBUG,
         openapi_config=openapi.config,
         route_handlers=routers.route_handlers,
-        static_files_config=static_files.config,
+        # static_files_config=static_files.config,
         plugins=[
             plugins.app_config,
             plugins.structlog,
