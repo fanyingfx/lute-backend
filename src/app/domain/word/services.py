@@ -21,7 +21,7 @@ __all__ = ["WordService", "words_store"]
 words_store = MemoryStore()
 
 
-@listener("word_created", "word_updated")
+@listener("word_created", "word_updated", "word_deleted")
 async def on_word_updated(language_name: str) -> None:
     await words_store.delete(f"{language_name}-word-index-saved")
 

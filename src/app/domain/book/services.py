@@ -167,6 +167,7 @@ async def match_word_in_sentence(sentence: Span, word_index: WordIndex, max_loop
                     vword.word_explanation = db_word.word_explanation
                     vword.word_pronunciation = db_word.word_pronunciation
                     vword.word_tokens = db_word.word_tokens
+                    vword.word_db_id = db_word.id
                     start_position = end_position
                     break
         res_word_list.append(vword)

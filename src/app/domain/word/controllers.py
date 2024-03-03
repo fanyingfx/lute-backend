@@ -1,4 +1,4 @@
-from litestar import Controller, Request, get, post
+from litestar import Controller, Request, delete, get, post
 from litestar.di import Provide
 from litestar.dto import DTOData
 
@@ -38,6 +38,12 @@ class WordController(Controller):
     async def create_word(self, word_service: WordService, data: DTOData[WordCreate]) -> Word:
         db_obj = await word_service.create(data.as_builtins())
         return word_service.to_dto(db_obj)
+
+    @delete("/delete/{word_id:int}")
+    async def delete_word(self, word_service: WordService, word_id: int, request: Request) -> None:
+        await word_service.delete(item_id=word_id)
+        request.app.emit("word_deleted", language_name="english")
+        # return word_service.to_dto(db_obj)
 
     @post("/update/{word_string:str}")
     async def update_word(self, word_service: WordService, data: WordUpdate) -> Word:

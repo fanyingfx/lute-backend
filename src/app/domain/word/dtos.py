@@ -18,7 +18,7 @@ __all__ = (
 
 
 class WordDTO(SQLAlchemyDTO[Word]):
-    config = dto.config({"max_nested_depth": 1}, exclude={"word_image", "id"}, rename_strategy="")
+    config = dto.config(exclude={"word_image"}, max_nested_depth=1, rename_fields={"id": "wordDbId"})
 
 
 # input
@@ -55,6 +55,7 @@ class WordUpdate:
     word_image_path: str | None = None
     word_tokens: list[str]
     word_counts: int
+    # id:int
 
 
 class WordUpdateDTO(DataclassDTO[WordUpdate]):

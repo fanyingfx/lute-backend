@@ -264,15 +264,13 @@ class DatabaseSettings(BaseSettings):
 
 
 @lru_cache
-def load_settings() -> (
-    tuple[
-        AppSettings,
-        DatabaseSettings,
-        OpenAPISettings,
-        ServerSettings,
-        LogSettings,
-    ]
-):
+def load_settings() -> tuple[
+    AppSettings,
+    DatabaseSettings,
+    OpenAPISettings,
+    ServerSettings,
+    LogSettings,
+]:
     """Load Settings file.
 
     As an example, I've commented on how you might go about injecting secrets into the environment for production.

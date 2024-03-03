@@ -107,6 +107,7 @@ class VWord(WordToken):
     word_tokens: list[str]
     word_pronunciation: str | None = None
     word_explanation: str | None = None
+    word_db_id: int = -1
 
 
 # @dataclass_json(letter_case=LetterCase.CAMEL)  # now all fields are encoded/decoded from camelCase

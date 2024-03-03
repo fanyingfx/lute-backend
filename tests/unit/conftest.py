@@ -53,8 +53,7 @@ def http_scope(app: Litestar) -> HTTPScope:
     """Minimal ASGI HTTP connection scope."""
 
     @get()
-    async def handler() -> None:
-        ...
+    async def handler() -> None: ...
 
     return {
         "headers": [],

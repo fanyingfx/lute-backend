@@ -48,8 +48,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
     """
 
     @overload
-    def to_dto(self, data: ModelT) -> ModelT:
-        ...
+    def to_dto(self, data: ModelT) -> ModelT: ...
 
     @overload
     def to_dto(
@@ -57,8 +56,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
         data: Sequence[ModelT],
         total: int | None = None,
         *filters: FilterTypes | ColumnElement[bool],
-    ) -> OffsetPagination[ModelT]:
-        ...
+    ) -> OffsetPagination[ModelT]: ...
 
     def to_dto(
         self,
@@ -114,8 +112,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
                 )
 
     @overload
-    def to_schema(self, dto: type[ModelDTOT], data: ModelT | RowMapping) -> ModelDTOT:
-        ...
+    def to_schema(self, dto: type[ModelDTOT], data: ModelT | RowMapping) -> ModelDTOT: ...
 
     @overload
     def to_schema(
@@ -124,8 +121,7 @@ class SQLAlchemyAsyncRepositoryService(_SQLAlchemyAsyncRepositoryService[ModelT]
         data: Sequence[ModelT] | list[RowMapping],
         total: int | None = None,
         *filters: FilterTypes,
-    ) -> OffsetPagination[ModelDTOT]:
-        ...
+    ) -> OffsetPagination[ModelDTOT]: ...
 
     def to_schema(
         self,
