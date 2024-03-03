@@ -5,7 +5,7 @@
 groups = ["default", "docs", "lint", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:8dbdc03bb455c6737669ab73a0bbeb12aa65a7e34210534beaf1bdc1f4fcdb9b"
+content_hash = "sha256:b3551fdaaea60ba5677bfdea83527db6a55a188a59520853fb3ae5501ceac3ab"
 
 [[package]]
 name = "advanced-alchemy"

@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING, TypeVar
 from litestar.config.app import ExperimentalFeatures
 from litestar.config.response_cache import ResponseCacheConfig, default_cache_key_builder
 from litestar.plugins import CLIPluginProtocol, InitPluginProtocol
-from litestar.stores.redis import RedisStore
+# from litestar.stores.redis import RedisStore
 
 if TYPE_CHECKING:
     from click import Group
     from litestar import Request
     from litestar.config.app import AppConfig
-    from redis.asyncio import Redis
+    # from redis.asyncio import Redis
 
 
 T = TypeVar("T")
@@ -22,7 +22,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
     """Application configuration plugin."""
 
     __slots__ = ("redis", "app_slug")
-    redis: Redis
+    # redis: Redis
     app_slug: str
 
     def __init__(self) -> None:
@@ -37,7 +37,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         from app.config import get_settings
 
         settings = get_settings()
-        self.redis = settings.redis.get_client()
+        # self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         # cli.add_command(user_management_app)
 
@@ -57,7 +57,7 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         from app.lib.exceptions import ApplicationError, exception_to_http_response
 
         settings = get_settings()
-        self.redis = settings.redis.get_client()
+        # self.redis = settings.redis.get_client()
         self.app_slug = settings.app.slug
         app_config.response_cache_config = ResponseCacheConfig(
             default_expiration=constants.CACHE_EXPIRATION,
@@ -82,8 +82,8 @@ class ApplicationConfigurator(InitPluginProtocol, CLIPluginProtocol):
         # app_config.type_decoders = [*(app_config.type_decoders or []), (lambda x: x is UUID, lambda t, v: t(str(v)))]
         return app_config
 
-    def redis_store_factory(self, name: str) -> RedisStore:
-        return RedisStore(self.redis, namespace=f"{self.app_slug}:{name}")
+    # def redis_store_factory(self, name: str) -> RedisStore:
+    #     return RedisStore(self.redis, namespace=f"{self.app_slug}:{name}")
 
     def _cache_key_builder(self, request: Request) -> str:
         """App name prefixed cache key builder.
