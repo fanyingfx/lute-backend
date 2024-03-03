@@ -219,7 +219,7 @@ class ViteSettings:
 class ServerSettings:
     """Server configurations."""
 
-    APP_LOC: str = "app.asgi:app"
+    APP_LOC: str = "app.asgi:litestar_app"
     """Path to app executable, or factory."""
     APP_LOC_IS_FACTORY: bool = False
     """Indicate if APP_LOC points to an executable or factory."""

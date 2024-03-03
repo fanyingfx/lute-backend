@@ -46,7 +46,7 @@ class SystemController(Controller):
         except ConnectionRefusedError:
             db_ping = False
 
-        db_status = "online" if db_ping else "offline"
+        db_status = "online" if db_ping else "offlinae"
         healthy = bool(db_ping)
         if healthy:
             await logger.adebug(

@@ -55,4 +55,4 @@ def create_app() -> Litestar:
     )
 
 
-app = create_app()
+litestar_app = create_app()

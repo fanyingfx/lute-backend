@@ -84,15 +84,15 @@ async def _seed_db(
 
 @pytest.fixture(autouse=True)
 def _patch_db(
-    test_app: "Litestar",
+    app: "Litestar",
     engine: AsyncEngine,
     sessionmaker: async_sessionmaker[AsyncSession],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(alchemy._config, "session_maker", sessionmaker)
-    monkeypatch.setitem(test_app.state, alchemy._config.engine_app_state_key, engine)
+    monkeypatch.setitem(app.state, alchemy._config.engine_app_state_key, engine)
     monkeypatch.setitem(
-        test_app.state,
+        app.state,
         alchemy._config.session_maker_app_state_key,
         async_sessionmaker(bind=engine, expire_on_commit=False),
     )
@@ -112,12 +112,12 @@ def _patch_db(
 
 
 @pytest.fixture(name="client")
-async def fx_client(test_app: Litestar) -> AsyncIterator[AsyncClient]:
+async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     """Async client that calls requests on the app.
 
     ```text
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    async with AsyncClient(app=test_app, base_url="http://testserver") as client:
+    async with AsyncClient(app=app, base_url="http://testserver") as client:
         yield client

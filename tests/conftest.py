@@ -62,16 +62,16 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-@pytest.fixture(name="test_app")
+@pytest.fixture(name="app")
 def fx_app(pytestconfig: pytest.Config, monkeypatch: MonkeyPatch) -> Litestar:
     """App fixture.
 
     Returns:
         An application instance, configured via plugin.
     """
-    from app.asgi import app
+    from app.asgi import litestar_app
 
-    return app
+    return litestar_app
 
 
 @pytest.fixture(name="is_unit_test")

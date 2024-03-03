@@ -1,0 +1,1766 @@
+components:
+  schemas:
+    AddBookAndContentBookCreateRequestBody:
+      properties:
+        bookName:
+          oneOf:
+          - type: 'null'
+          - type: string
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          oneOf:
+          - type: 'null'
+          - items:
+              $ref: '#/components/schemas/AddBookAndContentBookCreate_0_0RequestBody'
+            type: array
+      required:
+      - languageId
+      title: AddBookAndContentBookCreateRequestBody
+      type: object
+    AddBookAndContentBookCreate_0_0RequestBody:
+      properties:
+        bookText:
+          type: string
+        bookTitle:
+          oneOf:
+          - type: 'null'
+          - type: string
+      required:
+      - bookText
+      title: AddBookAndContentBookCreate_0_0RequestBody
+      type: object
+    AddBookAndContentBookResponseBody:
+      properties:
+        bookName:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          items:
+            $ref: '#/components/schemas/AddBookAndContentBook_0ResponseBody'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - bookName
+      - createdAt
+      - id
+      - languageId
+      - texts
+      - updatedAt
+      title: AddBookAndContentBookResponseBody
+      type: object
+    AddBookAndContentBook_0ResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: AddBookAndContentBook_0ResponseBody
+      type: object
+    AddBookBookCreateRequestBody:
+      properties:
+        bookName:
+          oneOf:
+          - type: 'null'
+          - type: string
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          oneOf:
+          - type: 'null'
+          - items:
+              $ref: '#/components/schemas/AddBookBookCreate_0_0RequestBody'
+            type: array
+      required:
+      - languageId
+      title: AddBookBookCreateRequestBody
+      type: object
+    AddBookBookCreate_0_0RequestBody:
+      properties:
+        bookText:
+          type: string
+        bookTitle:
+          oneOf:
+          - type: 'null'
+          - type: string
+      required:
+      - bookText
+      title: AddBookBookCreate_0_0RequestBody
+      type: object
+    AddBookBookResponseBody:
+      properties:
+        bookName:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          items:
+            $ref: '#/components/schemas/AddBookBook_0ResponseBody'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - bookName
+      - createdAt
+      - id
+      - languageId
+      - texts
+      - updatedAt
+      title: AddBookBookResponseBody
+      type: object
+    AddBookBook_0ResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: AddBookBook_0ResponseBody
+      type: object
+    AddBooktextBookTextCreateRequestBody:
+      properties:
+        bookText:
+          type: string
+        bookTitle:
+          oneOf:
+          - type: 'null'
+          - type: string
+      required:
+      - bookText
+      title: AddBooktextBookTextCreateRequestBody
+      type: object
+    CreateLanguageLanguageDataRequestBody:
+      properties:
+        RTL:
+          type: boolean
+        languageName:
+          type: string
+        parserName:
+          type: string
+      required:
+      - languageName
+      - parserName
+      title: CreateLanguageLanguageDataRequestBody
+      type: object
+    CreateLanguageLanguageResponseBody:
+      properties:
+        RTL:
+          type: boolean
+        id:
+          type: integer
+        languageName:
+          type: string
+        parserName:
+          type: string
+      required:
+      - id
+      - languageName
+      - parserName
+      title: CreateLanguageLanguageResponseBody
+      type: object
+    CreateOrUpdateWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: CreateOrUpdateWordResponseBody
+      type: object
+    CreateOrUpdateWordUpdateRequestBody:
+      properties:
+        isMultipleWords:
+          oneOf:
+          - type: boolean
+        languageId:
+          oneOf:
+          - type: integer
+        wordCounts:
+          oneOf:
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordImagePath:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: string
+        wordPos:
+          oneOf:
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          oneOf:
+          - type: integer
+        wordString:
+          oneOf:
+          - type: string
+        wordTokens:
+          oneOf:
+          - items:
+              type: string
+            type: array
+      required: []
+      title: CreateOrUpdateWordUpdateRequestBody
+      type: object
+    CreateWordWordCreateRequestBody:
+      properties:
+        isMultipleWords:
+          type: boolean
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          type: string
+        wordPos:
+          type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - wordLemma
+      - wordPos
+      - wordString
+      - wordTokens
+      title: CreateWordWordCreateRequestBody
+      type: object
+    CreateWordWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: CreateWordWordResponseBody
+      type: object
+    GetBookByIdBookResponseBody:
+      properties:
+        bookName:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          items:
+            $ref: '#/components/schemas/GetBookByIdBook_0ResponseBody'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - bookName
+      - createdAt
+      - id
+      - languageId
+      - texts
+      - updatedAt
+      title: GetBookByIdBookResponseBody
+      type: object
+    GetBookByIdBook_0ResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: GetBookByIdBook_0ResponseBody
+      type: object
+    GetWordByIdWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: GetWordByIdWordResponseBody
+      type: object
+    ListBooksBookResponseBody:
+      properties:
+        bookName:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          items:
+            $ref: '#/components/schemas/ListBooksBook_0ResponseBody'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - bookName
+      - createdAt
+      - id
+      - languageId
+      - texts
+      - updatedAt
+      title: ListBooksBookResponseBody
+      type: object
+    ListBooksBook_0ResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: ListBooksBook_0ResponseBody
+      type: object
+    ListLanguagesLanguageResponseBody:
+      properties:
+        RTL:
+          type: boolean
+        id:
+          type: integer
+        languageName:
+          type: string
+        parserName:
+          type: string
+      required:
+      - id
+      - languageName
+      - parserName
+      title: ListLanguagesLanguageResponseBody
+      type: object
+    ListWordsWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: ListWordsWordResponseBody
+      type: object
+    SearchWordStringWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: SearchWordStringWordResponseBody
+      type: object
+    SystemHealth:
+      properties:
+        app:
+          type: string
+        database_status:
+          enum:
+          - online
+          - offline
+          type: string
+        version:
+          type: string
+      required:
+      - database_status
+      title: SystemHealth
+      type: object
+    TestParserParsedBookTextResponseBody:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/TestParserParsedBookText_0ResponseBody'
+          type: array
+      required:
+      - data
+      title: TestParserParsedBookTextResponseBody
+      type: object
+    TestParserParsedBookText_0ResponseBody:
+      properties:
+        paragraphOrder:
+          type: integer
+        segmentRaw:
+          type: string
+        segmentType:
+          type: string
+        segmentValue:
+          type: string
+        segmentWords:
+          items:
+            $ref: '#/components/schemas/TestParserParsedTextSegment_0ResponseBody'
+          type: array
+        sentenceOrder:
+          type: integer
+      required: []
+      title: TestParserParsedBookText_0ResponseBody
+      type: object
+    TestParserParsedTextSegment_0ResponseBody:
+      properties:
+        isEos:
+          type: boolean
+        isMultipleWords:
+          type: boolean
+        isWord:
+          type: boolean
+        nextIsWs:
+          type: boolean
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          type: string
+        wordPos:
+          type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - wordLemma
+      - wordPos
+      - wordString
+      - wordTokens
+      title: TestParserParsedTextSegment_0ResponseBody
+      type: object
+    UpdateBookBookResponseBody:
+      properties:
+        bookName:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        languageId:
+          type: integer
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+        texts:
+          items:
+            $ref: '#/components/schemas/UpdateBookBook_0ResponseBody'
+          type: array
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - bookName
+      - createdAt
+      - id
+      - languageId
+      - texts
+      - updatedAt
+      title: UpdateBookBookResponseBody
+      type: object
+    UpdateBookBookUpdateRequestBody:
+      properties:
+        bookName:
+          oneOf:
+          - type: 'null'
+          - type: string
+        publishedAt:
+          oneOf:
+          - type: 'null'
+          - format: date
+            type: string
+      required: []
+      title: UpdateBookBookUpdateRequestBody
+      type: object
+    UpdateBookBook_0ResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: UpdateBookBook_0ResponseBody
+      type: object
+    UpdateWordWordResponseBody:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        isMultipleWords:
+          type: boolean
+        languageId:
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+        wordCounts:
+          oneOf:
+          - type: 'null'
+          - type: integer
+        wordExplanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordLemma:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPos:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordPronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        wordStatus:
+          type: integer
+        wordString:
+          type: string
+        wordTokens:
+          items:
+            type: string
+          type: array
+      required:
+      - createdAt
+      - isMultipleWords
+      - languageId
+      - updatedAt
+      - wordStatus
+      - wordString
+      - wordTokens
+      title: UpdateWordWordResponseBody
+      type: object
+    WordUpdate:
+      properties:
+        is_multiple_words:
+          type: boolean
+        language_id:
+          type: integer
+        word_counts:
+          type: integer
+        word_explanation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        word_image_path:
+          oneOf:
+          - type: 'null'
+          - type: string
+        word_lemma:
+          type: string
+        word_pos:
+          type: string
+        word_pronunciation:
+          oneOf:
+          - type: 'null'
+          - type: string
+        word_status:
+          type: integer
+        word_string:
+          type: string
+        word_tokens:
+          items:
+            type: string
+          type: array
+      required:
+      - language_id
+      - word_counts
+      - word_status
+      - word_string
+      - word_tokens
+      title: WordUpdate
+      type: object
+    app.domain.book.controllers.BookTextController.add_booktextBookTextResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: app.domain.book.controllers.BookTextController.add_booktextBookTextResponseBody
+      type: object
+    app.domain.book.controllers.BookTextController.get_booktextBookTextResponseBody:
+      properties:
+        bookText:
+          type: string
+        id:
+          type: integer
+        refBookId: {}
+        title:
+          type: string
+      required:
+      - bookText
+      - id
+      - refBookId
+      title: app.domain.book.controllers.BookTextController.get_booktextBookTextResponseBody
+      type: object
+info:
+  title: app
+  version: 0.2.0
+openapi: 3.1.0
+paths:
+  /book/add:
+    post:
+      deprecated: false
+      operationId: BookAddAddBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBookBookCreateRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddBookBookResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: AddBook
+      tags:
+      - book
+  /book/add_book_and_content:
+    post:
+      deprecated: false
+      operationId: BookAddBookAndContentAddBookAndContent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBookAndContentBookCreateRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddBookAndContentBookResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: AddBookAndContent
+      tags:
+      - book
+  /book/book_id/{book_id}:
+    get:
+      deprecated: false
+      operationId: BookBookIdGetBookById
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: path
+        name: book_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBookByIdBookResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: GetBookById
+      tags:
+      - book
+  /book/delete/{book_id}:
+    delete:
+      deprecated: false
+      operationId: BookDeleteBookIdDeleteBook
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: path
+        name: book_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: Request fulfilled, nothing follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: DeleteBook
+      tags:
+      - book
+  /book/list:
+    get:
+      deprecated: false
+      operationId: BookListListBooks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListBooksBookResponseBody'
+                type: array
+          description: Request fulfilled, document follows
+          headers: {}
+      summary: ListBooks
+      tags:
+      - book
+  /book/update:
+    patch:
+      deprecated: false
+      operationId: BookUpdateUpdateBook
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: query
+        name: book_id
+        required: true
+        schema:
+          title: BookID
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookBookUpdateRequestBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateBookBookResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: UpdateBook
+      tags:
+      - book
+  /booktext/add:
+    post:
+      deprecated: false
+      operationId: BooktextAddAddBooktext
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBooktextBookTextCreateRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app.domain.book.controllers.BookTextController.add_booktextBookTextResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: AddBooktext
+      tags:
+      - book
+      - booktext
+  /booktext/booktext/{book_id}:
+    get:
+      deprecated: false
+      operationId: BooktextBookIdGetBooktext
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: path
+        name: book_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app.domain.book.controllers.BookTextController.get_booktextBookTextResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: GetBooktext
+      tags:
+      - book
+      - booktext
+  /booktext/list_words:
+    get:
+      deprecated: false
+      operationId: BooktextListWordsListWords
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListWordsWordResponseBody'
+                type: array
+          description: Request fulfilled, document follows
+          headers: {}
+      summary: ListWords
+      tags:
+      - book
+      - booktext
+  /booktext/test_parser:
+    get:
+      deprecated: false
+      operationId: BooktextTestParserTestParser
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: query
+        name: booktext_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestParserParsedBookTextResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: TestParser
+      tags:
+      - book
+      - booktext
+  /booktext/upload_book_text:
+    post:
+      deprecated: false
+      operationId: BooktextUploadBookTextHandleFileUpload
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: query
+        name: book_id
+        required: true
+        schema:
+          type: integer
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: query
+        name: book_text_id
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  contentMediaType: application/octet-stream
+                  format: binary
+                  type: string
+              type: object
+        required: true
+      responses:
+        '201':
+          content:
+            text/plain:
+              schema:
+                type: string
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: HandleFileUpload
+      tags:
+      - book
+      - booktext
+  /health:
+    get:
+      deprecated: false
+      description: Execute a health check against backend components.  Returns system
+        information including database and cache status.
+      operationId: SystemHealth
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealth'
+          description: Request fulfilled, document follows
+          headers: {}
+      summary: Health Check
+      tags:
+      - System
+  /language/create:
+    post:
+      deprecated: false
+      operationId: LanguageCreateCreateLanguage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLanguageLanguageDataRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLanguageLanguageResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: CreateLanguage
+      tags:
+      - language
+  /language/languages:
+    get:
+      deprecated: false
+      operationId: LanguageLanguagesListLanguages
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ListLanguagesLanguageResponseBody'
+                type: array
+          description: Request fulfilled, document follows
+          headers: {}
+      summary: ListLanguages
+      tags:
+      - language
+  /language/parsers:
+    get:
+      deprecated: false
+      operationId: LanguageParsersListParsers
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Request fulfilled, document follows
+          headers: {}
+      summary: ListParsers
+      tags:
+      - language
+  /word/create:
+    post:
+      deprecated: false
+      operationId: WordCreateCreateWord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWordWordCreateRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWordWordResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: CreateWord
+      tags:
+      - word
+  /word/create_or_update:
+    post:
+      deprecated: false
+      operationId: WordCreateOrUpdateCreateOrUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateWordUpdateRequestBody'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrUpdateWordResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: CreateOrUpdate
+      tags:
+      - word
+  /word/update/{word_string}:
+    post:
+      deprecated: false
+      operationId: WordUpdateWordStringUpdateWord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordUpdate'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateWordWordResponseBody'
+          description: Document created, URL follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: UpdateWord
+      tags:
+      - word
+  /word/word_id/{word_id}:
+    get:
+      deprecated: false
+      operationId: WordWordIdGetWordById
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: path
+        name: word_id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWordByIdWordResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: GetWordById
+      tags:
+      - word
+  /word/word_string/{word_string}:
+    get:
+      deprecated: false
+      operationId: WordWordStringSearchWordString
+      parameters:
+      - allowEmptyValue: false
+        allowReserved: false
+        deprecated: false
+        in: path
+        name: word_string
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchWordStringWordResponseBody'
+          description: Request fulfilled, document follows
+          headers: {}
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation Exception
+                examples:
+                  ValidationException:
+                    value:
+                      detail: Bad Request
+                      extra: {}
+                      status_code: 400
+                properties:
+                  detail:
+                    type: string
+                  extra:
+                    additionalProperties: {}
+                    type:
+                    - 'null'
+                    - object
+                    - array
+                  status_code:
+                    type: integer
+                required:
+                - detail
+                - status_code
+                type: object
+          description: Bad request syntax or unsupported method
+      summary: SearchWordString
+      tags:
+      - word
+servers:
+- url: http://localhost:8000
