@@ -3,7 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from app.db.models.book import Book, BookText
-from app.domain.parser.markdown_text_parser import SentenceSegment, VWord
+from app.domain.parser.markdown_text_parser import (
+    ParsedTextSegment,
+    Segment,
+    SentenceSegment,
+    TextRawParagraphSegment,
+    VWord,
+)
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 from app.lib.timer import async_timed  # type: ignore
@@ -200,3 +206,24 @@ async def text2segment(text: str, language_parser: LanguageParser, paragraph_ord
         parsed_sent.sentence_order = index
         sentences.append(parsed_sent)
     return sentences
+
+
+async def get_parsed_text_segments(segmentlist: list[Segment], parser: LanguageParser) -> list[ParsedTextSegment]:
+    paragraph_order = 1
+    res: list[ParsedTextSegment] = []
+    for segment in segmentlist:
+        if isinstance(segment, TextRawParagraphSegment):
+            sentence_segments = await text2segment(segment.segment_value, parser, paragraph_order)
+            for sentence_segment in sentence_segments:
+                res.append(
+                    ParsedTextSegment(
+                        segment_words=sentence_segment.segment_value,
+                        segment_type=sentence_segment.segment_type,
+                        paragraph_order=paragraph_order,
+                        sentence_order=sentence_segment.sentence_order,
+                    )
+                )
+            paragraph_order += 1
+        else:
+            res.append(ParsedTextSegment(**segment.__dict__))
+    return res

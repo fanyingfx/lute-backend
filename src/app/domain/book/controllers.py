@@ -1,6 +1,5 @@
 from typing import Annotated
 
-from advanced_alchemy.filters import CollectionFilter
 from litestar import Controller, get
 
 __all__ = ("BookController", "BookTextController")
@@ -27,12 +26,10 @@ from app.domain.book.dtos import (
     BookUpdate,
     ParsedBookText,
     ParsedBookTextDTO,
-    ParsedTextSegment,
 )
-from app.domain.book.services import BookService, BookTextService, text2segment
+from app.domain.book.services import BookService, BookTextService, get_parsed_text_segments
 from app.domain.parser.language_parser import LanguageParser
 from app.domain.parser.markdown_text_parser import (
-    TextRawParagraphSegment,
     parse_markdown,
 )
 from app.domain.word.dependencies import provides_word_service
@@ -45,14 +42,16 @@ class BookController(Controller):
     tags = ["book"]
     dependencies = {
         "book_service": Provide(provides_book_service),
+        "booktext_service": Provide(provides_booktext_service),
+        "word_service": Provide(provides_word_service),
     }
     return_dto = BookDTO
 
-    @get("/book_id/{book_id:int}")
-    async def get_book_by_id(self, book_service: BookService, book_id: int) -> Book:
-        book = await book_service.get(item_id=book_id)
-
-        return book_service.to_dto(book)
+    # @get("/book_id/{book_id:int}")
+    # async def get_book_by_id(self, book_service: BookService, book_id: int) -> Book:
+    #     book = await book_service.get(item_id=book_id)
+    #
+    #     return book_service.to_dto(book)
 
     @get("/list")
     async def list_books(
@@ -86,6 +85,18 @@ class BookController(Controller):
         db_obj = await book_service.update(item_id=book_id, data=data.create_instance().__dict__)
         return book_service.to_dto(db_obj)
 
+    @get("/booktext/{booktext_id:int}", return_dto=ParsedBookTextDTO)
+    async def get_booktext(
+        self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
+    ) -> ParsedBookText:
+        db_obj = await booktext_service.get(item_id=booktext_id)
+        english_parser: LanguageParser = LanguageParser.get_parser("english")
+        await word_service.load_word_index(english_parser.get_language_name())
+        segmentlist = parse_markdown(db_obj.book_text)
+        res = await get_parsed_text_segments(segmentlist, english_parser)
+
+        return ParsedBookText(data=res)
+
     @delete("/delete/{book_id:int}")
     async def delete_book(self, book_id: int, book_service: BookService) -> None:
         _ = await book_service.delete(item_id=book_id, auto_commit=True)
@@ -99,39 +110,6 @@ class BookTextController(Controller):
         "word_service": Provide(provides_word_service),
     }
     return_dto = BookTextDTO
-
-    @get("/booktext/{book_id:int}")
-    async def get_booktext(self, booktext_service: BookTextService, book_id: int) -> BookText:
-        db_obj = await booktext_service.get(item_id=book_id)
-        return booktext_service.to_dto(db_obj)
-
-    @get("/test_parser", return_dto=ParsedBookTextDTO)
-    async def test_parser(
-        self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
-    ) -> ParsedBookText:
-        db_obj = await booktext_service.get(item_id=booktext_id)
-        english_parser: LanguageParser = LanguageParser.get_parser("english")
-        await word_service.load_word_index(english_parser.get_language_name())
-        segmentlist = parse_markdown(db_obj.book_text)
-        res: list[ParsedTextSegment] = []
-        paragraph_order = 1
-        for segment in segmentlist:
-            if isinstance(segment, TextRawParagraphSegment):
-                sentence_segments = await text2segment(segment.segment_value, english_parser, paragraph_order)
-                res.extend(
-                    ParsedTextSegment(
-                        segment_words=segment.segment_value,
-                        segment_type=segment.segment_type,
-                        paragraph_order=paragraph_order,
-                        sentence_order=segment.sentence_order,
-                    )
-                    for segment in sentence_segments
-                )
-                paragraph_order += 1
-            else:
-                res.append(ParsedTextSegment(**segment.__dict__))
-
-        return ParsedBookText(data=res)
 
     @post("/add", dto=BookTextCreateDTO)
     async def add_booktext(self, booktext_service: BookTextService, data: DTOData[BookTextCreate]) -> BookText:
@@ -152,6 +130,6 @@ class BookTextController(Controller):
 
     @get("/list_words", return_dto=WordDTO)
     async def list_words(self, word_service: WordService) -> OffsetPagination[Word]:
-        collection_filter = CollectionFilter("is_multiple_words", [True])
-        db_obj = await word_service.list(collection_filter)
+        # collection_filter = CollectionFilter("is_multiple_words", [True])
+        db_obj = await word_service.list()
         return word_service.to_dto(db_obj)

@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 __all__ = ["Book", "BookText"]
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
     from app.db.models.language import Language
 
 
-class Book(BigIntBase, AsyncAttrs):
+class Book(BigIntBase):
     """Book Model."""
 
     __tablename__ = "books"  # type: ignore[assignment]
@@ -31,7 +30,7 @@ class Book(BigIntBase, AsyncAttrs):
     language: Mapped["Language"] = relationship(lazy="noload")  # noqa
 
 
-class BookText(BigIntBase, AsyncAttrs):
+class BookText(BigIntBase):
     __tablename__ = "booktexts"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic BookText Table"}
     ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))
