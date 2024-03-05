@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload, selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.db.models.book import Book, BookText
 from app.domain.book.services import BookService, BookTextService
@@ -23,13 +23,15 @@ async def provides_book_service(db_session: AsyncSession) -> AsyncGenerator[Book
     async with BookService.new(
         session=db_session,
         statement=select(Book)
+        .options(selectinload(Book.texts).defer(BookText.book_text))
+        .options(joinedload(Book.language)),
         # .join(BookText, onclause=Book.id == BookText.ref_book_id, isouter=True)
-        .options(
-            selectinload(Book.texts).options(
-                joinedload(BookText.book, innerjoin=True).options(noload("*")),
-            ),
-            noload("*"),
-        ),
+        # .options(
+        #     selectinload(Book.texts).options(
+        #         joinedload(BookText.book, innerjoin=True).options(noload("*")),
+        #     ),
+        #     noload("*"),
+        # ),
         # .order_by(Book.updated_at)
         # .options(
         # ),

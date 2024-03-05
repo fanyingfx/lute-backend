@@ -39,8 +39,6 @@ from app.domain.word.dependencies import provides_word_service
 from app.domain.word.dtos import WordDTO
 from app.domain.word.services import WordService
 
-# if TYPE_CHECKING:
-
 
 class BookController(Controller):
     path = "/book"

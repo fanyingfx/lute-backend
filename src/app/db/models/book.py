@@ -1,15 +1,19 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 __all__ = ["Book", "BookText"]
+if TYPE_CHECKING:
+    from app.db.models.language import Language
 
 
-class Book(BigIntBase):
+class Book(BigIntBase, AsyncAttrs):
     """Book Model."""
 
     __tablename__ = "books"  # type: ignore[assignment]
@@ -23,17 +27,16 @@ class Book(BigIntBase):
     published_at: Mapped[date | None] = mapped_column(Date())
 
     # ORM Relationships
-    texts: Mapped[list[BookText]] = relationship(lazy="noload", cascade="all,delete-orphan")
+    texts: Mapped[list[BookText]] = relationship(cascade="all,delete-orphan")
+    language: Mapped["Language"] = relationship(lazy="noload")  # noqa
 
 
-class BookText(BigIntBase):
+class BookText(BigIntBase, AsyncAttrs):
     __tablename__ = "booktexts"  # type: ignore[assignment]
     __table_args__ = {"comment": "Basic BookText Table"}
     ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))
-    book_text: Mapped[str] = mapped_column(Text)
     title: Mapped[str] = mapped_column(String(length=300), nullable=True)
+    book_text: Mapped[str] = mapped_column(Text)
 
     def __repr__(self) -> str:
         return f"BookText(id={self.id!r}, book_text={self.book_text!r}, title={self.title!r})"
-
-    book: Mapped[Book] = relationship(back_populates="texts", lazy="noload")

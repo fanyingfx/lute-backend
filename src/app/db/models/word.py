@@ -31,6 +31,7 @@ class Word(BigIntBase):
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()  # type: ignore
     )
     word_image: Mapped[WordImage | None] = relationship(lazy="noload", cascade="all, delete-orphan")
+    first_word: Mapped[str] = mapped_column(String(100), nullable=True)
 
     def __repr__(self) -> str:
         return (

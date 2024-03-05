@@ -18,6 +18,8 @@ class Language(BigIntBase):
     language_name: Mapped[str] = mapped_column(String(length=40))
     parser_name: Mapped[str] = mapped_column(String(length=40))
     RTL: Mapped[bool] = mapped_column(Boolean, default=False, comment="is Right-to-left Language")
+    # book_language: Mapped["Book"] = relationship(back_populates="language", lazy="noload")
+    # books: Mapped[list["Book"]] = relationship(lazy="noload", cascade="all,delete-orphan")
 
     def get_parser(self) -> LanguageParser:
         return LanguageParser.get_parser(self.parser_name)

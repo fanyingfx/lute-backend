@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from app.domain.parser.language_parser import LanguageParser
     from app.domain.word.services import WordIndex
 
-__all__ = ["BookService"]
+__all__ = ["BookService", "BookTextService"]
 
 
 class BookRepository(SQLAlchemyAsyncRepository[Book]):

@@ -22,7 +22,8 @@ __all__ = (
     "parse_node",
     "parse_paragraph",
     "markdown",
-    # "dict_to_camel_case",
+    "TextRawParagraphSegment",
+    "parse_markdown",
 )
 
 
@@ -35,33 +36,6 @@ def to_lower_camel_case(snake_str: str) -> str:
     # with the 'capitalize' method and join them together.
     camel_string = to_camel_case(snake_str)
     return snake_str[0].lower() + camel_string[1:]
-
-
-# def to_camel_dict(snake_dataclass) -> dict:  # type: ignore
-#
-#     return {to_camel_case(k): v for k, v in asdict(snake_dataclass).items()}
-
-# def dict_to_camel_case(input_dataclass):  # type: ignore
-#     output_dict = {}
-#     for key, value in asdict(input_dataclass).items():
-#         if isinstance(value, dict):
-#             value = dict_to_camel_case(value)  # type: ignore
-#         output_dict[to_camel_case(key)] = value
-#     return output_dict
-# def dict_to_camel_case(input_dataclass) -> dict:
-#     renamed_dict = {}
-#     if dataclasses._is_dataclass_instance(input_dataclass):  # type: ignore[attr-defined]
-#         input_dict = asdict(input_dataclass)
-#     else:
-#         input_dict = input_dataclass
-#     for key, value in input_dict.items():
-#         new_key = to_lower_camel_case(key)
-#         if isinstance(value, dict):
-#             value = dict_to_camel_case(value)  # type: ignore[no-untyped-call]
-#         elif isinstance(value, list):
-#             value = [dict_to_camel_case(item) if isinstance(item, dict) else item for item in value]
-#         renamed_dict[new_key] = value
-#     return renamed_dict
 
 
 markdown: Markdown = mistune.create_markdown(renderer=None)
@@ -248,9 +222,9 @@ def flatten_segments(segments: list[Segment]) -> list[Segment]:
 
 
 def parse_markdown(text: str) -> list[Segment]:
-    doc: list[MarkDownNode] = markdown(text)
-    segments = [parse_node(m) for m in doc]
-    return flatten_segments(segments)
+    _doc: list[MarkDownNode] = markdown(text)
+    _segments = [parse_node(m) for m in _doc]
+    return flatten_segments(_segments)
 
 
 if __name__ == "__main__":

@@ -20,16 +20,9 @@ __all__ = [
     "ParsedTextSegment",
     "ParsedBookTextDTO",
     "ParsedBookText",
+    "BookPatchDTO",
+    "BookTextCreateDTO",
 ]
-
-# database model
-
-
-# T = TypeVar("T")
-
-# @dataclass
-# class ReturnData(Generic[T]):
-#     data: list[T]
 
 
 @dataclass
@@ -44,9 +37,7 @@ class ParsedBookTextDTO(DataclassDTO[ParsedBookText]):
 
 
 class BookDTO(SQLAlchemyDTO[Book]):
-    config = dto.config(
-        max_nested_depth=1,
-    )
+    config = dto.config(max_nested_depth=1, exclude={"texts.0.book_text"})
 
 
 class BookTextDTO(SQLAlchemyDTO[BookText]):

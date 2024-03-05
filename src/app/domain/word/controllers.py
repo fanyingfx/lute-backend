@@ -31,7 +31,7 @@ class WordController(Controller):
     @post(path="/create_or_update", dto=WordPatchDTO)
     async def create_or_update(self, word_service: WordService, data: DTOData[WordUpdate], request: Request) -> Word:
         db_obj = await word_service.create_or_update(data.create_instance().__dict__)
-        request.app.emit("word_updated", language_name="english")
+        request.app.emit("word_updated", language_name="english", word_string=db_obj.first_word)
         return word_service.to_dto(db_obj)
 
     @post("/create", dto=WordCreateDTO)
