@@ -172,21 +172,21 @@ line-length = 120
 src = ["src", "tests"]
 target-version = "py311"
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 12
 
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = [
     "classmethod",
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["src", "tests"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**/*.*" = [
     "A",
     "ARG",
