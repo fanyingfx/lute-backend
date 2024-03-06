@@ -42,8 +42,6 @@ class BookController(Controller):
     tags = ["book"]
     dependencies = {
         "book_service": Provide(provides_book_service),
-        "booktext_service": Provide(provides_booktext_service),
-        "word_service": Provide(provides_word_service),
     }
     return_dto = BookDTO
 
@@ -85,25 +83,13 @@ class BookController(Controller):
         db_obj = await book_service.update(item_id=book_id, data=data.create_instance().__dict__)
         return book_service.to_dto(db_obj)
 
-    @get("/booktext/{booktext_id:int}", return_dto=ParsedBookTextDTO)
-    async def get_booktext(
-        self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
-    ) -> ParsedBookText:
-        db_obj = await booktext_service.get(item_id=booktext_id)
-        english_parser: LanguageParser = LanguageParser.get_parser("english")
-        await word_service.load_word_index(english_parser.get_language_name())
-        segmentlist = parse_markdown(db_obj.book_text)
-        res = await get_parsed_text_segments(segmentlist, english_parser)
-
-        return ParsedBookText(data=res)
-
     @delete("/delete/{book_id:int}")
     async def delete_book(self, book_id: int, book_service: BookService) -> None:
         _ = await book_service.delete(item_id=book_id, auto_commit=True)
 
 
 class BookTextController(Controller):
-    path = "/booktext"
+    path = "/book"
     tags = ["book", "booktext"]
     dependencies = {
         "booktext_service": Provide(provides_booktext_service),
@@ -111,7 +97,7 @@ class BookTextController(Controller):
     }
     return_dto = BookTextDTO
 
-    @post("/add", dto=BookTextCreateDTO)
+    @post("/add_booktext", dto=BookTextCreateDTO)
     async def add_booktext(self, booktext_service: BookTextService, data: DTOData[BookTextCreate]) -> BookText:
         db_obj = await booktext_service.create(data.as_builtins())
         return booktext_service.to_dto(db_obj)
@@ -133,3 +119,15 @@ class BookTextController(Controller):
         # collection_filter = CollectionFilter("is_multiple_words", [True])
         db_obj = await word_service.list()
         return word_service.to_dto(db_obj)
+
+    @get("/booktext/{booktext_id:int}", return_dto=ParsedBookTextDTO)
+    async def get_booktext(
+        self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
+    ) -> ParsedBookText:
+        db_obj = await booktext_service.get(item_id=booktext_id)
+        english_parser: LanguageParser = LanguageParser.get_parser("english")
+        await word_service.load_word_index(english_parser.get_language_name())
+        segmentlist = parse_markdown(db_obj.book_text)
+        res = await get_parsed_text_segments(segmentlist, english_parser)
+
+        return ParsedBookText(data=res)

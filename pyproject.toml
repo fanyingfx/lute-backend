@@ -1,6 +1,6 @@
 [project]
 name = "app"
-version = "0.1.2"
+version = "0.1.3"
 description = "A minimal template for Litestar based projects"
 authors = [
     { name = "Jacob Coffee", email = "jacob@z7x.org" },

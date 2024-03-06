@@ -15,7 +15,7 @@ parser_instances: dict[str, "LanguageParser"] = {}
 def _get_parser(language_name: str) -> "LanguageParser":
     if language_name not in parser_instances:
         if language_name not in parser_mapping:
-            raise ValueError(f"Parser {language_name} is not registered")
+            raise ValueError(f"Parser '{language_name}' is not registered")
         parser_instances[language_name] = parser_mapping[language_name](language_name)
     return parser_instances[language_name]
 

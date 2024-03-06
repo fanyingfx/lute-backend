@@ -5,7 +5,7 @@ from sqlalchemy.orm import InstrumentedAttribute
 
 from app.db.models.language import Language
 from app.domain.parser import parser_tool
-from app.lib import exceptions
+from app.lib.exceptions import LanguageParserError
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
 
@@ -35,7 +35,7 @@ class LanguageService(SQLAlchemyAsyncRepositoryService[Language]):
     ) -> Language:
         db_obj = await self.to_model(data, "create")
         if not parser_tool.parser_exists(db_obj.parser_name):
-            raise exceptions.ApplicationError("Parser does not exist")
+            raise LanguageParserError(f"Parser '{db_obj.parser_name}' is not found")
         return await super().create(data=db_obj, auto_commit=auto_commit)
 
     async def update(

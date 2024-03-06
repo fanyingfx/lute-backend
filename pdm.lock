@@ -806,7 +806,7 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.98.15"
+version = "6.98.17"
 requires_python = ">=3.8"
 summary = "A library for property-based testing"
 dependencies = [
@@ -814,8 +814,8 @@ dependencies = [
     "sortedcontainers<3.0.0,>=2.1.0",
 ]
 files = [
-    {file = "hypothesis-6.98.15-py3-none-any.whl", hash = "sha256:5b40fd81fce9e0b35f0a47e10eb41f375a6b9e8551d0e1084c83b8b0d0d1bb6b"},
-    {file = "hypothesis-6.98.15.tar.gz", hash = "sha256:1e31210951511b24ce8b3b6e04d791c466385a30ac3af571bf2223954b025d77"},
+    {file = "hypothesis-6.98.17-py3-none-any.whl", hash = "sha256:313f64b9f9f95e12c8b5342466bef7f352d2608afeeb434817c039602b45f0c4"},
+    {file = "hypothesis-6.98.17.tar.gz", hash = "sha256:bbd227000cc21a9686a00867f031479c3812d8ab076e4af1c813f6b3a50c98f5"},
 ]
 
 [[package]]
@@ -908,7 +908,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.6.2"
+version = "2.6.3"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
@@ -924,8 +924,8 @@ dependencies = [
     "typing-extensions",
 ]
 files = [
-    {file = "litestar-2.6.2-py3-none-any.whl", hash = "sha256:f898c0fab8243fa0d772e3bd0677b86d2e6bc61e0f8f437d39edc91fcbce967a"},
-    {file = "litestar-2.6.2.tar.gz", hash = "sha256:13e924370034803e91cc2e6061692f95a697461352253f3593c5fbcf746e3e45"},
+    {file = "litestar-2.6.3-py3-none-any.whl", hash = "sha256:a923c32abe8bd50891a0c8162700716ed33ffc738e8b0e7d3668db9447266cf6"},
+    {file = "litestar-2.6.3.tar.gz", hash = "sha256:970f5c957b93f2cdbe193b3d20f2b3cd9de7ac2604f5d330ad2290c8295d99fc"},
 ]
 
 [[package]]
@@ -957,7 +957,7 @@ files = [
 
 [[package]]
 name = "litestar"
-version = "2.6.2"
+version = "2.6.3"
 extras = ["cli", "jinja", "pydantic", "sqlalchemy", "standard", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
@@ -969,7 +969,7 @@ dependencies = [
     "jinja2>=3.1.2",
     "jsbeautifier",
     "jsbeautifier",
-    "litestar==2.6.2",
+    "litestar==2.6.3",
     "pydantic",
     "pydantic-extra-types",
     "structlog",
@@ -979,43 +979,43 @@ dependencies = [
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.2-py3-none-any.whl", hash = "sha256:f898c0fab8243fa0d772e3bd0677b86d2e6bc61e0f8f437d39edc91fcbce967a"},
-    {file = "litestar-2.6.2.tar.gz", hash = "sha256:13e924370034803e91cc2e6061692f95a697461352253f3593c5fbcf746e3e45"},
+    {file = "litestar-2.6.3-py3-none-any.whl", hash = "sha256:a923c32abe8bd50891a0c8162700716ed33ffc738e8b0e7d3668db9447266cf6"},
+    {file = "litestar-2.6.3.tar.gz", hash = "sha256:970f5c957b93f2cdbe193b3d20f2b3cd9de7ac2604f5d330ad2290c8295d99fc"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.6.2"
+version = "2.6.3"
 extras = ["cli", "jinja"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
     "jinja2>=3.1.2",
     "jsbeautifier",
-    "litestar==2.6.2",
+    "litestar==2.6.3",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.2-py3-none-any.whl", hash = "sha256:f898c0fab8243fa0d772e3bd0677b86d2e6bc61e0f8f437d39edc91fcbce967a"},
-    {file = "litestar-2.6.2.tar.gz", hash = "sha256:13e924370034803e91cc2e6061692f95a697461352253f3593c5fbcf746e3e45"},
+    {file = "litestar-2.6.3-py3-none-any.whl", hash = "sha256:a923c32abe8bd50891a0c8162700716ed33ffc738e8b0e7d3668db9447266cf6"},
+    {file = "litestar-2.6.3.tar.gz", hash = "sha256:970f5c957b93f2cdbe193b3d20f2b3cd9de7ac2604f5d330ad2290c8295d99fc"},
 ]
 
 [[package]]
 name = "litestar"
-version = "2.6.2"
+version = "2.6.3"
 extras = ["cli"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
 dependencies = [
     "jsbeautifier",
-    "litestar==2.6.2",
+    "litestar==2.6.3",
     "uvicorn[standard]",
     "uvloop>=0.18.0; sys_platform != \"win32\"",
 ]
 files = [
-    {file = "litestar-2.6.2-py3-none-any.whl", hash = "sha256:f898c0fab8243fa0d772e3bd0677b86d2e6bc61e0f8f437d39edc91fcbce967a"},
-    {file = "litestar-2.6.2.tar.gz", hash = "sha256:13e924370034803e91cc2e6061692f95a697461352253f3593c5fbcf746e3e45"},
+    {file = "litestar-2.6.3-py3-none-any.whl", hash = "sha256:a923c32abe8bd50891a0c8162700716ed33ffc738e8b0e7d3668db9447266cf6"},
+    {file = "litestar-2.6.3.tar.gz", hash = "sha256:970f5c957b93f2cdbe193b3d20f2b3cd9de7ac2604f5d330ad2290c8295d99fc"},
 ]
 
 [[package]]

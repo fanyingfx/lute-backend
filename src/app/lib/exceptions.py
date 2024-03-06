@@ -16,6 +16,7 @@ from litestar.exceptions import (
     InternalServerException,
     NotFoundException,
     PermissionDeniedException,
+    ValidationException,
 )
 from litestar.middleware.exceptions._debug_response import create_debug_response
 from litestar.middleware.exceptions.middleware import create_exception_response
@@ -35,6 +36,7 @@ __all__ = (
     "AuthorizationError",
     "HealthCheckConfigurationError",
     "ApplicationError",
+    "LanguageParserError",
     "after_exception_hook_handler",
 )
 
@@ -94,6 +96,10 @@ class _HTTPConflictException(HTTPException):
     status_code = HTTP_409_CONFLICT
 
 
+class LanguageParserError(ApplicationError):
+    """load Language Parser error"""
+
+
 async def after_exception_hook_handler(exc: Exception, _scope: Scope) -> None:
     """Binds `exc_info` key with exception instance as value to structlog
     context vars.
@@ -131,10 +137,17 @@ def exception_to_http_response(
         http_exc = _HTTPConflictException
     elif isinstance(exc, AuthorizationError):
         http_exc = PermissionDeniedException
+    elif isinstance(exc, LanguageParserError):
+        http_exc = ValidationException
     else:
         http_exc = InternalServerException
     if request.app.debug and not isinstance(
-        exc, PermissionDeniedException | NotFoundError | AdvancedAlchemyNotFoundError | AuthorizationError
+        exc,
+        PermissionDeniedException
+        | NotFoundError
+        | AdvancedAlchemyNotFoundError
+        | AuthorizationError
+        | ApplicationError,
     ):
         return create_debug_response(request, exc)
-    return create_exception_response(request, http_exc(detail=str(exc.__cause__)))
+    return create_exception_response(request, http_exc(detail=str(exc.__cause__ or exc.detail)))
