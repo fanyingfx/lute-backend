@@ -12,7 +12,10 @@ from app.domain.parser.spacy_parser import split_sentences_and_tokenize
 class JapaneseParser(LanguageParser):
     def __init__(self, language_name: str) -> None:
         super().__init__(language_name)
-        self.nlp = spacy.load("ja_core_news_sm")
+        try:
+            self.nlp = spacy.load("ja_core_news_sm")
+        except OSError:
+            raise ValueError("ja_core_news_sm is not installed") from None
 
     @classmethod
     def split_sentences(cls, text: str):  # type: ignore

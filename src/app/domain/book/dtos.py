@@ -37,7 +37,7 @@ class ParsedBookTextDTO(DataclassDTO[ParsedBookText]):
 
 
 class BookDTO(SQLAlchemyDTO[Book]):
-    config = dto.config(max_nested_depth=1, exclude={"texts.0.book_text", "texts.0.ref_book_id"})
+    config = dto.config(max_nested_depth=1, exclude={"texts.0.ref_book_id", "texts.0.book_text"})
 
 
 class BookTextDTO(SQLAlchemyDTO[BookText]):

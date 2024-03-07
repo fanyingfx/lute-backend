@@ -23,7 +23,12 @@ def _get_language_parser(language_name: str) -> Language:
     if language_name not in spacy_model_mapping:
         raise NotImplementedError(f"Language {language_name} is not supported")
     if language_name not in nlp_mapping:
-        nlp_mapping[language_name] = spacy.load(spacy_model_mapping[language_name])
+        if spacy.util.is_package(spacy_model_mapping[language_name]):
+            nlp_mapping[language_name] = spacy.load(spacy_model_mapping[language_name])
+        else:
+            raise ValueError(
+                f"Spacy model {spacy_model_mapping[language_name]} for Language {language_name} is not exists"
+            )
     return nlp_mapping[language_name]
 
 

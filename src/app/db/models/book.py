@@ -26,7 +26,7 @@ class Book(BigIntBase):
     published_at: Mapped[date | None] = mapped_column(Date())
 
     # ORM Relationships
-    texts: Mapped[list[BookText]] = relationship(cascade="all,delete-orphan")
+    texts: Mapped[list[BookText]] = relationship(lazy="noload", cascade="all,delete-orphan")
     language: Mapped["Language"] = relationship(lazy="noload")  # noqa
 
 
@@ -36,6 +36,7 @@ class BookText(BigIntBase):
     ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))
     title: Mapped[str] = mapped_column(String(length=300), nullable=True)
     book_text: Mapped[str] = mapped_column(Text)
+    book: Mapped[Book] = relationship(back_populates="texts", lazy="noload")
 
     def __repr__(self) -> str:
         return f"BookText(id={self.id!r}, book_text={self.book_text!r}, title={self.title!r})"

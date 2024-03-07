@@ -3,9 +3,9 @@ from tokenize import Token
 from pytest import fixture
 
 from app.db.models.word import Word
-from app.domain.book.services import match_word_in_sentence
 from app.domain.parser.language_parser import LanguageParser
 from app.domain.parser.markdown_text_parser import VWord
+from app.domain.parser.parser_tool import match_word_in_sentence
 from app.domain.word.services import WordIndex
 
 
@@ -43,6 +43,7 @@ def word_index() -> WordIndex:
         word_explanation="own",
         word_counts=1,
         word_tokens=["have"],
+        first_word="have",
     )
     word2 = Word(
         word_string="have to",
@@ -54,6 +55,7 @@ def word_index() -> WordIndex:
         word_explanation="must do something",
         word_counts=2,
         word_tokens=["have", "to"],
+        first_word="have",
     )
 
     return WordIndex([word1, word2])
