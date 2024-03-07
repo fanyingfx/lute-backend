@@ -1,12 +1,10 @@
-from tokenize import Token
-
 from pytest import fixture
+from spacy.tokens import Token
 
 from app.db.models.word import Word
 from app.domain.parser.language_parser import LanguageParser
 from app.domain.parser.markdown_text_parser import VWord
 from app.domain.parser.parser_tool import match_word_in_sentence
-from app.domain.word.services import WordIndex
 
 
 # async def match_word_in_sentence(sentence: Iterable[Token], max_loop_num: int,word_index:WordIndex) -> TokenSentence:
@@ -32,7 +30,7 @@ def assert_vword_list_equal(vwordlist1: list[VWord], vwordlist2: list[VWord]) ->
 
 
 @fixture()
-def word_index() -> WordIndex:
+def word_index() -> dict[str, list[Word]]:
     word1 = Word(
         word_string="have",
         word_lemma="have",
@@ -58,11 +56,11 @@ def word_index() -> WordIndex:
         first_word="have",
     )
 
-    return WordIndex([word1, word2])
+    return {"have": [word2, word1]}
 
 
 @fixture()
-def sentence_tokens() -> list[Token]:  # type: ignore
+def sentence_tokens() -> list[Token]:
     english_parser: LanguageParser = LanguageParser.get_parser("english")
     sentence = "I have to go home."
     sents = english_parser.split_sentences_and_tokenize(sentence)

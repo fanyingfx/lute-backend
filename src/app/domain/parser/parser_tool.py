@@ -68,7 +68,7 @@ async def match_word_in_sentence(
             next_is_ws=" " in current_token.text_with_ws,
             word_status=0,
             word_explanation="",
-            word_pronunciation="",
+            # word_pronunciation=c,
             word_tokens=[current_token.text],
         )
 

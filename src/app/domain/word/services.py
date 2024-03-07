@@ -127,6 +127,9 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
             CollectionFilter("first_word", [word_string]),
             OrderBy("word_counts", "desc"),
         )
+        if not word_list:
+            del self.word_index[language_id][word_string]
+            return
 
         self.word_index[language_id][word_string] = list(word_list)
 
