@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, func
@@ -9,6 +10,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 __all__ = ("Word",)
 
 from app.db.models.base import JSONType
+
+if TYPE_CHECKING:
+    from app.db.models.language import Language
 
 
 class Word(BigIntBase):
@@ -32,6 +36,7 @@ class Word(BigIntBase):
     )
     word_image: Mapped[WordImage | None] = relationship(lazy="noload", cascade="all, delete-orphan")
     first_word: Mapped[str] = mapped_column(String(100), nullable=True)
+    language: Mapped["Language"] = relationship(lazy="joined")  # noqa
 
     def __repr__(self) -> str:
         return (

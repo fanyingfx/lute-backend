@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.orm import noload
+from sqlalchemy.orm import joinedload, noload
 
 from app.domain.word.services import WordService
 
@@ -25,10 +25,11 @@ async def provides_word_service(db_session: AsyncSession) -> AsyncGenerator[Word
     async with WordService.new(
         session=db_session,
         statement=select(Word).options(
+            joinedload(Word.language),
             #     options(
             # selectinload(Word.word_image).options(
             # ),
-            noload("*")
+            noload("*"),
         ),
     ) as service:
         yield service

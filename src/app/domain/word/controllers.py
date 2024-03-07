@@ -31,18 +31,20 @@ class WordController(Controller):
     @post(path="/create_or_update", dto=WordPatchDTO)
     async def create_or_update(self, word_service: WordService, data: DTOData[WordUpdate], request: Request) -> Word:
         db_obj = await word_service.create_or_update(data.create_instance().__dict__)
-        request.app.emit("word_updated", language_name="english", word_string=db_obj.first_word)
+        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
+        # request.app.emit("word_updated", language_name=db_obj.language.language_name, word_string=db_obj.first_word)
         return word_service.to_dto(db_obj)
 
     @post("/create", dto=WordCreateDTO)
     async def create_word(self, word_service: WordService, data: DTOData[WordCreate]) -> Word:
         db_obj = await word_service.create(data.as_builtins())
+        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
         return word_service.to_dto(db_obj)
 
     @delete("/delete/{word_id:int}")
     async def delete_word(self, word_service: WordService, word_id: int, request: Request) -> None:
-        await word_service.delete(item_id=word_id)
-        request.app.emit("word_deleted", language_name="english")
+        db_obj = await word_service.delete(item_id=word_id, auto_commit=True)
+        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
         # return word_service.to_dto(db_obj)
 
     @post("/update/{word_string:str}")

@@ -31,7 +31,7 @@ class LanguageParser(metaclass=abc.ABCMeta):
         return _get_parser(parser_name)
 
     def get_language_name(self) -> str:
-        return self.language_name
+        return self.language_name.capitalize()
 
     def load_resource(self, resource: Any) -> Any:  # noqa
         ...

@@ -17,7 +17,6 @@ def create_app() -> Litestar:
 
     from app.config import app as config
     from app.config.base import get_settings
-    from app.domain.word.services import on_word_updated
 
     # from app.lib import db
     # from app.domain.accounts import signals as account_signals
@@ -51,7 +50,7 @@ def create_app() -> Litestar:
         # signature_namespace={"UUID": UUID},
         # on_app_init=[auth.on_app_init],
         # listeners=[account_signals.user_created_event_handler, team_signals.team_created_event_handler],
-        listeners=[on_word_updated],
+        # listeners=[on_word_updated],
     )
 
 

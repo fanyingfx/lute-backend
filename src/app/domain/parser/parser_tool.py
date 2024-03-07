@@ -10,7 +10,7 @@ __all__ = ("register_parser", "list_all_parsers", "parser_exists")
 if TYPE_CHECKING:
     from spacy.tokens import Span, Token
 
-    from app.domain.word.services import WordIndex
+    from app.db.models.word import Word
 from app.domain.parser.markdown_text_parser import (
     ParsedTextSegment,
     Segment,
@@ -46,7 +46,9 @@ def parser_exists(parser_name: str) -> bool:
     return parser_name in parser_mapping
 
 
-async def match_word_in_sentence(sentence: list[Token], word_index: WordIndex, max_loop_num: int) -> SentenceSegment:
+async def match_word_in_sentence(
+    sentence: list[Token], word_index: dict[str, list[Word]], max_loop_num: int
+) -> SentenceSegment:
     start_position = 0
     res_word_list = []
     dead_loop_indicator = 0
@@ -105,17 +107,16 @@ async def match_word_in_sentence(sentence: list[Token], word_index: WordIndex, m
     return SentenceSegment(segment_value=res_word_list, segment_raw=sentence_raw)
 
 
-async def text2segment(text: str, language_parser: LanguageParser, paragraph_order: int) -> list[SentenceSegment]:
+async def text2segment(
+    text: str, language_parser: LanguageParser, paragraph_order: int, word_index: dict[str, list[Word]]
+) -> list[SentenceSegment]:
     """
     Returns:
         object: TextParagraphSegment
     """
     sents: list[Span] = language_parser.split_sentences_and_tokenize(text)
     max_loop_num = len(text) * 100
-    from app.domain.word.services import words_store
 
-    language_name = language_parser.get_language_name()
-    word_index: WordIndex = await words_store.get(f"{language_name}-word-index")  # type: ignore
     sentences = []
     for index, sent in enumerate(sents, 1):
         parsed_sent = await match_word_in_sentence(sent, word_index, max_loop_num)
@@ -125,12 +126,14 @@ async def text2segment(text: str, language_parser: LanguageParser, paragraph_ord
     return sentences
 
 
-async def get_parsed_text_segments(segmentlist: list[Segment], parser: LanguageParser) -> list[ParsedTextSegment]:
+async def get_parsed_text_segments(
+    segmentlist: list[Segment], parser: LanguageParser, word_index: dict[str, list[Word]]
+) -> list[ParsedTextSegment]:
     paragraph_order = 1
     res: list[ParsedTextSegment] = []
     for segment in segmentlist:
         if isinstance(segment, TextRawParagraphSegment):
-            sentence_segments = await text2segment(segment.segment_value, parser, paragraph_order)
+            sentence_segments = await text2segment(segment.segment_value, parser, paragraph_order, word_index)
             for sentence_segment in sentence_segments:
                 res.append(
                     ParsedTextSegment(

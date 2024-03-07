@@ -127,10 +127,10 @@ class BookTextController(Controller):
     async def get_booktext(
         self, booktext_service: BookTextService, word_service: WordService, booktext_id: int
     ) -> ParsedBookText:
-        db_obj = await booktext_service.get(item_id=booktext_id)
+        db_obj: BookText = await booktext_service.get(item_id=booktext_id)
         parser: LanguageParser = db_obj.book.language.get_parser()
-        await word_service.load_word_index(parser.get_language_name())
+        word_index: dict[str, list[Word]] = await word_service.load_word_index(db_obj.book.language_id)
         segmentlist = parse_markdown(db_obj.book_text)
-        res = await get_parsed_text_segments(segmentlist, parser)
+        res = await get_parsed_text_segments(segmentlist, parser, word_index)
 
         return ParsedBookText(data=res)

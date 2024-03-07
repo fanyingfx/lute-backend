@@ -88,7 +88,7 @@ class JSONType(TypeDecorator):
     def process_bind_param(self, value, dialect):  # type: ignore
         """Convert Python object to a JSON string before storing."""
         if value is not None:
-            value = json.dumps(value)
+            value = json.dumps(value, ensure_ascii=False)
         return value
 
     def process_result_value(self, value, dialect):  # type: ignore

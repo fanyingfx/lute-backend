@@ -24,8 +24,5 @@ class JapaneseParser(LanguageParser):
     def split_sentences_and_tokenize(self, text: str) -> list[Span]:  # type: ignore
         return split_sentences_and_tokenize(self.nlp, text)
 
-    def get_language_name(self) -> str:
-        return self.language_name
-
     def tokenize(self, text):  # type: ignore
         return self.nlp(text)
