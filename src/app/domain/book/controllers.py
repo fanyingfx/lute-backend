@@ -28,16 +28,16 @@ from app.domain.book.dtos import (
     ParsedBookTextDTO,
 )
 from app.domain.book.services import BookService, BookTextService
+from app.domain.parser import parser_tool
 from app.domain.parser.markdown_text_parser import (
     parse_markdown,
 )
-from app.domain.parser.parser_tool import get_parsed_text_segments
 from app.domain.word.dependencies import provides_word_service
 from app.domain.word.dtos import WordDTO
 from app.domain.word.services import WordService
 
 if TYPE_CHECKING:
-    from app.domain.parser.language_parser import LanguageParser
+    from app.domain.parser import LanguageParser
 
 
 class BookController(Controller):
@@ -131,6 +131,6 @@ class BookTextController(Controller):
         parser: LanguageParser = db_obj.book.language.get_parser()
         word_index: dict[str, list[Word]] = await word_service.load_word_index(db_obj.book.language_id)
         segmentlist = parse_markdown(db_obj.book_text)
-        res = await get_parsed_text_segments(segmentlist, parser, word_index)
+        res = await parser_tool.get_parsed_text_segments(segmentlist, parser, word_index)
 
         return ParsedBookText(data=res)

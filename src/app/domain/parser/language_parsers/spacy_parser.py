@@ -5,8 +5,8 @@ from spacy.language import Language
 from spacy.tokens.span import Span
 
 # from app.lib.timer import sync_timed
-from app.domain.parser.language_parser import LanguageParser
-from app.domain.parser.parser_tool import register_parser, spacy_model_mapping
+from .language_parser import LanguageParser
+from .parser_tool import register_parser, spacy_model_mapping
 
 __all__ = ("SpacyParser", "split_sentences_and_tokenize")
 

@@ -1,9 +1,9 @@
 import spacy
 from spacy.tokens.span import Span
 
-from app.domain.parser.language_parser import LanguageParser
-from app.domain.parser.parser_tool import register_parser
-from app.domain.parser.spacy_parser import split_sentences_and_tokenize
+from .language_parser import LanguageParser
+from .parser_tool import register_parser
+from .spacy_parser import split_sentences_and_tokenize
 
 # __all__ = ["JapaneseParser"]
 

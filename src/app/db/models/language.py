@@ -2,7 +2,7 @@ from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.domain.parser.language_parser import LanguageParser
+from app.domain.parser import LanguageParser
 
 # from app.lib.db import orm
 

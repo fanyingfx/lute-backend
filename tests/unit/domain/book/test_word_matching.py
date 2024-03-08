@@ -2,9 +2,8 @@ from pytest import fixture
 from spacy.tokens import Token
 
 from app.db.models.word import Word
-from app.domain.parser.language_parser import LanguageParser
+from app.domain.parser import LanguageParser, parser_tool
 from app.domain.parser.markdown_text_parser import VWord
-from app.domain.parser.parser_tool import match_word_in_sentence
 
 
 # async def match_word_in_sentence(sentence: Iterable[Token], max_loop_num: int,word_index:WordIndex) -> TokenSentence:
@@ -71,7 +70,7 @@ def sentence_tokens() -> list[Token]:
 @fixture()
 async def get_vwords(sentence_tokens, word_index) -> list[VWord]:  # type: ignore
     max_loop_num = len(sentence_tokens) * 100
-    token_sentence = await match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
+    token_sentence = await parser_tool.match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
     return token_sentence.segment_value
 
 

@@ -1,4 +1,4 @@
-from app.domain.parser.language_parser import LanguageParser
+from app.domain.parser import LanguageParser
 
 
 def test_japanese_parser() -> None:

@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from app.domain.parser.language_parser import LanguageParser, parser_mapping
+from .language_parser import LanguageParser, parser_mapping
 
-__all__ = ("register_parser", "list_all_parsers", "parser_exists")
+__all__ = ("register_parser", "list_all_parsers", "parser_exists", "match_word_in_sentence")
 
 if TYPE_CHECKING:
     from spacy.tokens import Span, Token

@@ -5,7 +5,7 @@
 groups = ["default", "docs", "lint", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:b3551fdaaea60ba5677bfdea83527db6a55a188a59520853fb3ae5501ceac3ab"
+content_hash = "sha256:af793e956f613b8df0ec5e9d5d713df41d0b5821977639c444a2b30510737fdd"
 
 [[package]]
 name = "advanced-alchemy"
@@ -660,6 +660,25 @@ files = [
 ]
 
 [[package]]
+name = "fugashi"
+version = "1.3.0"
+requires_python = ">=3.7"
+summary = "A Cython MeCab wrapper for fast, pythonic Japanese tokenization."
+files = [
+    {file = "fugashi-1.3.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:85f1669bb5af7a0d761cd64eaf6becdab5460c6fe6ce4153d3b23ac6f71a797e"},
+    {file = "fugashi-1.3.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:6f5f71b796f126efbb2e38f027bc4dcfc01e115ea79b115ba855dc08e6e6a72d"},
+    {file = "fugashi-1.3.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:fd6af40364cb27553e632b8c9672dc97dde908d82ef3e66bbd3178c6a7f25d3b"},
+    {file = "fugashi-1.3.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:edf2bf3155a2bcd43f305874de928a40602e46dcb76725c34293c211429d9b66"},
+    {file = "fugashi-1.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:96437109c407d1f6b47535767c8439be7c4a5f8859213ba25b042145dcbda405"},
+    {file = "fugashi-1.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:75c88c30a60222f95ea245cdd92b3fa7bb3ecbe74626ffe22f7cb37f5206e207"},
+    {file = "fugashi-1.3.0-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:1413c7d7c4954a323731d343c5c063c5f357c801018dac64cd0186ad66954b63"},
+    {file = "fugashi-1.3.0-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:5d87a226087c5fb15fec2402585aeb490c79ad8bb483213f713976aaf2ed4608"},
+    {file = "fugashi-1.3.0-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:bab08d7e9097641aec4c3572d77ab31be4bc80278ddfd120f0e51e91cbf79ea2"},
+    {file = "fugashi-1.3.0-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:bab1f55e27e0f2cc08c57dbf9135c03b9f38a6e491c2f56f8e78bb4939d4c60b"},
+    {file = "fugashi-1.3.0.tar.gz", hash = "sha256:0deec0ace31859897774238a6d7c136243f83f6fe4f98fdd48e4e770d859c1fc"},
+]
+
+[[package]]
 name = "granian"
 version = "1.1.0"
 requires_python = ">=3.8"
@@ -859,6 +878,14 @@ files = [
 ]
 
 [[package]]
+name = "jaconv"
+version = "0.3.4"
+summary = "Pure-Python Japanese character interconverter for Hiragana, Katakana, Hankaku, Zenkaku and more"
+files = [
+    {file = "jaconv-0.3.4.tar.gz", hash = "sha256:9e7c55f3f0b0e2dbad62f6c9fa0c30fc6fffdbb78297955509d90856b3a31d6d"},
+]
+
+[[package]]
 name = "jinja2"
 version = "3.1.2"
 requires_python = ">=3.7"
@@ -881,6 +908,35 @@ dependencies = [
 ]
 files = [
     {file = "jsbeautifier-1.15.1.tar.gz", hash = "sha256:ebd733b560704c602d744eafc839db60a1ee9326e30a2a80c4adb8718adc1b24"},
+]
+
+[[package]]
+name = "konoha"
+version = "5.5.5"
+requires_python = ">=3.8.0,<4.0.0"
+summary = "A tiny sentence/word tokenizer for Japanese text written in Python"
+dependencies = [
+    "requests<3.0.0",
+]
+files = [
+    {file = "konoha-5.5.5-py3-none-any.whl", hash = "sha256:2814652c83cfecad84fec8df3b439738986d2c829375d5d6cf324b14ae5b3508"},
+    {file = "konoha-5.5.5.tar.gz", hash = "sha256:7e87417d6c1ab57c616e7f4cdb5a7ae8c2c0855ec7a58bd900d903fddba29811"},
+]
+
+[[package]]
+name = "konoha"
+version = "5.5.5"
+extras = ["sudachi"]
+requires_python = ">=3.8.0,<4.0.0"
+summary = "A tiny sentence/word tokenizer for Japanese text written in Python"
+dependencies = [
+    "konoha==5.5.5",
+    "sudachidict-core==20230927",
+    "sudachipy<0.7.0,>=0.6.8",
+]
+files = [
+    {file = "konoha-5.5.5-py3-none-any.whl", hash = "sha256:2814652c83cfecad84fec8df3b439738986d2c829375d5d6cf324b14ae5b3508"},
+    {file = "konoha-5.5.5.tar.gz", hash = "sha256:7e87417d6c1ab57c616e7f4cdb5a7ae8c2c0855ec7a58bd900d903fddba29811"},
 ]
 
 [[package]]
@@ -2427,6 +2483,32 @@ summary = "Structured Logging for Python"
 files = [
     {file = "structlog-24.1.0-py3-none-any.whl", hash = "sha256:3f6efe7d25fab6e86f277713c218044669906537bb717c1807a09d46bca0714d"},
     {file = "structlog-24.1.0.tar.gz", hash = "sha256:41a09886e4d55df25bdcb9b5c9674bccfab723ff43e0a86a1b7b236be8e57b16"},
+]
+
+[[package]]
+name = "sudachidict-core"
+version = "20230927"
+summary = "Sudachi Dictionary for SudachiPy - Core Edition"
+dependencies = [
+    "SudachiPy<0.7,>=0.5",
+]
+files = [
+    {file = "SudachiDict-core-20230927.tar.gz", hash = "sha256:b7245a24736564e3b4ed47de59d10ba7634d6dde1c8b3ec421d77548f78bbff9"},
+    {file = "SudachiDict_core-20230927-py3-none-any.whl", hash = "sha256:84d4cf89f3f0592225e6b9d6497181c46b861e0f490ebcc8888edcbe3b39b14a"},
+]
+
+[[package]]
+name = "sudachipy"
+version = "0.6.8"
+summary = "Python version of Sudachi, the Japanese Morphological Analyzer"
+files = [
+    {file = "SudachiPy-0.6.8-cp311-cp311-macosx_10_12_universal2.whl", hash = "sha256:0a6cb506e402933023ea07035fc3e81d65880392afcdb2f09676027882b09e73"},
+    {file = "SudachiPy-0.6.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d19db58be100b05362d00d0ad5cd29aff6da31807967b302f35bd43dd59e141f"},
+    {file = "SudachiPy-0.6.8-cp311-cp311-win_amd64.whl", hash = "sha256:27833ae472220dc46f934edd9a8839b0134279c0113f7da01d67e424bfe2d0ab"},
+    {file = "SudachiPy-0.6.8-cp312-cp312-macosx_10_12_universal2.whl", hash = "sha256:7f75d4627fa141bc02951c5ce17ec7055faf2e9424d10c697e923c27b7936369"},
+    {file = "SudachiPy-0.6.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:33afa2efa4d98ae3cbea0ab8cc09c71b0405d188074d0c4cef2b2080a51caafe"},
+    {file = "SudachiPy-0.6.8-cp312-cp312-win_amd64.whl", hash = "sha256:2a2f22605093ed7994eb7edced2a21c8ac71b9ecc9877e94539414b1a60d172a"},
+    {file = "SudachiPy-0.6.8.tar.gz", hash = "sha256:3d1c9086ff09afacc34d02fdb2112aab7cff1d78f0d4b81f78b9ba01c36d4888"},
 ]
 
 [[package]]
