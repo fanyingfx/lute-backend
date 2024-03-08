@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
-from .language_parser import LanguageParser, parser_mapping
+from .paser_config import parser_mapping
 
 __all__ = ("register_parser", "list_all_parsers", "parser_exists", "match_word_in_sentence")
 
+from .paser_config import fugashi_unidic, spacy_model_mapping
 
 if TYPE_CHECKING:
     from app.db.models.word import Word
     from app.domain.parser.markdown_text_parser import WordToken
+
+    from .language_parser import LanguageParser
 from app.domain.parser.markdown_text_parser import (
     ParsedTextSegment,
     Segment,
@@ -18,10 +21,6 @@ from app.domain.parser.markdown_text_parser import (
     TextRawParagraphSegment,
     VWord,
 )
-
-spacy_model_mapping = {
-    "english": "en_core_web_sm",
-}
 
 
 def register_parser(parser_name: str) -> Callable[[type[LanguageParser]], type[LanguageParser]]:
@@ -31,6 +30,9 @@ def register_parser(parser_name: str) -> Callable[[type[LanguageParser]], type[L
         if parser_name == "spacy":
             for key in spacy_model_mapping:
                 parser_mapping[key] = cls
+        elif parser_name == "fugashi":
+            for key in fugashi_unidic:
+                parser_mapping[key] = cls
         else:
             parser_mapping[parser_name] = cls
         return cls
@@ -39,7 +41,7 @@ def register_parser(parser_name: str) -> Callable[[type[LanguageParser]], type[L
 
 
 def list_all_parsers() -> list[str]:
-    return [name.capitalize() for name in parser_mapping]
+    return list(parser_mapping.keys())
 
 
 def parser_exists(parser_name: str) -> bool:
@@ -47,7 +49,7 @@ def parser_exists(parser_name: str) -> bool:
 
 
 async def match_word_in_sentence(
-    sentence_iter: Iterator[WordToken], word_index: dict[str, list[Word]], max_loop_num: int
+    sentence_iter: list[WordToken], word_index: dict[str, list[Word]], max_loop_num: int
 ) -> SentenceSegment:
     start_position = 0
     res_word_list = []
@@ -59,19 +61,6 @@ async def match_word_in_sentence(
     while start_position < sentence_length:
         current_word = sentence[start_position].word_string
         current_token: WordToken = sentence[start_position]
-        # vword = VWord(
-        #     word_string=current_token.,
-        #     word_lemma=current_token.lemma_,
-        #     word_pos=current_token.pos_,
-        #     is_multiple_words=False,
-        #     is_word=not current_token.is_punct,
-        #     is_eos=current_token.is_sent_end or False,
-        #     next_is_ws=" " in current_token.text_with_ws,
-        #     word_status=0,
-        #     word_explanation="",
-        #     # word_pronunciation=c,
-        #     word_tokens=[current_token.text],
-        # )
         vword: VWord = VWord(**current_token.__dict__, word_tokens=[current_token.word_string])
 
         if current_word in word_index:
@@ -89,12 +78,12 @@ async def match_word_in_sentence(
                     vword.word_pos = db_word.word_pos or "UNKNOWN"
                     vword.is_multiple_words = db_word.is_multiple_words
                     vword.is_word = True
-                    vword.is_eos = sentence[end_position].is_eos or False
                     vword.next_is_ws = sentence[end_position].next_is_ws
                     vword.word_status = db_word.word_status
                     vword.word_explanation = db_word.word_explanation or ""
                     vword.word_pronunciation = db_word.word_pronunciation or ""
                     vword.word_tokens = db_word.word_tokens
+                    vword.word_image_src = db_word.word_image.word_image_path if db_word.word_image else None
                     vword.word_db_id = db_word.id
                     start_position = end_position
                     break
@@ -116,7 +105,7 @@ async def text2segment(
     Returns:
         object: TextParagraphSegment
     """
-    sents: Iterator[Iterator[WordToken]] = language_parser.split_sentences_and_tokenize(text)
+    sents: list[list[WordToken]] = language_parser.split_sentences_and_tokenize(text)
     max_loop_num = len(text) * 100
 
     sentences = []

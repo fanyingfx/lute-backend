@@ -1,5 +1,3 @@
-from collections.abc import Iterator
-
 import spacy
 
 from app.domain.parser.markdown_text_parser import WordToken
@@ -22,16 +20,17 @@ class JapaneseParser(LanguageParser):
     def split_sentences(cls, text: str) -> list[str]:  # type: ignore
         pass
 
-    def split_sentences_and_tokenize(self, text: str) -> Iterator[Iterator[WordToken]]:  # type: ignore
+    def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
         return split_sentences_and_tokenize(self.nlp, text)
 
-    def tokenize(self, text) -> Iterator[WordToken]:  # type: ignore
-        for token in self.nlp(text):
-            yield WordToken(
+    def tokenize(self, text: str) -> list[WordToken]:
+        return [
+            WordToken(
                 word_string=token.text,
                 word_pos=token.pos_,
                 word_lemma=token.lemma_,
                 is_word=not token.is_punct,
                 next_is_ws=" " in token.text_with_ws,
-                is_eos=bool(token.is_sent_end),
             )
+            for token in self.nlp(text)
+        ]

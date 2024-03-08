@@ -1,3 +1,4 @@
+# flake8: noqa
 from __future__ import annotations
 
 import binascii
@@ -237,7 +238,8 @@ class ServerSettings:
     RELOAD_DIRS: list[str] = field(default_factory=lambda: [f"{BASE_DIR}"])
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = field(
-        default_factory=lambda: int(os.getenv("WEB_CONCURRENCY")) if os.getenv("WEB_CONCURRENCY") is not None else None,  # type: ignore[arg-type]
+        default_factory=lambda: (
+            int(os.getenv("WEB_CONCURRENCY")) if os.getenv("WEB_CONCURRENCY") is not None else None),  # typing: ignore[arg-type]
     )
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
 
@@ -379,6 +381,28 @@ class LogSettings:
 
 
 @dataclass
+class UserDataSettings:
+    USER_DATA_FOLDER: Path = field(default_factory=lambda: Path(os.getenv("USER_DATA_FOLDER", Path.cwd() / "data")))
+    WORD_IMAGE_PATH: Path | None = None
+    UNIDIC_CSJ_PATH: Path | None = None
+    UNIDIC_CWJ_PATH: Path | None = None
+
+    def __post_init__(self) -> None:
+        self.WORD_IMAGE_PATH = self.USER_DATA_FOLDER / "word-images"
+        self.WORD_IMAGE_PATH.mkdir(exist_ok=True)
+        self.UNIDIC_CSJ_PATH = self.USER_DATA_FOLDER / "unidic-csj"
+        self.UNIDIC_CWJ_PATH = self.USER_DATA_FOLDER / "unidic-cwj"
+
+    @property
+    def data_folder(self) -> str:
+        return self.USER_DATA_FOLDER.as_posix()
+
+    @property
+    def word_image_path(self) -> str:
+        return self.WORD_IMAGE_PATH.as_posix()  # type: ignore[union-attr]
+
+
+@dataclass
 class AppSettings:
     """Application configuration"""
 
@@ -430,6 +454,7 @@ class Settings:
     log: LogSettings = field(default_factory=LogSettings)
     # redis: RedisSettings = field(default_factory=RedisSettings)
     saq: SaqSettings = field(default_factory=SaqSettings)
+    user_data: UserDataSettings = field(default_factory=UserDataSettings)
 
     @classmethod
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:
@@ -448,3 +473,7 @@ class Settings:
 @lru_cache(maxsize=1, typed=True)
 def get_settings() -> Settings:
     return Settings.from_env()
+
+
+def get_user_settings() -> UserDataSettings:
+    return get_settings().user_data

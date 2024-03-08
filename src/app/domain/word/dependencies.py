@@ -11,7 +11,6 @@ from app.domain.word.services import WordService
 
 __all__ = ["provides_word_service"]
 
-
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
@@ -24,11 +23,10 @@ async def provides_word_service(db_session: AsyncSession) -> AsyncGenerator[Word
 
     async with WordService.new(
         session=db_session,
-        statement=select(Word).options(
-            joinedload(Word.language),
-            #     options(
-            # selectinload(Word.word_image).options(
-            # ),
+        statement=select(Word)
+        .options(joinedload(Word.language))
+        .options(
+            joinedload(Word.word_image),
             noload("*"),
         ),
     ) as service:

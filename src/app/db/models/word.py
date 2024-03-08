@@ -34,23 +34,18 @@ class Word(BigIntBase):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()  # type: ignore
     )
-    word_image: Mapped[WordImage | None] = relationship(lazy="noload", cascade="all, delete-orphan")
-    first_word: Mapped[str] = mapped_column(String(100), nullable=True)
+    first_word: Mapped[str] = mapped_column(String(100))
     language: Mapped["Language"] = relationship(lazy="joined")  # noqa
-
-    def __repr__(self) -> str:
-        return (
-            f"<Word(word_string={self.word_string}, word_lemma={self.word_lemma},word_pos={self.word_pos},"
-            f"is_multiple_words={self.is_multiple_words},word_status={self.word_status},word_pronunciation={self.word_pronunciation}"
-            f"word_explanation={self.word_explanation},word_counts={self.word_tokens},word_tokens={self.word_tokens})>"
-        )
+    word_image: Mapped[WordImage] = relationship(
+        lazy="joined", single_parent=True, cascade="all, delete, delete-orphan"
+    )
 
     UniqueConstraint(word_string)
 
 
 class WordImage(BigIntBase):
     __tablename__ = "word_images"  # type: ignore[assignment]
-    word_id: Mapped[str] = mapped_column(ForeignKey("words.id"))
+    word_id: Mapped[int] = mapped_column(ForeignKey("words.id"))
     word_image_name: Mapped[str] = mapped_column(String(100))
     word_image_path: Mapped[str] = mapped_column(String(100))
-    word: Mapped[Word] = relationship(back_populates="word_image", lazy="noload")
+    # word: Mapped[Word] = relationship(back_populates="word_image", lazy="noload")

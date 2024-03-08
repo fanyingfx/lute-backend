@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from functools import lru_cache
 
 import spacy
@@ -8,25 +7,28 @@ from app.domain.parser.markdown_text_parser import WordToken
 
 # from app.lib.timer import sync_timed
 from .language_parser import LanguageParser
-from .parser_tool import register_parser, spacy_model_mapping
+from .parser_tool import register_parser
+from .paser_config import spacy_model_mapping
 
 __all__ = ("SpacyParser", "split_sentences_and_tokenize")
 
 
 @lru_cache
-def split_sentences_and_tokenize(nlp: Language, text: str) -> Iterator[Iterator[WordToken]]:
+def split_sentences_and_tokenize(nlp: Language, text: str) -> list[list[WordToken]]:
+    res = []
     for sent in nlp(text).sents:
-        yield (
+        sentence_tokens = [
             WordToken(
                 word_string=token.text,
                 word_pos=token.pos_,
                 word_lemma=token.lemma_,
                 is_word=not token.is_punct,
                 next_is_ws=" " in token.text_with_ws,
-                is_eos=bool(token.is_sent_end),
             )
             for token in sent
-        )
+        ]
+        res.append(sentence_tokens)
+    return res
 
 
 nlp_mapping: dict[str, Language] = {}
@@ -54,16 +56,17 @@ class SpacyParser(LanguageParser):
     def split_sentences(self, text: str):  # type: ignore
         pass
 
-    def split_sentences_and_tokenize(self, text: str) -> Iterator[Iterator[WordToken]]:  # type: ignore
+    def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
         return split_sentences_and_tokenize(self.nlp, text)
 
-    def tokenize(self, text) -> Iterator[WordToken]:  # type: ignore
-        for token in self.nlp(text):
-            yield WordToken(
+    def tokenize(self, text: str) -> list[WordToken]:
+        return [
+            WordToken(
                 word_string=token.text,
                 word_pos=token.pos_,
                 word_lemma=token.lemma_,
                 is_word=not token.is_punct,
                 next_is_ws=" " in token.text_with_ws,
-                is_eos=token.is_sent_end,
             )
+            for token in self.nlp(text)
+        ]

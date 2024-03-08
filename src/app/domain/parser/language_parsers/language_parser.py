@@ -1,29 +1,33 @@
 import abc
 
-__all__ = ("LanguageParser", "parser_mapping")
+__all__ = ("LanguageParser",)
 
-from collections.abc import Iterator
 from typing import Any
 
+from app.domain.parser.language_parsers.paser_config import parser_instances, parser_mapping
 from app.domain.parser.markdown_text_parser import WordToken
 
 # register in the @parser_tool.register_parser
-parser_mapping: dict[str, type["LanguageParser"]] = {}
-parser_instances: dict[str, "LanguageParser"] = {}
 
 
 def _get_parser(language_name: str) -> "LanguageParser":
+    from app.domain.parser.language_parsers.paser_config import fugashi_unidic
+
     if language_name not in parser_instances:
         if language_name not in parser_mapping:
             raise ValueError(f"Parser '{language_name}' is not registered")
-        parser_instances[language_name] = parser_mapping[language_name](language_name)
+        if language_name in fugashi_unidic:
+            parser_instances[language_name] = parser_mapping[language_name](
+                language_name, undic_path=fugashi_unidic[language_name]
+            )
+        else:
+            parser_instances[language_name] = parser_mapping[language_name](language_name)
     return parser_instances[language_name]
 
 
-class LanguageParser(metaclass=abc.ABCMeta):
-    class_instances: dict[type, "LanguageParser"] = {}
+class LanguageParser(abc.ABC):
 
-    def __init__(self, language_name: str) -> None:
+    def __init__(self, language_name: str, **kwargs: str) -> None:
         self.language_name = language_name
 
     @staticmethod
@@ -44,11 +48,9 @@ class LanguageParser(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def split_sentences_and_tokenize(
-        self, text: str
-    ) -> Iterator[Iterator[WordToken]]:  # TODO replace Span with Sentence
+    def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:  # TODO replace Span with Sentence
         pass
 
     @abc.abstractmethod
-    def tokenize(self, text: str) -> Iterator[WordToken]:
+    def tokenize(self, text: str) -> list[WordToken]:
         pass

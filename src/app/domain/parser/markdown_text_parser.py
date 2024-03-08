@@ -38,25 +38,32 @@ class MarkDownNode(TypedDict):
 # https://medium.com/@aniscampos/python-dataclass-inheritance-finally-686eaf60fbb5
 @dataclass(kw_only=True)
 class WordToken:
+    """
+    using for parsedToken
+    """
+
     word_string: str
     word_lemma: str
     word_pos: str
-    is_multiple_words: bool = False
     is_word: bool = False
-    is_eos: bool = False
     next_is_ws: bool = False
-    word_status: int = 0
+    word_pronunciation: str = ""
 
 
 @dataclass
 class VWord(WordToken):
+    """
+    using for frontend
+    """
+
     word_tokens: list[str]
-    word_pronunciation: str = ""
+    word_status: int = 0
+    is_multiple_words: bool = False
     word_explanation: str = ""
+    word_image_src: str | None = None
     word_db_id: int = -1
 
 
-# @dataclass_json(letter_case=LetterCase.CAMEL)  # now all fields are encoded/decoded from camelCase
 @dataclass
 class SentenceSegment:
     segment_value: list[VWord]

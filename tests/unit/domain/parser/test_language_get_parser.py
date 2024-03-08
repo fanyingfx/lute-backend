@@ -8,6 +8,11 @@ def test_japanese_parser() -> None:
     assert isinstance(parser, LanguageParser)
 
 
+def test_spoken_japanese_parser() -> None:
+    parser = LanguageParser.get_parser("spoken_japanese")
+    assert isinstance(parser, LanguageParser)
+
+
 def test_english_parser() -> None:
     parser = LanguageParser.get_parser("english")
     assert isinstance(parser, LanguageParser)
