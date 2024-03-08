@@ -2,10 +2,10 @@ import abc
 
 __all__ = ("LanguageParser", "parser_mapping")
 
-from collections.abc import Iterable
+from collections.abc import Iterator
 from typing import Any
 
-from spacy.tokens.span import Span
+from app.domain.parser.markdown_text_parser import WordToken
 
 # register in the @parser_tool.register_parser
 parser_mapping: dict[str, type["LanguageParser"]] = {}
@@ -40,13 +40,15 @@ class LanguageParser(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def split_sentences(self, text: str) -> list[Span]:
+    def split_sentences(self, text: str) -> list[str]:
         pass
 
     @abc.abstractmethod
-    def split_sentences_and_tokenize(self, text: str) -> list[Span]:  # TODO replace Span with Sentence
+    def split_sentences_and_tokenize(
+        self, text: str
+    ) -> Iterator[Iterator[WordToken]]:  # TODO replace Span with Sentence
         pass
 
     @abc.abstractmethod
-    def tokenize(self, text: str) -> Iterable[Any]:
+    def tokenize(self, text: str) -> Iterator[WordToken]:
         pass

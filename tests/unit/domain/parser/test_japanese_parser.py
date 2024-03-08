@@ -9,4 +9,4 @@ def test_japanese_parser() -> None:
 def test_japanese_tokenizer() -> None:
     parser = LanguageParser.get_parser("japanese")
     text = "私は元気です。"
-    assert [t.text for t in parser.tokenize(text)] == ["私", "は", "元気", "です", "。"]
+    assert [t.word_string for t in parser.tokenize(text)] == ["私", "は", "元気", "です", "。"]

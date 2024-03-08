@@ -6,39 +6,18 @@ import mistune
 from mistune.markdown import Markdown
 
 __all__ = (
-    "BlockSegment",
-    "EmptySegment",
-    "HardLineBreakSegment",
-    "ImageSegment",
     "MarkDownNode",
     "ParagraphSegment",
     "SoftLineBreakSegment",
     "TextParagraphSegment",
-    "TextToken",
     "SentenceSegment",
     "WordToken",
-    "flatten_segments",
-    "parse_node",
-    "parse_paragraph",
-    "markdown",
     "TextRawParagraphSegment",
     "parse_markdown",
     "ParsedTextSegment",
     "Segment",
     "VWord",
 )
-
-
-# def to_camel_case(snake_str: str) -> str:
-#     return "".join(x.capitalize() for x in snake_str.lower().split("_"))
-#
-#
-# def to_lower_camel_case(snake_str: str) -> str:
-#     # We capitalize the first letter of each component except the first one
-#     # with the 'capitalize' method and join them together.
-#     camel_string = to_camel_case(snake_str)
-#     return snake_str[0].lower() + camel_string[1:]
-
 
 markdown: Markdown = mistune.create_markdown(renderer=None)
 
@@ -53,15 +32,6 @@ class MarkDownNode(TypedDict):
     raw: NotRequired[str]
     children: NotRequired[list["MarkDownNode"]]
     attrs: NotRequired[AttrNode]
-
-
-@dataclass
-class TextToken:
-    token_string: str
-    token_lemma: str
-    token_pos: str
-    is_eos: bool = False
-    is_punct: bool = False
 
 
 # kw_only for dataclass inheritance
@@ -81,8 +51,8 @@ class WordToken:
 @dataclass
 class VWord(WordToken):
     word_tokens: list[str]
-    word_pronunciation: str | None = None
-    word_explanation: str | None = None
+    word_pronunciation: str = ""
+    word_explanation: str = ""
     word_db_id: int = -1
 
 
@@ -160,8 +130,6 @@ class EmptySegment(BaseSegment):
     segment_type: str = "empty"
 
 
-# @dataclass
-# class Segment:
 Segment = (
     ImageSegment
     | SoftLineBreakSegment

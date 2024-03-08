@@ -1,8 +1,10 @@
+from collections.abc import Iterator
 from functools import lru_cache
 
 import spacy
 from spacy.language import Language
-from spacy.tokens.span import Span
+
+from app.domain.parser.markdown_text_parser import WordToken
 
 # from app.lib.timer import sync_timed
 from .language_parser import LanguageParser
@@ -12,8 +14,19 @@ __all__ = ("SpacyParser", "split_sentences_and_tokenize")
 
 
 @lru_cache
-def split_sentences_and_tokenize(nlp: Language, text: str) -> list[Span]:
-    return list(nlp(text).sents)
+def split_sentences_and_tokenize(nlp: Language, text: str) -> Iterator[Iterator[WordToken]]:
+    for sent in nlp(text).sents:
+        yield (
+            WordToken(
+                word_string=token.text,
+                word_pos=token.pos_,
+                word_lemma=token.lemma_,
+                is_word=not token.is_punct,
+                next_is_ws=" " in token.text_with_ws,
+                is_eos=bool(token.is_sent_end),
+            )
+            for token in sent
+        )
 
 
 nlp_mapping: dict[str, Language] = {}
@@ -41,8 +54,16 @@ class SpacyParser(LanguageParser):
     def split_sentences(self, text: str):  # type: ignore
         pass
 
-    def split_sentences_and_tokenize(self, text: str) -> list[Span]:  # type: ignore
+    def split_sentences_and_tokenize(self, text: str) -> Iterator[Iterator[WordToken]]:  # type: ignore
         return split_sentences_and_tokenize(self.nlp, text)
 
-    def tokenize(self, text):  # type: ignore
-        return self.nlp(text)
+    def tokenize(self, text) -> Iterator[WordToken]:  # type: ignore
+        for token in self.nlp(text):
+            yield WordToken(
+                word_string=token.text,
+                word_pos=token.pos_,
+                word_lemma=token.lemma_,
+                is_word=not token.is_punct,
+                next_is_ws=" " in token.text_with_ws,
+                is_eos=token.is_sent_end,
+            )

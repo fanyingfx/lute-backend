@@ -64,7 +64,7 @@ def sentence_tokens() -> list[Token]:
     sentence = "I have to go home."
     sents = english_parser.split_sentences_and_tokenize(sentence)
 
-    return [token for token in sents[0]]  # noqa  in the test case, there is only one sentence.
+    return [token for token in next(sents)]  # noqa  in the test case, there is only one sentence.
 
 
 @fixture()

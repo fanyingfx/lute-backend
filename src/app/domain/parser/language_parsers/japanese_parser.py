@@ -1,11 +1,12 @@
+from collections.abc import Iterator
+
 import spacy
-from spacy.tokens.span import Span
+
+from app.domain.parser.markdown_text_parser import WordToken
 
 from .language_parser import LanguageParser
 from .parser_tool import register_parser
 from .spacy_parser import split_sentences_and_tokenize
-
-# __all__ = ["JapaneseParser"]
 
 
 @register_parser("japanese")
@@ -18,11 +19,19 @@ class JapaneseParser(LanguageParser):
             raise ValueError("ja_core_news_sm is not installed") from None
 
     @classmethod
-    def split_sentences(cls, text: str):  # type: ignore
+    def split_sentences(cls, text: str) -> list[str]:  # type: ignore
         pass
 
-    def split_sentences_and_tokenize(self, text: str) -> list[Span]:  # type: ignore
+    def split_sentences_and_tokenize(self, text: str) -> Iterator[Iterator[WordToken]]:  # type: ignore
         return split_sentences_and_tokenize(self.nlp, text)
 
-    def tokenize(self, text):  # type: ignore
-        return self.nlp(text)
+    def tokenize(self, text) -> Iterator[WordToken]:  # type: ignore
+        for token in self.nlp(text):
+            yield WordToken(
+                word_string=token.text,
+                word_pos=token.pos_,
+                word_lemma=token.lemma_,
+                is_word=not token.is_punct,
+                next_is_ws=" " in token.text_with_ws,
+                is_eos=bool(token.is_sent_end),
+            )
