@@ -113,7 +113,7 @@ def fx_raw_words() -> list[Word | dict[str, Any]]:
             "word_explanation": "must do something",
             "word_counts": 2,
             "word_tokens": ["have", "to"],
-            "first_word": "have"
+            "first_word": "have",
         },
         {
             "language_id": 1,
@@ -126,9 +126,10 @@ def fx_raw_words() -> list[Word | dict[str, Any]]:
             "word_explanation": "greeting",
             "word_counts": None,
             "word_tokens": ["hello"],
-            "first_word": "hello"
+            "first_word": "hello",
         },
     ]
+
 
 # @pytest.fixture()
 # def _patch_worker(

@@ -49,7 +49,7 @@ def parser_exists(parser_name: str) -> bool:
 
 
 async def match_word_in_sentence(
-        sentence_iter: list[WordToken], word_index: dict[str, list[Word]], max_loop_num: int
+    sentence_iter: list[WordToken], word_index: dict[str, list[Word]], max_loop_num: int
 ) -> SentenceSegment:
     start_position = 0
     res_word_list = []
@@ -99,7 +99,7 @@ async def match_word_in_sentence(
 
 
 async def text2segment(
-        text: str, language_parser: LanguageParser, paragraph_order: int, word_index: dict[str, list[Word]]
+    text: str, language_parser: LanguageParser, paragraph_order: int, word_index: dict[str, list[Word]]
 ) -> list[SentenceSegment]:
     """
     Returns:
@@ -118,7 +118,7 @@ async def text2segment(
 
 
 async def get_parsed_text_segments(
-        segmentlist: list[Segment], parser: LanguageParser, word_index: dict[str, list[Word]]
+    segmentlist: list[Segment], parser: LanguageParser, word_index: dict[str, list[Word]]
 ) -> list[ParsedTextSegment]:
     paragraph_order = 1
     res: list[ParsedTextSegment] = []

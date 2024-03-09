@@ -239,7 +239,9 @@ class ServerSettings:
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = field(
         default_factory=lambda: (
-            int(os.getenv("WEB_CONCURRENCY")) if os.getenv("WEB_CONCURRENCY") is not None else None),  # typing: ignore[arg-type]
+            int(os.getenv("WEB_CONCURRENCY")) if os.getenv("WEB_CONCURRENCY") is not None else None
+        ),
+        # typing: ignore[arg-type]
     )
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
 
@@ -380,12 +382,12 @@ class LogSettings:
 #         return self._redis_instance
 
 
-@dataclass
+@dataclass(kw_only=True)
 class UserDataSettings:
     USER_DATA_FOLDER: Path = field(default_factory=lambda: Path(os.getenv("USER_DATA_FOLDER", Path.cwd() / "data")))
-    WORD_IMAGE_PATH: Path | None = None
-    UNIDIC_CSJ_PATH: Path | None = None
-    UNIDIC_CWJ_PATH: Path | None = None
+    WORD_IMAGE_PATH: Path = Path()
+    UNIDIC_CSJ_PATH: Path = Path()
+    UNIDIC_CWJ_PATH: Path = Path()
 
     def __post_init__(self) -> None:
         self.WORD_IMAGE_PATH = self.USER_DATA_FOLDER / "word-images"
@@ -399,9 +401,11 @@ class UserDataSettings:
     @property
     def word_image_path(self) -> str:
         return self.WORD_IMAGE_PATH.as_posix()  # type: ignore[union-attr]
+
     @property
     def unidic_csj_path(self) -> str:
         return self.UNIDIC_CSJ_PATH.as_posix()  # type: ignore[union-attr]
+
     @property
     def unidic_cwj_path(self) -> str:
         return self.UNIDIC_CWJ_PATH.as_posix()  # type: ignore[union-attr]

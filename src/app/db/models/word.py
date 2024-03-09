@@ -7,7 +7,7 @@ from advanced_alchemy.base import BigIntBase
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-__all__ = ("Word",)
+__all__ = ("Word", "WordImage")
 
 from app.db.models.base import JSONType
 
@@ -48,4 +48,4 @@ class WordImage(BigIntBase):
     word_id: Mapped[int] = mapped_column(ForeignKey("words.id"))
     word_image_name: Mapped[str] = mapped_column(String(100))
     word_image_path: Mapped[str] = mapped_column(String(100))
-    # word: Mapped[Word] = relationship(back_populates="word_image", lazy="noload")
+    word: Mapped[Word] = relationship(back_populates="word_image", lazy="joined")
