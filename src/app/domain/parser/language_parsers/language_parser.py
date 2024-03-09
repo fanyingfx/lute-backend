@@ -48,7 +48,7 @@ class LanguageParser(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:  # TODO replace Span with Sentence
+    def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
         pass
 
     @abc.abstractmethod

@@ -389,7 +389,6 @@ class UserDataSettings:
 
     def __post_init__(self) -> None:
         self.WORD_IMAGE_PATH = self.USER_DATA_FOLDER / "word-images"
-        self.WORD_IMAGE_PATH.mkdir(exist_ok=True)
         self.UNIDIC_CSJ_PATH = self.USER_DATA_FOLDER / "unidic-csj"
         self.UNIDIC_CWJ_PATH = self.USER_DATA_FOLDER / "unidic-cwj"
 
@@ -400,6 +399,12 @@ class UserDataSettings:
     @property
     def word_image_path(self) -> str:
         return self.WORD_IMAGE_PATH.as_posix()  # type: ignore[union-attr]
+    @property
+    def unidic_csj_path(self) -> str:
+        return self.UNIDIC_CSJ_PATH.as_posix()  # type: ignore[union-attr]
+    @property
+    def unidic_cwj_path(self) -> str:
+        return self.UNIDIC_CWJ_PATH.as_posix()  # type: ignore[union-attr]
 
 
 @dataclass
