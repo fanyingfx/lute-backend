@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# flake8: noqa
 import logging
 import time
 from functools import wraps
@@ -6,7 +8,6 @@ __all__ = (
     "sync_timed",
     "timed",
 )
-
 
 logging.basicConfig()
 logger = logging.getLogger("time-logger")
@@ -24,7 +25,7 @@ def timed(func):
         result = await func(*args, **kwargs)
         end = time.time()
         if ENABLE_DEBUG_LOGGING:
-            logger.debug("{} ran in {:.2f}s".format(func.__name__,end-start))
+            logger.debug(f"{func.__name__} ran in {end - start:.2f}s")
         return result
 
     return wrapper
@@ -39,7 +40,7 @@ def sync_timed(func):
         result = func(*args, **kwargs)
         end = time.time()
         if ENABLE_DEBUG_LOGGING:
-            logger.debug("{} ran in {:.2f}s".format(func.__name__,end-start))
+            logger.debug(f"{func.__name__} ran in {end - start:.2f}s")
         return result
 
     return wrapper

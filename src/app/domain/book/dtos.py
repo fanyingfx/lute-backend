@@ -57,8 +57,8 @@ class BookTextCreate:
 class BookCreate:
     language_id: int
     book_name: str | None = None
-    create_at: datetime = None
-    update_at: datetime = None
+    create_at: datetime | None = None
+    update_at: datetime | None = None
     published_at: date | None = None
     texts: list[BookTextCreate] | None = None
 

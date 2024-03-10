@@ -236,14 +236,14 @@ class ServerSettings:
     )
     """Turn on hot reloading."""
     RELOAD_DIRS: list[str] = field(default_factory=lambda: [f"{BASE_DIR}"])
+    # fmt: off
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = field(
         default_factory=lambda: (
-            int(os.getenv("WEB_CONCURRENCY")) if os.getenv("WEB_CONCURRENCY") is not None else None
-        ),
-        # typing: ignore[arg-type]
+            int(workers) if (workers := os.getenv("WEB_CONCURRENCY")) is not None else None),  # typing: ignore[arg-type] #fmt: skip
     )
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
+    # fmt:on
 
 
 @dataclass
@@ -400,15 +400,15 @@ class UserDataSettings:
 
     @property
     def word_image_path(self) -> str:
-        return self.WORD_IMAGE_PATH.as_posix()  # type: ignore[union-attr]
+        return self.WORD_IMAGE_PATH.as_posix()
 
     @property
     def unidic_csj_path(self) -> str:
-        return self.UNIDIC_CSJ_PATH.as_posix()  # type: ignore[union-attr]
+        return self.UNIDIC_CSJ_PATH.as_posix()
 
     @property
     def unidic_cwj_path(self) -> str:
-        return self.UNIDIC_CWJ_PATH.as_posix()  # type: ignore[union-attr]
+        return self.UNIDIC_CWJ_PATH.as_posix()
 
 
 @dataclass
