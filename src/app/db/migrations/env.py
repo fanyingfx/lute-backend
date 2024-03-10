@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from advanced_alchemy.alembic.commands import AlembicCommandConfig
     from alembic.runtime.environment import EnvironmentContext
     from sqlalchemy.engine import Connection
+    from sqlalchemy.ext.asyncio import AsyncEngine
 
 __all__ = ["do_run_migrations", "run_migrations_offline", "run_migrations_online"]
 
@@ -114,7 +115,7 @@ async def run_migrations_online() -> None:
     configuration["sqlalchemy.url"] = config.db_url
 
     connectable = cast(
-        "AsyncEngine",  # noqa
+        "AsyncEngine",
         config.engine
         or async_engine_from_config(
             configuration,
@@ -124,7 +125,7 @@ async def run_migrations_online() -> None:
         ),
     )
     if connectable is None:
-        msg = (
+        msg = (  # type: ignore[unreachable]
             "Could not get engine from config. "
             " Please ensure your `alembic.ini` according to the official Alembic documentation."
         )
