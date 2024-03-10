@@ -39,6 +39,6 @@ async def provides_word_image_service(db_session: AsyncSession) -> AsyncGenerato
 
     async with WordImageService.new(
         session=db_session,
-        statement=select(WordImage).options(joinedload(WordImage.word)).options(noload("*")),
+        statement=select(WordImage).options(noload("*")),
     ) as service:
         yield service

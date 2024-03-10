@@ -80,6 +80,8 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         return self.word_index[language_id]
 
     async def update_word_index(self, language_id: int, word_string: str) -> None:
+        if language_id not in self.word_index:
+            return
         word_list = await self.list(
             CollectionFilter("language_id", [language_id]),
             CollectionFilter("first_word", [word_string]),

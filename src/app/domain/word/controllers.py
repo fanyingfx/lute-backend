@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from litestar import Controller, MediaType, Request, delete, get, post
-from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.dto import DTOData
 from litestar.enums import RequestEncodingType
@@ -9,8 +8,9 @@ from litestar.params import Body
 
 from app.config.base import get_user_settings
 from app.db.models.word import Word
+from app.domain.image_search.bing_image_search import fetch_all_images
 from app.domain.word.dependencies import provides_word_image_service, provides_word_service
-from app.domain.word.dtos import WordCreate, WordCreateDTO, WordDTO, WordPatchDTO, WordUpdate
+from app.domain.word.dtos import WordCreate, WordCreateDTO, WordDTO, WordImageFormData, WordPatchDTO, WordUpdate
 from app.domain.word.services import WordImageService, WordService
 
 __all__ = ("WordController",)
@@ -37,19 +37,16 @@ class WordController(Controller):
     @post(path="/create_or_update", dto=WordPatchDTO)
     async def create_or_update(self, word_service: WordService, data: DTOData[WordUpdate]) -> Word:
         db_obj = await word_service.create_or_update(data.create_instance().__dict__)
-        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
         return word_service.to_dto(db_obj)
 
     @post("/create", dto=WordCreateDTO)
     async def create_word(self, word_service: WordService, data: DTOData[WordCreate]) -> Word:
         db_obj = await word_service.create(data.as_builtins())
-        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
         return word_service.to_dto(db_obj)
 
     @delete("/delete/{word_id:int}")
     async def delete_word(self, word_service: WordService, word_id: int, request: Request) -> None:
-        db_obj = await word_service.delete(item_id=word_id, auto_commit=True)
-        await word_service.update_word_index(db_obj.language_id, db_obj.first_word)
+        await word_service.delete(item_id=word_id, auto_commit=True)
         # return word_service.to_dto(db_obj)
 
     @post("/update/{word_string:str}")
@@ -65,21 +62,28 @@ class WordController(Controller):
     async def save_word_image(
         self,
         word_image_service: WordImageService,
-        word_service: WordService,
-        data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
-        save_local: bool = False,
-        word_id: int | None = None,
-        image_name: str | None = None,
+        data: Annotated[WordImageFormData, Body(media_type=RequestEncodingType.MULTI_PART)],
     ) -> str:
-        if save_local and image_name:
-            content = await data.read()
-            with (get_user_settings().WORD_IMAGE_PATH / image_name).open("wb") as f:
+        if data.save_local and data.word_image_name:
+            content = await data.word_image_file.read()
+            with (get_user_settings().WORD_IMAGE_PATH / data.word_image_name).open("wb") as f:
                 f.write(content)
-            if word_id is not None:
-                db_obj = await word_image_service.create(
-                    {"word_id": word_id, "word_image_name": image_name.split(".")[0], "word_image_path": image_name}
+            if data.word_id is not None:
+                await word_image_service.create(
+                    {
+                        "word_id": data.word_id,
+                        "word_image_name": data.word_image_name.split(".")[0],
+                        "word_image_path": data.word_image_name,
+                    }
                 )
-                await word_service.update_word_index(db_obj.word.language_id, db_obj.word.first_word)
 
-        filename = data.filename
-        return f"{filename}"
+        # filename = data.filename
+        return f"{data.word_image_name}"
+
+    @get("/search_word_image")
+    async def search_image(self, word_string: str) -> list[str]:
+        return await fetch_all_images(word_string)
+
+    @post("/update_word_index")
+    async def _update_word_index(self, word_service: WordService, language_id: int, first_word: str) -> None:
+        await word_service.update_word_index(language_id, first_word)

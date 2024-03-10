@@ -78,3 +78,4 @@ cython_debug/
 .idea/
 /src/app/static/web/
 /data/
+*.sqlite

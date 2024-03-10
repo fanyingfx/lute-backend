@@ -1,43 +1,52 @@
-# mypy: ignore-errors
-# ruff: noqa
+import asyncio
+from urllib.parse import quote_plus
 
-# adapted from code by @stephenhouser on github
-# https://gist.github.com/stephenhouser/c5e2b921c3770ed47eb3b75efbc94799
-import json
-import sys
-import urllib.error
-import urllib.parse
-import urllib.request
-
+import httpx
 from bs4 import BeautifulSoup
 
-
-def get_soup(url, header):
-    return BeautifulSoup(urllib.request.urlopen(urllib.request.Request(url, headers=header)), "html.parser")
+__all__ = ["fetch_all_images"]
 
 
-def bing_image_search(query):
-    query = query.split()
-    # query.pop()
-    query = "+".join(query)
-    # query.split()
-    url = "http://www.bing.com/images/search?q=" + query + "&FORM=HDRSC2"
-
-    # add the directory for your image here
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36"
+async def _fetch_image_urls(search_query: str, page_num: int) -> list[str]:
+    search_url = f"https://www.bing.com/images/search?q={quote_plus(search_query)}&first={page_num}&count=40"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
+        "AppleWebKit/537.11 (KHTML, like Gecko) "
+        "Chrome/23.0.1271.64 Safari/537.11",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.3",
+        "Accept-Encoding": "none",
+        "Accept-Language": "en-US,en;q=0.8",
+        "Connection": "keep-alive",
     }
-    soup = get_soup(url, header)
-    image_result_raw = soup.find("a", {"class": "iusc"})
 
-    m = json.loads(image_result_raw["m"])
-    murl, turl = m["murl"], m["turl"]  # mobile image, desktop image
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(search_url, headers=headers)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+            image_urls = []
 
-    image_name = urllib.parse.urlsplit(murl).path.split("/")[-1]
-    return (image_name, murl, turl)
+            for img in soup.find_all("img"):
+                src = img.get("src")
+                if src and src.startswith("http"):
+                    image_urls.append(src)
+
+            return image_urls
+
+        except httpx.HTTPStatusError:
+            return []
+
+
+async def fetch_all_images(search_query: str, num_pages: int = 2) -> list[str]:
+    tasks = [_fetch_image_urls(search_query, page) for page in range(num_pages)]
+    results = await asyncio.gather(*tasks)
+    return list({url for urls in results for url in urls})
+
+
+async def main(search_query):  # type: ignore
+    await fetch_all_images(search_query)
 
 
 if __name__ == "__main__":
-    query = sys.argv[1]
-    results = bing_image_search(query)
-    print(results)
+    asyncio.run(main("cat"))  # type: ignore
