@@ -81,49 +81,49 @@ vite = ViteConfig(
 #         ),
 #     ],
 # )
-
+log_handlers = ["console"]
 log = StructlogConfig(
     structlog_logging_config=StructLoggingConfig(
         log_exceptions="always",
         traceback_line_limit=4,
         standard_lib_logging_config=LoggingConfig(
-            root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
+            root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": log_handlers},
             loggers={
                 # "uvicorn.access": {
                 #     "propagate": False,
                 #     "level": settings.log.UVICORN_ACCESS_LEVEL,
-                #     "handlers": ["queue_listener"],
+                #     "handlers": ["console"],
                 # },
                 # "uvicorn.error": {
                 #     "propagate": False,
                 #     "level": settings.log.UVICORN_ERROR_LEVEL,
-                #     "handlers": ["queue_listener"],
-                # },
+                #     "handlers": ["console"],
+                #  },
                 "granian.access": {
                     "propagate": False,
                     "level": settings.log.GRANIAN_ACCESS_LEVEL,
-                    "handlers": ["queue_listener"],
+                    "handlers": log_handlers,
                 },
                 "granian.error": {
                     "propagate": False,
                     "level": settings.log.GRANIAN_ERROR_LEVEL,
-                    "handlers": ["queue_listener"],
+                    "handlers": log_handlers,
                 },
                 "saq": {
                     "propagate": False,
                     "level": settings.log.SAQ_LEVEL,
-                    "handlers": ["queue_listener"],
+                    "handlers": log_handlers,
                 },
                 "sqlalchemy.engine": {
                     "propagate": False,
                     "level": settings.log.SQLALCHEMY_LEVEL,
-                    "handlers": ["queue_listener"],
+                    "handlers": log_handlers,
                 },
-                "sqlalchemy.pool": {
-                    "propagate": False,
-                    "level": settings.log.SQLALCHEMY_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
+                # "sqlalchemy.pool": {
+                #     "propagate": False,
+                #     "level": settings.log.SQLALCHEMY_LEVEL,
+                #     "handlers": log_handlers,
+                # }
             },
         ),
     ),

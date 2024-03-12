@@ -67,7 +67,7 @@ def sentence_tokens() -> list[WordToken]:
 
 @fixture()
 async def get_vwords(sentence_tokens: list[WordToken], word_index: dict[str, list[Word]]) -> list[VWord]:
-    max_loop_num = 100
+    max_loop_num = 10 * len(sentence_tokens)
     token_sentence = await parser_tool.match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
     return token_sentence.segment_value
 

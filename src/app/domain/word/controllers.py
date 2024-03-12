@@ -65,7 +65,7 @@ class WordController(Controller):
         data: Annotated[WordImageFormData, Body(media_type=RequestEncodingType.MULTI_PART)],
     ) -> str:
         if data.save_local and data.word_image_name:
-            content = await data.word_image_file.read()
+            content = await data.file.read()
             with (get_user_settings().WORD_IMAGE_PATH / data.word_image_name).open("wb") as f:
                 f.write(content)
             if data.word_id is not None:

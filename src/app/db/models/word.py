@@ -36,9 +36,7 @@ class Word(BigIntBase):
     )
     first_word: Mapped[str] = mapped_column(String(100))
     language: Mapped["Language"] = relationship(lazy="joined")  # noqa
-    word_image: Mapped[WordImage] = relationship(
-        lazy="joined", single_parent=True, cascade="all, delete, delete-orphan"
-    )
+    word_image: Mapped[WordImage] = relationship(lazy="joined", cascade="all, delete, delete-orphan")
 
     UniqueConstraint(word_string)
 
@@ -48,4 +46,5 @@ class WordImage(BigIntBase):
     word_id: Mapped[int] = mapped_column(ForeignKey("words.id"))
     word_image_name: Mapped[str] = mapped_column(String(100))
     word_image_path: Mapped[str] = mapped_column(String(100))
-    word: Mapped[Word] = relationship(back_populates="word_image", lazy="joined")
+    word: Mapped[Word] = relationship(back_populates="word_image", lazy="joined", single_parent=True)
+    __table_args__ = (UniqueConstraint("word_id"),)

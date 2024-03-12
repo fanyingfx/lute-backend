@@ -68,7 +68,7 @@ class WordPatchDTO(DataclassDTO[WordUpdate]):
 
 
 class WordImageFormData(BaseModel):
-    word_image_file: UploadFile
+    file: UploadFile
     save_local: bool = Field(default=True)
     word_id: int | None = Field(default=None)
     word_image_name: str | None = Field(default=None)

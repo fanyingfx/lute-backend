@@ -28,6 +28,11 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
 
     repository_type = WordRepository
     word_index: dict[int, dict[str, list[Word]]] = {}
+    """
+     for each language, key is language_id, value is dict[str, list[Word]],
+     in the value, key is word_string's first word
+     for value of list[Word], Word is sorted by word_counts descending
+    """
 
     def __init__(self, **repo_kwargs: Any) -> None:
         self.repository: WordRepository = self.repository_type(**repo_kwargs)
@@ -80,14 +85,24 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         return self.word_index[language_id]
 
     async def update_word_index(self, language_id: int, word_string: str) -> None:
+        """
+        This function will update the word index for a given language.
+        Parameters:
+            language_id (int): The ID of the language.
+            word_string (str): The word to be updated in the index.
+        Returns:
+            None
+        """
         if language_id not in self.word_index:
             return
+        # word_list should be sort by word_counts desc
+        # it will be used in search the longest matched word
         word_list = await self.list(
             CollectionFilter("language_id", [language_id]),
             CollectionFilter("first_word", [word_string]),
             OrderBy("word_counts", "desc"),
         )
-        if not word_list:
+        if not word_list and word_string in self.word_index[language_id]:
             del self.word_index[language_id][word_string]
             return
 
@@ -121,6 +136,15 @@ class WordImageService(SQLAlchemyAsyncRepositoryService[WordImage]):
     ) -> WordImage:
         db_obj = await self.to_model(data, "create")
         return await super().create(data=db_obj, auto_commit=auto_commit)
+
+    async def create_or_update(
+        self,
+        data: dict[str, Any],
+    ) -> WordImage:
+        db_obj: WordImage | None = await self.get_one_or_none(word_id=data["word_id"])
+        if db_obj is None:
+            return await self.create(data)
+        return await super().update(item_id=db_obj.id, data=data, auto_commit=True)
 
     async def update(
         self,
