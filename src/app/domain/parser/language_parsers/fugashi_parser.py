@@ -1,17 +1,19 @@
-import pathlib
 import re
 
 import jaconv
 from fugashi import Tagger, UnidicNode
 from konoha import SentenceTokenizer
 
+from app.config.base import get_user_settings
+from app.domain.parser.language_parsers.language_parser import LanguageParser
+from app.domain.parser.language_parsers.parser_tool import register_parser
 from app.domain.parser.markdown_text_parser import WordToken
 
-from .language_parser import LanguageParser
-from .parser_tool import register_parser
+# from .parser_tool import register_parser
 
-CSJ_PATH = r"C:Users\fanzh\PycharmProjects\lute-backend\data\csj"
-csj_path = pathlib.Path(CSJ_PATH).as_posix()
+# CSJ_PATH = r"C:Users\fanzh\PycharmProjects\lute-backend\data\csj"
+# csj_path = pathlib.Path(CSJ_PATH).as_posix()
+CWJ_PATH = get_user_settings().unidic_cwj_path
 
 
 class JapaneseHelper:
@@ -25,6 +27,13 @@ class JapaneseHelper:
     def kata2hira(katakana: str) -> str:
         return str(jaconv.kata2hira(katakana))
 
+    # @staticmethod
+    # def pos2ud(pos:str):
+    #     f = {"接頭辞": "NOUN", "接頭詞": "NOUN", "代名詞": "PRON", "連体詞": "DET", "副詞": "ADV", "感動詞": "INTJ",
+    #          "フィラー": "INTJ", "接続詞": "CCONJ", "補助記号": "PUNCT"}
+    #
+    #
+
 
 @register_parser("fugashi")
 class SpokenJapaneseParser(LanguageParser):
@@ -36,13 +45,17 @@ class SpokenJapaneseParser(LanguageParser):
     def tokenize(self, text: str) -> list[WordToken]:
         token: UnidicNode
         res = []
+        pos_set = set()
         for token in self._tagger(text):
+            pos_extra = (token.feature.pos1, token.feature.pos2, token.feature.pos3, token.feature.pos4)
             word_token = WordToken(
                 word_string=token.surface,
                 word_lemma=token.feature.orthBase,
                 word_pos=token.feature.pos1,
                 is_word=token.char_type in {2, 6, 7, 8},
+                pos_extra=",".join(pos_extra),
             )
+            pos_set.add((token.feature.pos1, token.feature.pos2, token.feature.pos3, token.feature.pos4))
             if token.feature.goshu == "外":
                 word_token.word_pronunciation = token.feature.lemma.split("-")[-1]
             elif JapaneseHelper.string_is_kana(token.surface):
@@ -57,3 +70,8 @@ class SpokenJapaneseParser(LanguageParser):
 
     def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
         return [self.tokenize(sentence) for sentence in self.split_sentences(text)]
+
+
+if __name__ == "__main__":
+    parser = SpokenJapaneseParser("fugashi", undic_path=CWJ_PATH)
+    # print(parser.tokenize("麩菓子は、麩を主材料とした日本の菓子。"))

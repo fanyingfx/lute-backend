@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from litestar import get
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -50,6 +50,6 @@ async def test_db_session_dependency(app: "Litestar", engine: "AsyncEngine") -> 
 
     app.register(db_session_dependency_patched)
     # can't use test client as it always starts its own event loop
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://testserver") as client:  # type: ignore[arg-type]
         response = await client.get("/db-session-test")
         assert response.json()["result"] == "db_session.bind is engine = True"

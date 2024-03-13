@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar.datastructures import UploadFile
 from litestar.dto import DataclassDTO
-from pydantic import BaseConfig, BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.db.models.word import Word
 from app.lib import dto
@@ -41,6 +41,7 @@ class WordCreateDTO(DataclassDTO[WordCreate]):
 
 @dataclass(kw_only=True)
 class WordUpdate:
+    word_db_id: int = -1
     word_string: str
     language_id: int
     word_lemma: str = ""
@@ -68,13 +69,8 @@ class WordPatchDTO(DataclassDTO[WordUpdate]):
 
 
 class WordImageFormData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     file: UploadFile
     save_local: bool = Field(default=True)
     word_id: int | None = Field(default=None)
     word_image_name: str | None = Field(default=None)
-
-    class Config(BaseConfig):
-        arbitrary_types_allowed = True
-
-
-# class BookPatchDTO(DataclassDTO[BookUpdate]):

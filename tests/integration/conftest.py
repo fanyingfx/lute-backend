@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from litestar import Litestar
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
@@ -119,5 +119,5 @@ async def fx_client(app: Litestar) -> AsyncIterator[AsyncClient]:
     ValueError: The future belongs to a different loop than the one specified as the loop argument
     ```
     """
-    async with AsyncClient(app=app, base_url="http://testserver") as client:
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://testserver") as client:  # type: ignore[arg-type]
         yield client

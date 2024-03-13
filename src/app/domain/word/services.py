@@ -52,7 +52,7 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         return await super().create(data=db_obj, auto_commit=auto_commit)
 
     async def create_or_update(self, data: dict[str, Any]) -> Word:
-        db_obj: Word | None = await self.get_one_or_none(word_string=data["word_string"])
+        db_obj: Word | None = await self.get_one_or_none(id=data["word_db_id"])
         if db_obj is None:
             return await self.create(data)
         return await super().update(item_id=db_obj.id, data=data, auto_commit=True)
@@ -95,13 +95,15 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         """
         if language_id not in self.word_index:
             return
-        # word_list should be sort by word_counts desc
-        # it will be used in search the longest matched word
         word_list = await self.list(
             CollectionFilter("language_id", [language_id]),
             CollectionFilter("first_word", [word_string]),
             OrderBy("word_counts", "desc"),
         )
+        """
+         word_list should be sort by word_counts desc
+        it will be used in search the longest matched word
+        """
         if not word_list and word_string in self.word_index[language_id]:
             del self.word_index[language_id][word_string]
             return
