@@ -48,6 +48,7 @@ class WordToken:
     is_word: bool = False
     next_is_ws: bool = False
     word_pronunciation: str = ""
+    pos_extra: str = ""
 
 
 @dataclass
