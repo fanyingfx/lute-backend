@@ -18,7 +18,7 @@ static_route_handlers = [
         tags=["static"],
     ),
     create_static_files_router(
-        directories=[get_user_settings().word_image_path],
+        directories=[get_user_settings().WORD_IMAGE_PATH],
         path="word_images",
         name="word_images",
         tags=["static"],

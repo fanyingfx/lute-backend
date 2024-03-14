@@ -12,7 +12,7 @@ spacy_model_mapping = {
 }
 fugashi_unidic = {
     "written_japanese": get_user_settings().unidic_cwj_path,
-    "spoken_japanese": get_user_settings().unidic_csj_path,
+    "spoken_japanese": get_user_settings().unidic_csj_path_str,
 }
 parser_mapping: dict[str, type[LanguageParser]] = {}
 parser_instances: dict[str, LanguageParser] = {}

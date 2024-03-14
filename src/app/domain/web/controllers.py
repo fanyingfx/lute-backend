@@ -1,5 +1,5 @@
 from litestar import Controller, get
-from litestar.response import Template
+from litestar.response import Redirect, Template
 from litestar.status_codes import HTTP_200_OK
 
 # from app.config import constants
@@ -15,3 +15,10 @@ class WebController(Controller):
     async def index(self) -> Template:
         """Serve site root."""
         return Template(template_name="index.html")
+
+    @get("/{filename:str}")
+    async def get_static_resource(self, filename: str) -> Redirect:
+        """
+        redirect for favicon.ico
+        """
+        return Redirect(f"/static/{filename}")

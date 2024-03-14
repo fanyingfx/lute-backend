@@ -388,22 +388,20 @@ class UserDataSettings:
     WORD_IMAGE_PATH: Path = Path()
     UNIDIC_CSJ_PATH: Path = Path()
     UNIDIC_CWJ_PATH: Path = Path()
+    MDX_DICTS_PATH: Path = Path()
 
     def __post_init__(self) -> None:
         self.WORD_IMAGE_PATH = self.USER_DATA_FOLDER / "word-images"
         self.UNIDIC_CSJ_PATH = self.USER_DATA_FOLDER / "unidic-csj"
         self.UNIDIC_CWJ_PATH = self.USER_DATA_FOLDER / "unidic-cwj"
+        self.MDX_DICT_PATH = self.USER_DATA_FOLDER / "dicts"
 
     @property
     def data_folder(self) -> str:
         return self.USER_DATA_FOLDER.as_posix()
 
     @property
-    def word_image_path(self) -> str:
-        return self.WORD_IMAGE_PATH.as_posix()
-
-    @property
-    def unidic_csj_path(self) -> str:
+    def unidic_csj_path_str(self) -> str:
         return self.UNIDIC_CSJ_PATH.as_posix()
 
     @property

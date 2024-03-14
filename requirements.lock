@@ -22,6 +22,7 @@ anyio==4.3.0
     # via watchfiles
 beautifulsoup4==4.12.3
     # via app
+    # via mdict-query
 blis==0.7.11
     # via thinc
 catalogue==2.0.10
@@ -113,6 +114,8 @@ marko==2.0.3
 markupsafe==2.1.5
     # via jinja2
     # via mako
+mdict-query @ file:///D:/Code/mdict-query/dist/mdict_query-0.1.1-py3-none-any.whl
+    # via app
 mdurl==0.1.2
     # via markdown-it-py
 mistune==3.0.2

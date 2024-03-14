@@ -26,7 +26,3 @@ class HomeController(Controller):
             "railway_ref_url": "https://railway.app/template/zx1KGh?referralCode=BMcs0x",
         }
         return Template("index.html", context=context)
-
-    # @get("/{filename:str}", tags=["frontend:"], include_in_schema=False)
-    # async def get_resource(self, filename: str) -> Response:
-    #     return Redirect(f"/static/{filename}")
