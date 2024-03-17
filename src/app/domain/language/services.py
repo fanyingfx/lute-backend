@@ -3,8 +3,10 @@ from typing import Any
 
 from sqlalchemy.orm import InstrumentedAttribute
 
+import app.domain.parser.language_parsers.paser_config
 from app.db.models.language import Language
-from app.domain.parser import parser_tool
+
+# from app.domain.parser import parser_helper
 from app.lib.exceptions import LanguageParserError
 from app.lib.repository import SQLAlchemyAsyncRepository
 from app.lib.service import SQLAlchemyAsyncRepositoryService
@@ -34,7 +36,7 @@ class LanguageService(SQLAlchemyAsyncRepositoryService[Language]):
         auto_refresh: bool | None = None,
     ) -> Language:
         db_obj = await self.to_model(data, "create")
-        if not parser_tool.parser_exists(db_obj.parser_name):
+        if not app.domain.parser.language_parsers.paser_config.parser_exists(db_obj.parser_name):
             raise LanguageParserError(f"Parser '{db_obj.parser_name}' is not found")
         return await super().create(data=db_obj, auto_commit=auto_commit)
 

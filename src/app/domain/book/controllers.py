@@ -28,7 +28,7 @@ from app.domain.book.dtos import (
     ParsedBookTextDTO,
 )
 from app.domain.book.services import BookService, BookTextService
-from app.domain.parser import parser_tool
+from app.domain.parser import parser_helper
 from app.domain.parser.markdown_text_parser import (
     parse_markdown,
 )
@@ -131,6 +131,17 @@ class BookTextController(Controller):
         parser: LanguageParser = db_obj.book.language.get_parser()
         word_index: dict[str, list[Word]] = await word_service.load_word_index(db_obj.book.language_id)
         segmentlist = parse_markdown(db_obj.book_text)
-        res = await parser_tool.get_parsed_text_segments(segmentlist, parser, word_index)
+        res = await parser_helper.get_parsed_text_segments(segmentlist, parser, word_index)
 
         return ParsedBookText(data=res)
+
+    @post("/booktext/update_page")
+    async def update_booktext_page(
+        self, booktext_service: BookTextService, booktext_id: int, current_page_number: int
+    ) -> dict[str, Any]:
+        db_obj = await booktext_service.update(item_id=booktext_id, data={"current_page": current_page_number})
+        return {
+            "booktext_id": db_obj.id,
+            "message": "Page number updated successfully",
+            "current_page": db_obj.current_page,
+        }

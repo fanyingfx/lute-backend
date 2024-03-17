@@ -21,4 +21,6 @@ class WebController(Controller):
         """
         redirect for favicon.ico
         """
+        if "ico" not in filename:
+            return Redirect(f"/dict/{filename}")
         return Redirect(f"/static/{filename}")

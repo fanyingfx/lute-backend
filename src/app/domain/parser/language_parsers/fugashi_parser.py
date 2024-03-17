@@ -6,14 +6,14 @@ from konoha import SentenceTokenizer
 
 from app.config.base import get_user_settings
 from app.domain.parser.language_parsers.language_parser import LanguageParser
-from app.domain.parser.language_parsers.parser_tool import register_parser
+from app.domain.parser.language_parsers.paser_config import register_parser
 from app.domain.parser.markdown_text_parser import WordToken
 
 # from .parser_tool import register_parser
 
 # CSJ_PATH = r"C:Users\fanzh\PycharmProjects\lute-backend\data\csj"
 # csj_path = pathlib.Path(CSJ_PATH).as_posix()
-CWJ_PATH = get_user_settings().unidic_cwj_path
+CWJ_PATH = get_user_settings().unidic_cwj_path_str
 
 
 class JapaneseHelper:

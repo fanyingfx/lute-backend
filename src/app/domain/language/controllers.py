@@ -3,11 +3,13 @@ from litestar.di import Provide
 from litestar.dto import DTOData
 from litestar.pagination import OffsetPagination
 
+import app.domain.parser.language_parsers.paser_config
 from app.db.models.language import Language
 from app.domain.language.dependencies import provides_language_service
 from app.domain.language.dtos import LanguageCreateDTO, LanguageData, LanguageDTO
 from app.domain.language.services import LanguageService
-from app.domain.parser import parser_tool
+
+# from app.domain.parser import parser_tool
 
 __all__ = ("LanguageController",)
 
@@ -27,7 +29,7 @@ class LanguageController(Controller):
 
     @get("/parsers")
     async def list_parsers(self) -> list[str]:
-        return parser_tool.list_all_parsers()
+        return app.domain.parser.language_parsers.paser_config.list_all_parsers()
 
     @post("/create", dto=LanguageCreateDTO)
     async def create_language(self, language_service: LanguageService, data: DTOData[LanguageData]) -> Language:

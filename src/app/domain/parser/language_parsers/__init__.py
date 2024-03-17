@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 from pathlib import Path
 
-from . import language_parser, parser_tool
+from . import language_parser
 
 
 def import_submodules() -> None:
@@ -17,4 +17,4 @@ def import_submodules() -> None:
 
 
 import_submodules()
-__all__ = ["language_parser", "parser_tool"]
+__all__ = ["language_parser", "parser_helper.py"]

@@ -7,21 +7,20 @@ from app.domain.parser.markdown_text_parser import WordToken
 
 # from app.lib.timer import sync_timed
 from .language_parser import LanguageParser
-from .parser_tool import register_parser
-from .paser_config import spacy_model_mapping
+from .paser_config import nlp_mapping, register_parser, spacy_model_mapping
 
-__all__ = ("SpacyParser", "split_sentences_and_tokenize")
+__all__ = ("SpacyParser", "_split_sentences_and_tokenize")
 
 
 @lru_cache
-def split_sentences_and_tokenize(nlp: Language, text: str) -> list[list[WordToken]]:
+def _split_sentences_and_tokenize(nlp: Language, text: str) -> list[list[WordToken]]:
     res = []
     for sent in nlp(text).sents:
         sentence_tokens = [
             WordToken(
                 word_string=token.text,
                 word_pos=token.pos_,
-                word_lemma=token.lemma_,
+                word_lemma=token.lemma_.lower() if token.pos_ == "PROPN" else token.lemma_,
                 is_word=not token.is_punct,
                 next_is_ws=" " in token.text_with_ws,
             )
@@ -29,9 +28,6 @@ def split_sentences_and_tokenize(nlp: Language, text: str) -> list[list[WordToke
         ]
         res.append(sentence_tokens)
     return res
-
-
-nlp_mapping: dict[str, Language] = {}
 
 
 def _get_language_parser(language_name: str) -> Language:
@@ -57,14 +53,14 @@ class SpacyParser(LanguageParser):
         pass
 
     def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
-        return split_sentences_and_tokenize(self.nlp, text)
+        return _split_sentences_and_tokenize(self.nlp, text)
 
     def tokenize(self, text: str) -> list[WordToken]:
         return [
             WordToken(
                 word_string=token.text,
                 word_pos=token.pos_,
-                word_lemma=token.lemma_,
+                word_lemma=token.lemma_.lower() if token.pos_ == "PROPN" else token.lemma_,
                 is_word=not token.is_punct,
                 next_is_ws=" " in token.text_with_ws,
             )

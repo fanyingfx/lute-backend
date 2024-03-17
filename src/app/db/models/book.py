@@ -36,6 +36,7 @@ class BookText(BigIntBase):
     ref_book_id: Mapped[Integer] = mapped_column(ForeignKey("books.id"))
     title: Mapped[str] = mapped_column(String(length=300), nullable=True)
     book_text: Mapped[str] = mapped_column(Text)
+    current_page: Mapped[int] = mapped_column(Integer, default=1)
     book: Mapped[Book] = relationship(back_populates="texts", lazy="noload")
 
     def __repr__(self) -> str:

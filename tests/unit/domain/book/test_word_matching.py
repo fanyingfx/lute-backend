@@ -1,7 +1,7 @@
 from pytest import fixture
 
 from app.db.models.word import Word
-from app.domain.parser import LanguageParser, parser_tool
+from app.domain.parser import LanguageParser, parser_helper
 from app.domain.parser.markdown_text_parser import VWord, WordToken
 
 
@@ -68,7 +68,7 @@ def sentence_tokens() -> list[WordToken]:
 @fixture()
 async def get_vwords(sentence_tokens: list[WordToken], word_index: dict[str, list[Word]]) -> list[VWord]:
     max_loop_num = 10 * len(sentence_tokens)
-    token_sentence = await parser_tool.match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
+    token_sentence = await parser_helper.match_word_in_sentence(sentence_tokens, word_index, max_loop_num)
     return token_sentence.segment_value
 
 

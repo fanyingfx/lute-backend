@@ -3,8 +3,8 @@ import spacy
 from app.domain.parser.markdown_text_parser import WordToken
 
 from .language_parser import LanguageParser
-from .parser_tool import register_parser
-from .spacy_parser import split_sentences_and_tokenize
+from .paser_config import register_parser
+from .spacy_parser import _split_sentences_and_tokenize
 
 
 @register_parser("japanese")
@@ -21,7 +21,7 @@ class JapaneseParser(LanguageParser):
         pass
 
     def split_sentences_and_tokenize(self, text: str) -> list[list[WordToken]]:
-        return split_sentences_and_tokenize(self.nlp, text)
+        return _split_sentences_and_tokenize(self.nlp, text)
 
     def tokenize(self, text: str) -> list[WordToken]:
         return [

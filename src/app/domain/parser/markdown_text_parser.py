@@ -4,6 +4,7 @@ from typing import NotRequired, TypedDict
 
 import mistune
 from mistune.markdown import Markdown
+from mistune.plugins.formatting import mark
 
 __all__ = (
     "MarkDownNode",
@@ -19,7 +20,7 @@ __all__ = (
     "VWord",
 )
 
-markdown: Markdown = mistune.create_markdown(renderer=None)
+markdown: Markdown = mistune.create_markdown(renderer=None, plugins=[mark])
 
 
 class AttrNode(TypedDict):
@@ -117,8 +118,13 @@ class SoftLineBreakSegment(BaseSegment):
 
 
 @dataclass
+class PageSeperator(BaseSegment):
+    segment_type: str = "pageseperator"
+
+
+@dataclass
 class ParagraphSegment:
-    segment_value: list[ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment]
+    segment_value: list[ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment | PageSeperator]
     segment_raw: str = ""
     segment_type: str = "paragraph"
 
@@ -138,7 +144,7 @@ class EmptySegment(BaseSegment):
     segment_type: str = "empty"
 
 
-Segment = (
+type Segment = (  # type: ignore[valid-type]
     ImageSegment
     | SoftLineBreakSegment
     | HardLineBreakSegment
@@ -146,6 +152,7 @@ Segment = (
     | ParagraphSegment
     | EmptySegment
     | TextRawParagraphSegment
+    | PageSeperator
 )
 
 
@@ -159,31 +166,35 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
     # if paragraph["children"] is None:
     #     raise ValueError(f"No children found for paragraph: {paragraph}")
 
-    def parse_child(child: MarkDownNode) -> ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment:
-        match child["type"]:
-            case "text" | "codespan":  # treat text in double quote as normal text
-                return TextRawParagraphSegment(child["raw"])
-            case "softbreak":
-                return SoftLineBreakSegment("")
-            case "image":
-                return ImageSegment(child["attrs"]["url"])
-            # case "codespan":
+    def parse_child(
+        child: MarkDownNode,
+    ) -> ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment | PageSeperator:
+        match child:
+            case {"type": "text" | "codespan", "raw": raw}:  # treat text in double quote as normal text
+                return TextRawParagraphSegment(raw)
+            case {"type": "softbreak"}:
+                return SoftLineBreakSegment()
+            case {"type": "image", "attrs": {"url": url}}:
+                return ImageSegment(url)
+            case {"type": "mark", "children": [{"raw": "page_seperator", "type": "text"}]}:
+                return PageSeperator()
         raise ValueError(f"Unknown child type of paragraph: {child['type']}")
 
     return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph["children"]])
 
 
 def parse_node(node: MarkDownNode) -> Segment:
-    match node["type"]:
-        case "paragraph":
-            return parse_paragraph(node)
-        case "blank_line":
+    match node:
+        case {"type": "paragraph", "children": children}:
+            return parse_paragraph({"type": "paragraph", "children": children})
+        case {"type": "blank_line"}:
             return HardLineBreakSegment(segment_value="")
-        case "block_code":
-            return BlockSegment(segment_value=node["raw"])
-        case "heading":
+        case {"type": "block_code", "raw": raw}:
+            return BlockSegment(segment_value=raw)
+        case {"type": "heading"}:
             return EmptySegment()
-    raise ValueError(f"Unrecognized markdown node: {node}")
+        case _:
+            raise ValueError(f"Unrecognized markdown node: {node}")
 
 
 def flatten_segments(segments: list[Segment]) -> list[Segment]:

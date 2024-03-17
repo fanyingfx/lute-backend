@@ -240,7 +240,8 @@ class ServerSettings:
     """Directories to watch for reloading."""
     HTTP_WORKERS: int | None = field(
         default_factory=lambda: (
-            int(workers) if (workers := os.getenv("WEB_CONCURRENCY")) is not None else None),  # typing: ignore[arg-type] #fmt: skip
+            int(workers) if (workers := os.getenv("WEB_CONCURRENCY")) is not None else None),
+        # typing: ignore[arg-type] #fmt: skip
     )
     """Number of HTTP Worker processes to be spawned by Uvicorn."""
     # fmt:on
@@ -380,10 +381,16 @@ class LogSettings:
 #             health_check_interval=self.HEALTH_CHECK_INTERVAL,
 #         )
 #         return self._redis_instance
+# from platformdirs import user_data_dir, user_config_dir
 
 
 @dataclass(kw_only=True)
 class UserDataSettings:
+    # multiple level config
+    # default->user_data_folder->user_custom_folder
+    # check user_data_folder first, if not exist, create it and save the default config
+    # check the folder setting path in user_data_folder, if not exist using the user_data_folder setting
+    # otherwise, using the user_custom_folder setting
     USER_DATA_FOLDER: Path = field(default_factory=lambda: Path(os.getenv("USER_DATA_FOLDER", Path.cwd() / "data")))
     WORD_IMAGE_PATH: Path = Path()
     UNIDIC_CSJ_PATH: Path = Path()
@@ -396,6 +403,10 @@ class UserDataSettings:
         self.UNIDIC_CWJ_PATH = self.USER_DATA_FOLDER / "unidic-cwj"
         self.MDX_DICT_PATH = self.USER_DATA_FOLDER / "dicts"
 
+    def create_user_data_folder(self) -> None:
+        if not self.USER_DATA_FOLDER.is_dir():
+            self.USER_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
+
     @property
     def data_folder(self) -> str:
         return self.USER_DATA_FOLDER.as_posix()
@@ -405,7 +416,7 @@ class UserDataSettings:
         return self.UNIDIC_CSJ_PATH.as_posix()
 
     @property
-    def unidic_cwj_path(self) -> str:
+    def unidic_cwj_path_str(self) -> str:
         return self.UNIDIC_CWJ_PATH.as_posix()
 
 

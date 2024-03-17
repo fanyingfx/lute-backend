@@ -24,7 +24,10 @@ dependencies = [
     "unidic-lite>=1.0.8",
     "playwright>=1.42.0",
     "beautifulsoup4>=4.12.3",
-    "mdict-query @ file:///D:/Code/mdict-query/dist/mdict_query-0.1.1-py3-none-any.whl",
+    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl",
+    "ja-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl",
+    "mdict-query @ file:///D:/Code/mdict-query/dist/mdict_query-0.2.3-py3-none-any.whl",
+    "platformdirs>=4.2.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
