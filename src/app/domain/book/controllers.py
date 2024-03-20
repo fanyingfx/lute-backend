@@ -48,12 +48,6 @@ class BookController(Controller):
     }
     return_dto = BookDTO
 
-    # @get("/book_id/{book_id:int}")
-    # async def get_book_by_id(self, book_service: BookService, book_id: int) -> Book:
-    #     book = await book_service.get(item_id=book_id)
-    #
-    #     return book_service.to_dto(book)
-
     @get("/list")
     async def list_books(
         self,
@@ -133,6 +127,28 @@ class BookTextController(Controller):
         segmentlist = parse_markdown(db_obj.book_text)
         res = await parser_helper.get_parsed_text_segments(segmentlist, parser, word_index)
 
+        return ParsedBookText(data=res)
+
+    @get("booktext/test_en", return_dto=ParsedBookTextDTO)
+    async def get_en_booktext(self, word_service: WordService) -> ParsedBookText:
+        from app.domain.book.get_demo_book import get_en_book
+        from app.domain.parser import LanguageParser
+
+        parser = LanguageParser.get_parser("english")
+        word_index: dict[str, list[Word]] = await word_service.load_word_index(1)
+        segmentlist = parse_markdown(get_en_book())
+        res = await parser_helper.get_parsed_text_segments(segmentlist, parser, word_index)
+        return ParsedBookText(data=res)
+
+    @get("booktext/test_jp", return_dto=ParsedBookTextDTO)
+    async def get_jp_booktext(self, word_service: WordService) -> ParsedBookText:
+        from app.domain.book.get_demo_book import get_jp_book
+        from app.domain.parser import LanguageParser
+
+        parser = LanguageParser.get_parser("spoken_japanese")
+        word_index: dict[str, list[Word]] = await word_service.load_word_index(2)
+        segmentlist = parse_markdown(get_jp_book())
+        res = await parser_helper.get_parsed_text_segments(segmentlist, parser, word_index)
         return ParsedBookText(data=res)
 
     @post("/booktext/update_page")

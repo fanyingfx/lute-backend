@@ -54,3 +54,7 @@ class LanguageParser(abc.ABC):
     @abc.abstractmethod
     def tokenize(self, text: str) -> list[WordToken]:
         pass
+
+    # @abc.abstractmethod
+    # def all_pos_tags(self) -> list[str]:
+    #     pass

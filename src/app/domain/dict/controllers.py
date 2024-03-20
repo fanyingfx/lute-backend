@@ -18,10 +18,19 @@ class DictController(Controller):
 
         return Response(res, media_type=response_media_type)
 
-    @get(path="/en", media_type=MediaType.HTML)
-    async def query_en_word(self, word: str) -> bytes:
-        return en_query(word)
+    @get(path="/query_word", media_type=MediaType.HTML)
+    async def query_word(self, word: str, language_id: int) -> bytes:
+        match language_id:
+            case 1:
+                return en_query(word)
+            case 2:
+                return jp_query(word)
+        raise ValueError(f"Language {language_id} is not supported")
 
-    @get(path="/jp", media_type=MediaType.HTML)
-    async def query_jp_word(self, word: str) -> bytes:
-        return jp_query(word)
+    # @get(path="/en", media_type=MediaType.HTML)
+    # async def query_en_word(self, word: str) -> bytes:
+    #     return en_query(word)
+    #
+    # @get(path="/jp", media_type=MediaType.HTML)
+    # async def query_jp_word(self, word: str) -> bytes:
+    #     return jp_query(word)

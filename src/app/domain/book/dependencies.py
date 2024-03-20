@@ -10,9 +10,7 @@ from sqlalchemy.orm import joinedload, noload, selectinload
 from app.db.models.book import Book, BookText
 from app.domain.book.services import BookService, BookTextService
 
-__all__ = [
-    "provides_book_service",
-]
+__all__ = ["provides_book_service", "provides_booktext_service"]
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -32,10 +30,6 @@ async def provides_book_service(db_session: AsyncSession) -> AsyncGenerator[Book
             noload("*"),
         )
         .options(joinedload(Book.language)),
-        # .join(BookText, onclause=Book.id == BookText.ref_book_id, isouter=True)
-        # .order_by(Book.updated_at)
-        # .options(
-        # ),
     ) as service:
         yield service
 

@@ -1,10 +1,11 @@
 import dataclasses
 from dataclasses import dataclass
+from enum import StrEnum
+from itertools import chain
 from typing import NotRequired, TypedDict
 
 import mistune
 from mistune.markdown import Markdown
-from mistune.plugins.formatting import mark
 
 __all__ = (
     "MarkDownNode",
@@ -20,7 +21,21 @@ __all__ = (
     "VWord",
 )
 
-markdown: Markdown = mistune.create_markdown(renderer=None, plugins=[mark])
+markdown: Markdown = mistune.create_markdown(renderer=None)
+PAGE_SEPERATOR_RE = r"^===(?P<page_sep>.+?)===$"
+
+
+def parse_block_page(block, m, state):  # type: ignore
+    text = m.group("page_sep")
+    # use ``state.append_token`` to save parsed block math token
+    state.append_token({"type": "page_seperator", "raw": text})
+    # return the end position of parsed text
+    # since python doesn't count ``$``, we have to +1
+    # if the pattern is not ended with `$`, we can't +1
+    return m.end() + 1
+
+
+markdown.block.register("page_seperator", PAGE_SEPERATOR_RE, parse_block_page, before="list")
 
 
 class AttrNode(TypedDict):
@@ -33,6 +48,21 @@ class MarkDownNode(TypedDict):
     raw: NotRequired[str]
     children: NotRequired[list["MarkDownNode"]]
     attrs: NotRequired[AttrNode]
+
+
+class SegmentType(StrEnum):
+    IMAGE = "image"
+    SOFT_LINEBREAK = "softlinebreak"
+    HARD_LINEBREAK = "hardlinebreak"
+    BLOCK = "block"
+    PARAGRAPH = "paragraph"
+    EMPTY = "empty"
+    TEXT_PARAGRAPH = "textparagraph"
+    TEXT_RAW_PARAGRAPH = "textrawparagraph"
+    PAGE_START = "pagestart"
+    PAGE_END = "pageend"
+    SENTENCE = "sentence"
+    SEGMENT = "segment"
 
 
 # kw_only for dataclass inheritance
@@ -70,7 +100,7 @@ class VWord(WordToken):
 class SentenceSegment:
     segment_value: list[VWord]
     segment_raw: str = ""
-    segment_type: str = "sentence"
+    segment_type: str = SegmentType.SENTENCE
     paragraph_order: int = 0
     sentence_order: int = 0
 
@@ -91,57 +121,62 @@ class ParsedTextSegment:
 class BaseSegment:
     segment_value: str = ""
     segment_raw: str = ""
-    segment_type: str = "segment"
+    segment_type: str = SegmentType.SEGMENT
 
 
 @dataclass
 class ImageSegment(BaseSegment):
-    segment_type: str = "image"
+    segment_type: str = SegmentType.IMAGE
 
 
 @dataclass
 class TextRawParagraphSegment(BaseSegment):
-    segment_type: str = "textrawparagraph"
+    segment_type: str = SegmentType.TEXT_RAW_PARAGRAPH
 
 
 @dataclass
 class TextParagraphSegment:
     segment_value: list[SentenceSegment]
     segment_raw: str = ""
-    segment_type: str = "textparagraph"
+    segment_type: str = SegmentType.TEXT_PARAGRAPH
     segment_order: int = 0
 
 
 @dataclass
 class SoftLineBreakSegment(BaseSegment):
-    segment_type: str = "softlinebreak"
+    segment_type: str = SegmentType.SOFT_LINEBREAK
 
 
 @dataclass
-class PageSeperator(BaseSegment):
-    segment_type: str = "pageseperator"
+class PageStart(BaseSegment):
+    segment_type: str = SegmentType.PAGE_START
+
+
+@dataclass
+class PageEnd(BaseSegment):
+    segment_type: str = SegmentType.PAGE_END
 
 
 @dataclass
 class ParagraphSegment:
-    segment_value: list[ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment | PageSeperator]
+    segment_value: list[ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment | PageStart | PageEnd]
     segment_raw: str = ""
-    segment_type: str = "paragraph"
+    segment_type: str = SegmentType.PARAGRAPH
 
 
 @dataclass
 class BlockSegment(BaseSegment):
-    segment_type: str = "block"
+    segment_type: str = SegmentType.BLOCK
 
 
 @dataclass
 class HardLineBreakSegment(BaseSegment):
-    segment_type: str = "hardlinebreak"
+    segment_type: str = SegmentType.HARD_LINEBREAK
 
 
 @dataclass
 class EmptySegment(BaseSegment):
-    segment_type: str = "empty"
+    segment_type: str = SegmentType.EMPTY
 
 
 type Segment = (  # type: ignore[valid-type]
@@ -152,7 +187,8 @@ type Segment = (  # type: ignore[valid-type]
     | ParagraphSegment
     | EmptySegment
     | TextRawParagraphSegment
-    | PageSeperator
+    | PageStart
+    | PageEnd
 )
 
 
@@ -162,13 +198,13 @@ class NodeAttr:
     info: str | None
 
 
-def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
+def parse_paragraph(paragraph: MarkDownNode) -> list[Segment]:
     # if paragraph["children"] is None:
     #     raise ValueError(f"No children found for paragraph: {paragraph}")
 
     def parse_child(
         child: MarkDownNode,
-    ) -> ImageSegment | TextRawParagraphSegment | SoftLineBreakSegment | PageSeperator:
+    ) -> Segment:
         match child:
             case {"type": "text" | "codespan", "raw": raw}:  # treat text in double quote as normal text
                 return TextRawParagraphSegment(raw)
@@ -176,52 +212,44 @@ def parse_paragraph(paragraph: MarkDownNode) -> ParagraphSegment:
                 return SoftLineBreakSegment()
             case {"type": "image", "attrs": {"url": url}}:
                 return ImageSegment(url)
-            case {"type": "mark", "children": [{"raw": "page_seperator", "type": "text"}]}:
-                return PageSeperator()
-        raise ValueError(f"Unknown child type of paragraph: {child['type']}")
+            case _:
+                raise ValueError(f"Unknown child type of paragraph: {child['type']}")
 
-    return ParagraphSegment(segment_value=[parse_child(child) for child in paragraph["children"]])
+    return [parse_child(child) for child in paragraph["children"]]
 
 
-def parse_node(node: MarkDownNode) -> Segment:
+def parse_node(node: MarkDownNode) -> list[Segment]:
     match node:
+        case {"type": "page_seperator", "raw": seperator_type}:
+            match seperator_type:
+                case "page_start":
+                    return [PageStart()]
+                case "page_end":
+                    return [PageEnd()]
+                case _:
+                    raise ValueError(f"Unknown seperator type: {seperator_type}")
         case {"type": "paragraph", "children": children}:
             return parse_paragraph({"type": "paragraph", "children": children})
         case {"type": "blank_line"}:
-            return HardLineBreakSegment(segment_value="")
+            return [HardLineBreakSegment()]
         case {"type": "block_code", "raw": raw}:
-            return BlockSegment(segment_value=raw)
+            return [BlockSegment(segment_value=raw)]
         case {"type": "heading"}:
-            return EmptySegment()
+            return [EmptySegment()]
         case _:
             raise ValueError(f"Unrecognized markdown node: {node}")
 
 
-def flatten_segments(segments: list[Segment]) -> list[Segment]:
-    res_node_list: list[Segment] = []
-    for segment in segments:
-        match segment:
-            case ParagraphSegment():
-                res_node_list.extend(segment.segment_value)
-            case EmptySegment():
-                pass
-            case _:
-                res_node_list.append(segment)
-    return res_node_list
-
-
 def parse_markdown(text: str) -> list[Segment]:
     _doc: list[MarkDownNode] = markdown(text)
-    _segments = [parse_node(m) for m in _doc]
-    return flatten_segments(_segments)
+    return list(chain.from_iterable(parse_node(m) for m in _doc))
 
 
 if __name__ == "__main__":
     source_text_file = "test.md"
     with open(source_text_file) as f:  # noqa
-        doc: list[MarkDownNode] = markdown(f.read())
-    segments = [parse_node(m) for m in doc]
+        doc: str = f.read()
+    segments = parse_markdown(doc)
 
-    res = flatten_segments(segments)
-    r = {s.segment_type for s in res}
+    r = {s.segment_type for s in segments}
     print(r)  # noqa

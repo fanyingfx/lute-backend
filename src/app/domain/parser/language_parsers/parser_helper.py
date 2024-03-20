@@ -106,5 +106,7 @@ async def get_parsed_text_segments(
                 )
             paragraph_order += 1
         else:
-            res.append(ParsedTextSegment(**segment.__dict__))
+            segment_tmp = ParsedTextSegment(**segment.__dict__)
+            segment_tmp.paragraph_order = paragraph_order
+            res.append(segment_tmp)
     return res

@@ -72,17 +72,17 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         return await super().update(item_id=item_id, data=db_obj, auto_commit=True)
 
     async def get_word_index(self, language_id: int) -> dict[str, list[Word]]:
-        if language_id not in self.word_index:
-            self.word_index[language_id] = defaultdict(list)
+        if language_id not in WordService.word_index:
+            WordService.word_index[language_id] = defaultdict(list)
         word_list = await self.list(CollectionFilter("language_id", [language_id]), OrderBy("word_counts", "desc"))
         for word in word_list:
-            self.word_index[language_id][word.first_word].append(word)
-        return self.word_index[language_id]
+            WordService.word_index[language_id][word.first_word].append(word)
+        return WordService.word_index[language_id]
 
     async def load_word_index(self, language_id: int) -> dict[str, list[Word]]:
-        if language_id not in self.word_index:
+        if language_id not in WordService.word_index:
             return await self.get_word_index(language_id)
-        return self.word_index[language_id]
+        return WordService.word_index[language_id]
 
     async def update_word_index(self, language_id: int, word_string: str) -> None:
         """
@@ -93,7 +93,7 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
         Returns:
             None
         """
-        if language_id not in self.word_index:
+        if language_id not in WordService.word_index:
             return
         word_list = await self.list(
             CollectionFilter("language_id", [language_id]),
@@ -104,11 +104,11 @@ class WordService(SQLAlchemyAsyncRepositoryService[Word]):
          word_list should be sort by word_counts desc
         it will be used in search the longest matched word
         """
-        if not word_list and word_string in self.word_index[language_id]:
-            del self.word_index[language_id][word_string]
+        if not word_list and word_string in WordService.word_index[language_id]:
+            del WordService.word_index[language_id][word_string]
             return
 
-        self.word_index[language_id][word_string] = list(word_list)
+        WordService.word_index[language_id][word_string] = list(word_list)
 
     async def to_model(self, data: Word | dict[str, Any], operation: str | None = None) -> Word:
         return await super().to_model(data, operation)
