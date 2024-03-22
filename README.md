@@ -31,6 +31,12 @@ This repo is a template for creating a Litestar app on Railway.
 
 For working on this template, you'll need to clone the repo and set up for development environment.
 
-1. Clone [the repo](https://github.com/JacobCoffee/litestar-template)
-2. Install [Python Development Master (`PDM`)](https://pdm.fming.dev/latest/)
-3. TODO
+1. Clone the repo and switch to develop branch
+```bash
+git clone https://github.com/fanyingfx/lute-backend.git
+git switch develop
+```
+2. Install [Rye](https://rye-up.com/guide/deps/) and sync
+```bash
+rye sync
+```
