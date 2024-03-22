@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from advanced_alchemy.base import BigIntBase
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 __all__ = ["Book", "BookText"]
@@ -23,7 +23,6 @@ class Book(BigIntBase):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now()  # type: ignore[arg-type]
     )
-    published_at: Mapped[date | None] = mapped_column(Date())
 
     # ORM Relationships
     texts: Mapped[list[BookText]] = relationship(lazy="noload", cascade="all,delete-orphan")

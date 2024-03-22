@@ -8,7 +8,7 @@
 #   with-sources: false
 
 -e file:.
-advanced-alchemy==0.7.4
+advanced-alchemy==0.8.0
     # via litestar
 aiosqlite==0.20.0
     # via app
@@ -63,13 +63,13 @@ email-validator==2.1.1
     # via litestar
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
     # via app
-faker==24.2.0
+faker==24.3.0
     # via polyfactory
 fast-query-parsers==1.0.3
     # via litestar
 fugashi==1.3.1
     # via app
-granian==1.1.2
+granian==1.2.0
     # via litestar-granian
 greenlet==3.0.3
     # via playwright
@@ -109,7 +109,7 @@ litestar==2.7.0
     # via litestar-vite
 litestar-granian==0.2.3
     # via app
-litestar-vite==0.1.19
+litestar-vite==0.1.21
     # via app
 mako==1.3.2
     # via alembic
@@ -142,7 +142,7 @@ packaging==24.0
     # via spacy
     # via thinc
     # via weasel
-panflute==2.3.0
+panflute==2.3.1
     # via app
 pip==24.0
     # via mdict-query
@@ -255,7 +255,7 @@ unidic-lite==1.0.8
     # via app
 urllib3==2.2.1
     # via requests
-uvicorn==0.28.0
+uvicorn==0.29.0
     # via app
     # via litestar
 wasabi==1.1.2

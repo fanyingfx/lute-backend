@@ -17,7 +17,6 @@ from app.db.models.word import Word
 from app.domain.book.dependencies import provides_book_service, provides_booktext_service
 from app.domain.book.dtos import (
     BookCreate,
-    BookCreateDTO,
     BookDTO,
     BookPatchDTO,
     BookTextCreate,
@@ -57,21 +56,23 @@ class BookController(Controller):
 
         return book_service.to_dto(result)
 
-    @post("/add", dto=BookCreateDTO)
-    async def add_book(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
-        db_obj = await book_service.create(data.as_builtins())
-        db_obj = book_service.to_dto(db_obj)
-        return book_service.to_dto(db_obj)
+    # @post("/add", dto=BookCreateDTO)
+    # async def add_book(self, book_service: BookService, data: DTOData[BookCreate]) -> Book:
+    #     db_obj = await book_service.create(data.as_builtins())
+    #     db_obj = book_service.to_dto(db_obj)
+    #     return book_service.to_dto(db_obj)
 
-    @post("/add_book_and_content", dto=BookCreateDTO)
-    async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> dict[str, Any]:
-        contents = data.create_instance().texts
+    @post("/add_book_and_content")
+    async def add_book_and_content(
+        self, book_service: BookService, data: Annotated[BookCreate, Body(media_type=RequestEncodingType.MULTI_PART)]
+    ) -> dict[str, Any]:
+        contents = await book_service.extract_book_text(await data.file.read())
         if contents is None or len(contents) == 0:
             from litestar.exceptions import HTTPException
 
             raise HTTPException("Content cannot be empty")
-        db_obj = await book_service.create_with_contents(data.as_builtins(), contents)
-        return {"book_id": db_obj.id, "message": f"{data.as_builtins()['book_name']} created successfully"}
+        db_obj = await book_service.create_with_contents(data.__dict__, contents)
+        return {"book_id": {db_obj.id}, "message": f"{data.book_name} created successfully"}
 
     @patch("/update", dto=BookPatchDTO)
     async def update_book(
@@ -161,3 +162,14 @@ class BookTextController(Controller):
             "message": "Page number updated successfully",
             "current_page": db_obj.current_page,
         }
+
+    # create api for add book with content
+    # @post("/add_book_and_content", dto=BookCreateDTO)
+    # async def add_book_and_content(self, book_service: BookService, data: DTOData[BookCreate]) -> dict[str, Any]:
+    #     contents = data.create_instance().texts
+    #     if contents is None or len(contents) == 0:
+    #         from litestar.exceptions import HTTPException
+    #
+    #         raise HTTPException("Content cannot be empty")
+    #     db_obj = await book_service.create_with_contents(data.as_builtins(), contents)
+    #     return {"book_id": db_obj.id, "message": f"{data.as_builtins()['book_name']} created successfully"}

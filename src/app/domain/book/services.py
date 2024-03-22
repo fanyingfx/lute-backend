@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from app.db.models.book import Book, BookText
@@ -11,9 +12,14 @@ if TYPE_CHECKING:
 
     from sqlalchemy.orm import InstrumentedAttribute
 
-    from app.domain.book.dtos import BookTextCreate
 
 __all__ = ["BookService", "BookTextService"]
+
+
+@dataclass
+class BookFragment:
+    title: str
+    text: str
 
 
 class BookRepository(SQLAlchemyAsyncRepository[Book]):
@@ -37,11 +43,11 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
         self.repository: BookRepository = self.repository_type(**repo_kwargs)
         self.model_type = self.repository.model_type
 
-    async def create_with_contents(self, data: Book | dict[str, Any], contents: list[BookTextCreate]) -> Book:
+    async def create_with_contents(self, data: Book | dict[str, Any], contents: list[BookFragment]) -> Book:
         book_obj = await self.to_model(data, "create")
         book = await super().create(data=book_obj, auto_commit=False)
         for content in contents:
-            book.texts.append(BookText(ref_book_id=book.id, book_text=content.book_text, title=content.book_title))
+            book.texts.append(BookText(ref_book_id=book.id, book_text=content.text, title=content.title))
         return await self.update(item_id=book.id, data=book)
 
     async def create(
@@ -77,6 +83,10 @@ class BookService(SQLAlchemyAsyncRepositoryService[Book]):
 
     async def to_model(self, data: Book | dict[str, Any], operation: str | None = None) -> Book:
         return await super().to_model(data, operation)
+
+    @staticmethod
+    async def extract_book_text(book_text: bytes) -> list[BookFragment]:
+        return [BookFragment(title="first Chapter", text=book_text.decode())]
 
 
 class BookTextService(SQLAlchemyAsyncRepositoryService[BookText]):

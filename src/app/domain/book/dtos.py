@@ -1,8 +1,12 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 
 from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
+from litestar.contrib.pydantic import PydanticDTO
+from litestar.datastructures import UploadFile
 from litestar.dto import DataclassDTO
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 
 from app.db.models.book import Book, BookText
 from app.domain.parser.markdown_text_parser import BaseSegment, ParsedTextSegment
@@ -53,21 +57,21 @@ class BookTextCreate:
     book_title: str | None = None
 
 
-@dataclass
-class BookCreate:
+class BookCreate(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True, alias_generator=to_camel)
+    file: UploadFile
     language_id: int
-    book_name: str | None = None
-    create_at: datetime | None = None
-    update_at: datetime | None = None
-    published_at: date | None = None
-    texts: list[BookTextCreate] | None = None
+    book_name: str | None = Field(default=True)
+    # create_at: datetime | None = Field(default=None)
+    # update_at: datetime | None = Field(default=None)
+    # published_at: date | None = Field(default=None)
 
 
 # class BookParsedDTO(DataclassDTO[Segment]):
 #     config = dto.config()
 
 
-class BookCreateDTO(DataclassDTO[BookCreate]):
+class BookCreateDTO(PydanticDTO[BookCreate]):
     """User Create."""
 
     config = dto.config(exclude={"create_at", "update_at"})
